@@ -42,6 +42,19 @@ We can pick actions:
 
 Deterministically (evaluation): Action with the highest N
 Stochastically (exploration): Randomly where pi ~ N^(1/Tau) where Tau controls exploration
+
+
+# Evaluation
+Evaluate against random agent
+Observe distributions of Win/Draw/Loss
+Observe distributions of Draws
+
+# Baseline agents
+Random
+Simple rule based 
+
+
+
 *
 *
 *
