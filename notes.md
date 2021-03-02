@@ -58,3 +58,10 @@ Simple rule based
 To ensure that our agents don't converge on a strategy that only works against a weak opponent we will train one agent at a time and as soon as it improves we train the other one.
 
 
+# Thesis notes
+
+*
+*
+*
+*
+*
