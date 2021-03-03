@@ -1,8 +1,6 @@
-# Notes
+# AlphaZero notes
 
-
-
-# Neural Network:
+## Neural Network:
 Trained to predict the policy (p -> pi) and value (v -> the winner of the game)
 
 Evaluated by playing against the current best NN, both players use MCTS to choose their moves and
@@ -20,7 +18,7 @@ p: array which indicates the precentages of picking each possible move
 v: estimation of current player winning precentage
 
 
-# MCTS:
+## MCTS:
 
 Every action has four values:
 N: How many times has this action been taken?
@@ -44,19 +42,22 @@ Deterministically (evaluation): Action with the highest N
 Stochastically (exploration): Randomly where pi ~ N^(1/Tau) where Tau controls exploration
 
 
-# Evaluation
+## Evaluation
 Evaluate against random agent
 Observe distributions of Win/Draw/Loss
 Observe distributions of Draws
 
-# Baseline agents
+## Baseline agents
 Random
 Simple rule based 
 
-# Training
+## Training
 
 To ensure that our agents don't converge on a strategy that only works against a weak opponent we will train one agent at a time and as soon as it improves we train the other one.
 
+# Game balance
+
+![alt text](balance.png)
 
 # Thesis notes
 
