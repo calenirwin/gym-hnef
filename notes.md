@@ -55,14 +55,51 @@ Simple rule based
 
 To ensure that our agents don't converge on a strategy that only works against a weak opponent we will train one agent at a time and as soon as it improves we train the other one.
 
-# Game balance of different variants of Hnefatafl
+# Game balance of the variants of Hnefatafl considered
 
-![alt text](balance.png)
+## Table created from data taken from the Hnefatafl Steam app
+
+
+| Variant        | Black wins           | Draws  | White wins | Balance | 
+| ------------- |-------------| -----| --- | ---  |
+| Historical Hnefatafl      | 260 | 1 | 274 | 1.05 | 
+| Copenhagen Hnefatafl     | 895      |  25 | 1704 | 1.89 |
+
+
+## Table taken from the largest database of Hnefatafl matches
+
+| Variant        | Overall           | Full matches  | Strong players | Strong players full matches | Average |
+| ------------- |-------------| -----| --- | ---  | ---  |
+| Historical Hnefatafl      | -1.15 | -1.14 | -1.23 | -1.21 | -1.18 |
+| Copenhagen Hnefatafl     | 1.41      |   1.47 | 1.39 | 1.46 | 1.46 |
+
+Positive means white wins more often, negative means black wins more often.
+
+Full matches mean pairs of matches where players take two games, one as each side.
+
+Draws were counted as half wins.
+
+Link: 
+http://aagenielsen.dk/tafl_balances.php
+
 
 # Thesis notes
 
-*
-*
-*
-*
-*
+## Evaluation metrics
+
+### Evaluation is split into two measures:
+
+* Intelligence: Performance against a random player
+* Generality: Performance against themselves
+
+Maybe we can try having the attacker agent play as the defender and vice versa to see how their strategies change?
+
+
+### State space complexity
+
+|     |  Historical Hnefatafl   |  Othello |  Chess   |  Go |
+| --- | --- | --- | --- | --- |
+|  Upper bound on state-space complexity |   1.4 * 10^27  |  10^28   |  10^43 or 10^50   |   2 * 10^170  |
+
+
+http://ai.unibo.it/sites/ai.unibo.it/files/Complexity_of_Tablut_0.pdf
