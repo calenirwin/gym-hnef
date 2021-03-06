@@ -37,7 +37,13 @@ class HnefEnv(gym.Env):
         return observation_space
 
     # needs work
+    # In: tuple of tuples action ((pos_x, pos_y), (new_pos_x, new_pos_y))
+    # Out: observation (the new state), reward, done (True if game is finished, False otherwise), info (information of the state)
     def step(self, action):
+
+        # make sure that the game is still going
+        assert not self.done        
+
         return observation, reward, done, info
 
     def winner(self):
