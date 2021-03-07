@@ -66,13 +66,63 @@ class HnefEnv(gym.Env):
             import pyglet
             from pyglet.window import mouse
             from pyglet.window import key
-        window = pyglet.window.Window(540, 540, style=window.Window.WINDOW_STYLE_TOOL, caption='Hnefatafl')
 
-        # load window icon
-        # icon2 = pyglet.image.load('32x32.png')
-        # window.set_icon(icon1, icon2)
-        cursor = window.get_system_mouse_cursor(window.CURSOR_HAND)
-        window.set_mouse_cursor(cursor)
 
+            screen = pyglet.canvas.get_display().get_default_screen()
+            window = pyglet.window.Window(540, 540, style=window.Window.WINDOW_STYLE_TOOL, caption='Hnefatafl')
+
+            # set a custom window icon --IF HAVE TIME--
+            # icon2 = pyglet.image.load('32x32.png')
+            # window.set_icon(icon1, icon2)
+
+            self.window = window
+            self.pyglet = pyglet
+            self.user_action = None
+
+            cursor = window.get_system_mouse_cursor(window.CURSOR_HAND)
+            window.set_mouse_cursor(cursor)
+
+            @window.event
+            def on_draw():
+                pyglet.gl.glClearColor(0.7, 0.5, 0.3, 1)
+                window.clear()
+
+                pyglet.gl.glLineWidth(3)
+                batch = pyglet.graphics.Batch()
+
+                # draw the grid and labels
+                rendering.draw_grid(batch, delta, self.size, lower_grid_coord, upper_grid_coord)
+
+                # info on top of the board
+                rendering.draw_info(batch, window_width, window_height, upper_grid_coord, self.state_)
+
+                # Inform user what they can do
+                rendering.draw_command_labels(batch, window_width, window_height)
+
+                rendering.draw_title(batch, window_width, window_height)
+
+                batch.draw()
+
+                # draw the pieces
+                rendering.draw_pieces(batch, lower_grid_coord, delta, piece_r, self.size, self.state_)
+
+             @window.event
+            def on_mouse_press(x, y, button, modifiers):
+                if button == mouse.LEFT:
+                    grid_x = (x - lower_grid_coord)
+                    grid_y = (y - lower_grid_coord)
+                    x_coord = round(grid_x / delta)
+                    y_coord = round(grid_y / delta)
+                    try:
+                        self.window.close()
+                        pyglet.app.exit()
+                        self.user_action = (x_coord, y_coord)
+                    except:
+                        pass
+
+            pyglet.app.run()
+
+            return self.user_action
+            
 
             
