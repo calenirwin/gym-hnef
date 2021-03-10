@@ -87,77 +87,82 @@ def next_state(state, action):
     # switch turns
 
 
-# In: state (current state)
-# Out: valid_moves (list of all valid moves)
-#
-# We want to see which pieces are able to move by seeing which values > 0 are next to zeros
-# then we're going to collect all the indexes of the possible moves and create a list of tuples
-# so that each one is ((pos_x, pox_y), (new_x, new_y))
-def compute_valid_moves(state):
+# In: state (current state), x-position of piece, y-position of piece
+# Out: list of all possible actions where action a = ((x, y), (new_x, new_y))
+def actions_for_piece(state, x, y):
+    actions = []
+
     board_size = state.shape[1]
 
-    full_board = state[0] + state[1]
+    # the position of every piece
+    full_board = state[hnef_vars.ATTACKER] + state[hnef_vars.DEFENDER]
 
-    corners = np.array([0,0], [0, board_size-1], [board_size-1, 0], [board_size-1, board_size-1])
-    throne = np.array([board_size // 2, board_size // 2])
+    throne = (board_size // 2, board_size // 2)
+    # can the piece move up?
+    if x > 0:
+        pos_x = x
+        pos_y = y 
+        # continue until on the edge or about to collide with another piece
+        while pos_x > 0 and not full_board[pos_x - 1, y]:
+            pos_x -= 1
+            # the action isn't possible if the destination is the throne, except if the piece is the king
+            if ((full_board[x, y] == 2 and ((pos_x, y) == throne))) or (((pos_x, y) != throne)):
+                actions.append(((x, y), (pos_x, y)))
+
+    # can the piece move down?
+    if x < board_size - 1:
+        pos_x = x
+        pos_y = y
+        # continue until on the edge or about to collide with another piece
+        while pos_x < board_size - 1 and not full_board[pos_x + 1, y]:
+            pos_x += 1
+
+            if ((full_board[x, y] == 2 and ((pos_x, y) == throne))) or (((pos_x, y) != throne)):
+                actions.append(((x, y), (pos_x, y)))
+
+    # can the piece move left?
+    if y > 0:
+        pos_x = x
+        pos_y = y
+        while pos_y > 0 and not full_board[x, pos_y - 1]:
+            pos_y -= 1
+
+            if ((full_board[x, y] == 2 and ((x, pos_y) == throne))) or (((x, pos_y) != throne)):
+                actions.append(((x, y), (x, pos_y)))
+                
+    # can the piece move right?
+    if y < board_size - 1:
+        pos_x = x
+        pos_y = y
+        while pos_y < board_size - 1 and not full_board[x, pos_y + 1]:
+            pos_y += 1
+
+            if ((full_board[x, y] == 2 and ((x, pos_y) == throne))) or (((x, pos_y) != throne)):
+                actions.append(((x, y), (x, pos_y)))
+
+    return actions
+
+
+# In: state (current state)
+# Out: list of all possible actions for all pieces of the current player 
+#      where action a = ((x, y), (new_x, new_y))
+def compute_valid_moves(state):
+    actions = []
+
+    board_size = state.shape[1]
 
     turn = int(np.max(state[hnef_vars.TURN_CHNL]))
 
-    valid_moves = []
-
-    # checking whose turn it is, if 1 then white, otherwise it's blacks' move
-    if turn:
-        # white to move
-
-        # now we want to check for every zero in a straight line from values > 0
-        # 
-        #  
-        for i in range(board_size):
+    for i in range(board_size):
             for j in range(board_size):
-                
-                # pass if (i, j) is a corner or no piece belonging to the current player is there
-                if (np.array([i, j]) in corners) or (not state[turn][i][j]):
-                    pass               
+                if state[turn, i, j]:
+                    piece_actions = actions_for_piece(state, i, j)
 
-                pos_x, pos_y = i, j
-
-                # up, down, left, right
-                directions = np.array([0, 0, 0, 0])
-
-                # check the neighbours
-                #      
-                if not i == 0:
-                    # if we can move up
-                    directions[0] = 1
-                    while pos_x > 0 and not state[turn][pos_x-1][j]:
-                        
-                        valid_moves.append(((i, j), ()))
-
-                
-                if not i == board_size-1:
-                    # if we can move down
-                    directions[1] = 1
-
-                
-                if not j == 0:
-                    # if we can move left
-                    directions[2] = 1
-
-                
-                if not j == board_size-1:
-                    # if we can move right
-                    directions[3] = 1
-
-
-
-
-
-    else:
-        # black to move
-
-
-
-
+                    # this isn't the most efficient way of doing this 
+                    # but I wanted to have a seperate helper method
+                    for a in piece_actions:
+                        actions.append(a)
+    return actions
 
 
 def action_size(state=None, board_size: int = None):
