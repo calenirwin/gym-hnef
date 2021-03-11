@@ -39,6 +39,11 @@ Played on a 11x11 board with 1 King, 12 defenders and 24 attackers
 
 ### Corners and throne are hostile
 
+### Shieldwall captures:
+A little complicated, but an explanation:
+https://www.facebook.com/media/set/?set=a.1637222823214092.1073741840.1464975820438794&type=3
+
+
 ### Defenders win:
 * King reaches a corner square.
 * If the white pieces create an "edge fort", i.e. the King must be on an edge square, the King must be able to move and the fort must be impregnable to attack. If a fort is created and is impregnable to attack but the King is not on an edge or the King can't move, that results in a draw.
