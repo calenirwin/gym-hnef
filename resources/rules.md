@@ -12,6 +12,8 @@ Attackers' side moves first
 
 Pieces move like rooks in chess
 
+### King can take part in captures
+
 ### Throne (center square):
 Cannot be occupied by anyone but the King. It is hostile so it can take part in a capture, except when it is occupied, then it isn't hostile to defenders.
 
@@ -34,8 +36,6 @@ A player who aggressively maintains a board repetition must find another move or
 Played on a 11x11 board with 1 King, 12 defenders and 24 attackers 
 
 ![alt text](board_fetlar11.png)
-
-### King can take part in captures
 
 ### Corners and throne are hostile
 
