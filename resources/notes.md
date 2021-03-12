@@ -103,3 +103,9 @@ Maybe we can try having the attacker agent play as the defender and vice versa t
 
 
 http://ai.unibo.it/sites/ai.unibo.it/files/Complexity_of_Tablut_0.pdf
+
+# General thoughts
+
+One thing is that it takes time to calculate all of the valid moves and we need such computations each time we change states. For Go, finding the legal moves is the same as checking what board tiles are empty, this is more complicated for Hnefatafl.
+
+Instead of having it be a part of the state, I think we should have the list of valid moves as a variable in the hnef_game class or hnef_env class and then update it each time we change states.
