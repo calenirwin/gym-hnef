@@ -199,18 +199,34 @@ def check_capture(state, action):
 # At the end of this method we want to check whether the new state ends the game
 def next_state(state, action):
 
+    # How will we handle repetitions?
+    # we can either include the last two board positions in the state variable or keep track of the "timestamp"
+    # I think the timestamp is a good way to handle this because with the same variable we can stop the game if
+    # it gets too long, the only question is whether is should be a part of the state or a part of this class
+
+    # define the current player
+    turn = int(np.max(state[hnef_vars.TURN_CHNL]))
+    
     # assert that the action is valid i.e. that the action is in state[valid_actions]
+    valid_moves = compute_valid_moves(state)
+    assert action in valid_moves
 
     # move the piece
-    state[hnef_vars.TURN_CHNL][action[0][0]][action[0][1]] = 0
-    state[hnef_vars.TURN_CHNL][action[1][0]][action[1][1]] = 1
+    state[turn][test_action[0][0]][test_action[0][1]] = 0
+    state[turn][test_action[1][0]][test_action[1][1]] = 1
 
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
-    # check if game is over
-    # switch turns
-    # update state[valid_actions] for next player
 
+    # check if game is over
+    
+
+    # switch turns
+    state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
+
+
+    # update state[valid_actions] for next player
+    valid_moves = compute_valid_moves(state)
 
 # In: state (current state), x-position of piece, y-position of piece
 # Out: list of all possible actions where action a = ((x, y), (new_x, new_y))
@@ -289,17 +305,27 @@ def compute_valid_moves(state):
                         actions.append(a)
     return actions
 
+def is_over(state):
+    at = hnef_vars.ATTACKER
+    df = hnef_vars.DEFENDER
+    full_board = state[at] + state[df]
+    board_size = state.shape[1]    
+    # current player
+    player = int(np.max(state[hnef_vars.TURN_CHNL]))
+    # other player
+    other_player = np.abs(player - 1)
 
-def action_size(state=None, board_size: int = None):
-    """
-    Figure out a way to get the total number of actions for a given rule set
-    This works for Go but it is likely different for Hnef
-    """
-     if state is not None:
-        m, n = state.shape[1:]
-    elif board_size is not None:
-        m, n = board_size, board_size
+    # has the king been captured?
+    if np.max(state[df]) < 2:
+        return True, at
+    # has the king escaped?
+    elif np.max(state[df][0]) == 2 or np.max(state[df][:,0]) == 2 or np.max(state[df][:,board_size-1]) == 2 or np.max(state[df][board_size-1]) == 2:
+        return True, df
+    # enclosure (how can we determine this?)
+    elif False:
+        return True, at
+    # no win
     else:
-        raise RuntimeError('No argument passed')
-    return m * n + 1
+        return False, -1
 
+    
