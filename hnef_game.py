@@ -82,7 +82,7 @@ def init_state(rule_set):
 # Out: state (new state)
 def check_capture(state, action):
     # current player
-    player = state[hnef_vars.TURN_CHNL]
+    player = int(np.max(state[hnef_vars.TURN_CHNL]))
     # other player
     other_player = np.abs(player - 1)
     # defender
@@ -120,16 +120,16 @@ def check_capture(state, action):
     # if the king is on the throne then the white pieces cant be captured in this way
     if not (player == at and state[df][throne[0]][throne[0]] == 2):
         # capturing upwards
-        if x > 1 and state[other_player][x-1][y] == 1 and state[player][x-2][y] == throne:
+        if x > 1 and state[other_player][x-1][y] == 1 and np.mean(state[player][x-2][y] == throne):
             state[other_player][x-1][y] = 0
         # capturing downwards
-        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and state[player][x+2][y] == throne:
+        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and np.mean(state[player][x+2][y] == throne):
             state[other_player][x+1][y] = 0
         # capturing left
-        elif y > 1 and state[other_player][x][y-1] == 1 and state[player][x][y-2] == throne:
+        elif y > 1 and state[other_player][x][y-1] == 1 and np.mean(state[player][x][y-2] == throne):
             state[other_player][x][y-1] = 0
         # capturing right
-        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and state[player][x][y+2] == throne:
+        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and np.mean(state[player][x][y+2] == throne):
             state[other_player][x][y+1] = 0
     
     ## capturing the king normally
@@ -192,7 +192,7 @@ def check_capture(state, action):
             state[hnef_vars.DONE_CHNL] = 1
             return state
 
-        return state
+    return state
 
 # In: state (current state), action (action taken by current player)
 # Out: state (new state)
