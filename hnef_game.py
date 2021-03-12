@@ -77,14 +77,139 @@ def init_state(rule_set):
         print("*Error: Given rule set has not been implemented.\n Existing rule sets are:\n-copenhagen\n-historial")
         return -1
 
+# Method for checking whether a capture has taken place
+# In: state (current state), action (action taken by current player)
+# Out: state (new state)
+def check_capture(state, action):
+    # current player
+    player = state[hnef_vars.TURN_CHNL]
+    # other player
+    other_player = np.abs(player - 1)
+    # defender
+    df = hnef_vars.DEFENDER
+    # attacker
+    at = hnef_vars.ATTACKER
+    # board size
+    board_size = state.shape[1]
+    # throne location
+    throne = (board_size // 2, board_size // 2)
+
+    # new location of moved piece
+    x, y = action[1]
+
+    ## capturing normal pieces normally
+    
+    # capturing upwards
+    if x > 1 and state[other_player][x-1][y] == 1 and state[player][x-2][y] > 0:
+        state[other_player][x-1][y] = 0
+
+    # capturing downwards
+    if x < board_size - 2 and state[other_player][x+1][y] == 1 and state[player][x+2][y] > 0:
+        state[other_player][x+1][y] = 0
+    
+    # capturing left
+    if y > 1 and state[other_player][x][y-1] == 1 and state[player][x][y-2] > 0:
+        state[other_player][x][y-1] = 0
+
+    # capturing right
+    if y < board_size - 2 and state[other_player][x][y+1] == 1 and state[player][x][y+2] > 0:
+        state[other_player][x][y+1] = 0
+    
+    ## capturing normal pieces with the throne
+    
+    # if the king is on the throne then the white pieces cant be captured in this way
+    if not (player == at and state[df][throne[0]][throne[0]] == 2):
+        # capturing upwards
+        if x > 1 and state[other_player][x-1][y] == 1 and state[player][x-2][y] == throne:
+            state[other_player][x-1][y] = 0
+        # capturing downwards
+        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and state[player][x+2][y] == throne:
+            state[other_player][x+1][y] = 0
+        # capturing left
+        elif y > 1 and state[other_player][x][y-1] == 1 and state[player][x][y-2] == throne:
+            state[other_player][x][y-1] = 0
+        # capturing right
+        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and state[player][x][y+2] == throne:
+            state[other_player][x][y+1] = 0
+    
+    ## capturing the king normally
+
+    # capturing upwards
+    if x > 1 and state[df][x-1][y] == 2 and state[player][x-2][y] > 0:
+        state[df][x-1][y] = 0
+        state[hnef_vars.DONE_CHNL] = 1
+        return state
+
+    # capturing downwards
+    if x < board_size - 2 and state[df][x+1][y] == 2 and state[player][x+2][y] > 0:
+        state[df][x+1][y] = 0
+        state[hnef_vars.DONE_CHNL] = 1
+        return state
+    
+    # capturing left
+    if y > 1 and state[df][x][y-1] == 2 and state[player][x][y-2] > 0:
+        state[df][x][y-1] = 0
+        state[hnef_vars.DONE_CHNL] = 1
+        return state
+
+    # capturing right
+    if y < board_size - 2 and state[df][x][y+1] == 2 and state[player][x][y+2] > 0:
+        state[df][x][y+1] = 0
+        state[hnef_vars.DONE_CHNL] = 1
+        return state
+
+    ## capturing the king on the throne
+    if (state[df][throne[0]][throne[0]] == 2 
+        and state[at][throne[0]-1][throne[0]] 
+        and state[at][throne[0]+1][throne[0]] 
+        and state[at][throne[0]][throne[0]-1] 
+        and state[at][throne[0]][throne[0]]+1):
+        state[df][throne[0]][throne[0]] = 0
+        state[hnef_vars.DONE_CHNL] = 1
+        return state
+
+    ## capturing the king next to the throne
+
+    if player == at:
+        # king is above throne
+        if state[df][throne[0]-1][throne[0]] == 2 and state[at][throne[0]-1][throne[0]-1] and state[at][throne[0]-1][throne[0]+1] and state[at][throne[0]-2][throne[0]]:
+            state[df][throne[0]-1][throne[0]] = 0
+            state[hnef_vars.DONE_CHNL] = 1
+            return state
+        # king is below throne  
+        elif state[df][throne[0]+1][throne[0]] == 2 and state[at][throne[0]+1][throne[0]-1] and state[at][throne[0]+1][throne[0]+1] and state[at][throne[0]+2][throne[0]]:
+            state[df][throne[0]+1][throne[0]] = 0
+            state[hnef_vars.DONE_CHNL] = 1
+            return state
+        # king is left of throne 
+        elif state[df][throne[0]][throne[0]-1] == 2 and state[at][throne[0]-1][throne[0]-1] and state[at][throne[0]+1][throne[0]-1] and state[at][throne[0]][throne[0]-2]:
+            state[df][throne[0]][throne[0]-1] = 0
+            state[hnef_vars.DONE_CHNL] = 1
+            return state
+        # king is right of throne 
+        elif state[df][throne[0]][throne[0]+1] == 2 and state[at][throne[0]-1][throne[0]+1] and state[at][throne[0]+1][throne[0]+1] and state[at][throne[0]][throne[0]+2]:
+            state[df][throne[0]][throne[0]+1] = 0
+            state[hnef_vars.DONE_CHNL] = 1
+            return state
+
+        return state
+
 # In: state (current state), action (action taken by current player)
 # Out: state (new state)
 # At the end of this method we want to check whether the new state ends the game
 def next_state(state, action):
 
-    # assert that the action is valid
+    # assert that the action is valid i.e. that the action is in state[valid_actions]
 
+    # move the piece
+    state[hnef_vars.TURN_CHNL][action[0][0]][action[0][1]] = 0
+    state[hnef_vars.TURN_CHNL][action[1][0]][action[1][1]] = 1
+
+    # check if the player just captured a piece and update the state if so
+    state = check_capture(state, action)
+    # check if game is over
     # switch turns
+    # update state[valid_actions] for next player
 
 
 # In: state (current state), x-position of piece, y-position of piece
