@@ -8,10 +8,8 @@
 # https://github.com/aigagror/GymGo
 
 import gym
-import pyglet
 
-import hnef_game
-import hnef_vars
+from hnef_gym import hnef_game, hnef_vars, rendering_helpers
 
 class HnefEnv(gym.Env):
 
@@ -59,14 +57,13 @@ class HnefEnv(gym.Env):
     def __str__(self):
         return gogame.str(self.state_)
 
-    def render(self, mode='terminal'):
+    def render(self, mode='human'):
         if mode == 'terminal':
             print(self.__str__())
         elif mode == 'human':
             import pyglet
             from pyglet.window import mouse
             from pyglet.window import key
-
 
             screen = pyglet.canvas.get_display().get_default_screen()
             window = pyglet.window.Window(540, 540, style=window.Window.WINDOW_STYLE_TOOL, caption='Hnefatafl')
@@ -120,9 +117,17 @@ class HnefEnv(gym.Env):
                     except:
                         pass
 
+             @window.event
+            def on_key_press(symbol, modifiers):
+                if symbol == key.R:
+                    self.reset()
+                    self.window.close()
+                    pyglet.app.exit()
+                elif symbol == key.Q:
+                    self.window.close()
+                    pyglet.app.exit()
+                    self.user_action = -1
+
             pyglet.app.run()
 
-            return self.user_action
-            
-
-            
+            return self.user_action        
