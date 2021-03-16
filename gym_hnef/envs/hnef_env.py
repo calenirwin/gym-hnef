@@ -12,6 +12,9 @@ import gym
 from hnef_gym import hnef_game, hnef_vars, rendering_helpers
 
 class HnefEnv(gym.Env):
+    metadata = {'render.modes': ['terminal', 'gui']}
+    hnef_vars = hnef_vars
+    hnef_game = hnef_game
 
     def __init__(self, rule_set, render_mode, reward_method):
         self.rule_set = rule_set
@@ -19,30 +22,52 @@ class HnefEnv(gym.Env):
         self.reward_method = reward_method
 
         if rule_set.lower() == 'historical':
+            self.size = 9
             self.state = hnef_game.init_state('historical')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 9, 9))
             self.action_space = gym.spaces.Discrete(hnef_game.action_size(self.state))
             
         else:
+            self.size = 11
             self.state = hnef_game.init_state('copenhagen')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 11, 11))
             self.action_space = gym.spaces.Discrete(hnef_game.action_size(self.state))
             
         self.done = False
 
-    # needs work
     def reset(self):
-        return observation_space
+        self.state = hnef_game.init_state(self.rule_set)
+        self.done = False
+        return np.copy(self.state)
 
     # needs work
     # In: tuple of tuples action ((pos_x, pos_y), (new_pos_x, new_pos_y))
     # Out: observation (the new state), reward, done (True if game is finished, False otherwise), info (information of the state)
     def step(self, action):
+        assert not self.done    # make sure that the game is not over
+        
+        self.state = hnef_game.next_state(self.state, action)   # get next state
+        self.done = hnef_game.is_over(self.state, action)       # check if the game is over
 
-        # make sure that the game is still going
-        assert not self.done        
+        return np.copy(self.state), self.reward(), self.done, self.info()
 
-        return observation, reward, done, info
+    def is_over(self):
+        return self.done
+
+    def turn(self):
+        return hnef_game.turn(self.state)
+
+    def compute_valid_moves(self):
+        return hnef_game.compute_valid_moves(self.state)
+
+    def random_action(self):
+        valid_moves = self.compute_valid_moves()
+        return valid_moves[random.randrange(len(valid_moves))]  # randrange gets a random int between 0 and argument
+
+    def info(self):
+        return {
+            'turn' : hnef_game.turn(self.state),
+        }
 
     def winner(self):
         if self.game_ended():
@@ -52,7 +77,6 @@ class HnefEnv(gym.Env):
 
     def reward(self):
         return self.winner()
-
 
     def __str__(self):
         return gogame.str(self.state_)

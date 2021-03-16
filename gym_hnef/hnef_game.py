@@ -305,7 +305,49 @@ def compute_valid_moves(state):
                         actions.append(a)
     return actions
 
-def is_over(state):
+# In: state (current state), action (possible actions for current player)
+# Out: list of all possible actions for all pieces of the current player 
+#      where action a = ((x, y), (new_x, new_y))
+# note: because actiosn is only the list of actions for the current player
+# this check should only be done when it is the defenders turn
+# unless we change that later, which we might want to do
+def check_enclosure(state, action):
+    board_size = state.shape[1] # get board size
+    wall_positions = [] # holds wall positions for specific board size
+
+    # populate wall positions array with tuples of (row_index, col_index)
+    for i in range(board_size): # row index loop
+        for j in range(board_size): # col index loop
+            # bottom or top wall indices
+            if i == 0 or i == board_size - 1:
+                wall_positions.append((i,j))
+            # side walls
+            elif j == 0 or j == board_size -1:
+                wall_positions.append((i,j))
+
+    # list comprehension to check if a wall position is within the list of 
+    # possible actions for the defender
+    # appends those locations if they exist in the action list
+    # wall_moves = [pos for pos in wall_positions if pos in action]
+
+    # not as pretty but still works
+    # should we break early or add some terminating condition?
+    wall_moves = []
+    
+    for pos in wall_positions:
+        for a in action:
+            if a[1] == pos:
+                wall_moves.append(pos)
+
+    # if no defender pieces can move to a wall then they are either enclosed or 
+    # there are no remaining defender pieces
+    # either way the game is over and the attacker wins
+    if len(wall_moves) == 0:
+        return True, hnef_vars.ATTACKER
+    else:
+        return False, -1
+
+def is_over(state, action):
     at = hnef_vars.ATTACKER
     df = hnef_vars.DEFENDER
     full_board = state[at] + state[df]
@@ -321,11 +363,9 @@ def is_over(state):
     # has the king escaped?
     elif np.max(state[df][0]) == 2 or np.max(state[df][:,0]) == 2 or np.max(state[df][:,board_size-1]) == 2 or np.max(state[df][board_size-1]) == 2:
         return True, df
-    # enclosure (how can we determine this?)
-    elif False:
+    # has the attacker enclosed the defender?
+    elif check_enclosure(state,action)[0]:
         return True, at
     # no win
     else:
         return False, -1
-
-    
