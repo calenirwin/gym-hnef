@@ -77,39 +77,6 @@ def init_state(rule_set):
         print("*Error: Given rule set has not been implemented.\n Existing rule sets are:\n-copenhagen\n-historial")
         return -1
 
-# In: state (current state), action (action taken by current player)
-# Out: state (new state), valid_moves (list of valid moves from new state)
-# At the end of this method we want to check whether the new state ends the game
-def next_state(state, action):
-
-    # How will we handle repetitions?
-    # we can either include the last two board positions in the state variable or keep track of the "timestamp"
-    # I think the timestamp is a good way to handle this because with the same variable we can stop the game if
-    # it gets too long, the only question is whether is should be a part of the state or a part of this class
-
-    # define the current player
-    turn = turn(state)
-    
-    # assert that the action is valid i.e. that the action is in state[valid_actions]
-    valid_moves = compute_valid_moves(state)
-    assert action in valid_moves
-
-    # move the piece
-    state[turn][test_action[0][0]][test_action[0][1]] = 0
-    state[turn][test_action[1][0]][test_action[1][1]] = 1
-
-    # check if the player just captured a piece and update the state if so
-    state = check_capture(state, action)
-
-    # check if game is over
-
-    # switch turns
-    state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
-
-    # # update state[valid_actions] for next player
-    # valid_moves = compute_valid_moves(state)
-
-    return state
 def turn(state):
     if state is not None:
         return int(np.max(state[hnef_vars.TURN_CHNL]))
@@ -119,9 +86,9 @@ def turn(state):
 # Out: state (new state)
 def check_capture(state, action):
     # current player
-    player = turn(state)
+    current_player = turn(state)
     # other player
-    other_player = np.abs(player - 1)
+    other_player = np.abs(current_player - 1)
     # defender
     df = hnef_vars.DEFENDER
     # attacker
@@ -137,60 +104,60 @@ def check_capture(state, action):
     ## capturing normal pieces normally
     
     # capturing upwards
-    if x > 1 and state[other_player][x-1][y] == 1 and state[player][x-2][y] > 0:
+    if x > 1 and state[other_player][x-1][y] == 1 and state[current_player][x-2][y] > 0:
         state[other_player][x-1][y] = 0
 
     # capturing downwards
-    if x < board_size - 2 and state[other_player][x+1][y] == 1 and state[player][x+2][y] > 0:
+    if x < board_size - 2 and state[other_player][x+1][y] == 1 and state[current_player][x+2][y] > 0:
         state[other_player][x+1][y] = 0
     
     # capturing left
-    if y > 1 and state[other_player][x][y-1] == 1 and state[player][x][y-2] > 0:
+    if y > 1 and state[other_player][x][y-1] == 1 and state[current_player][x][y-2] > 0:
         state[other_player][x][y-1] = 0
 
     # capturing right
-    if y < board_size - 2 and state[other_player][x][y+1] == 1 and state[player][x][y+2] > 0:
+    if y < board_size - 2 and state[other_player][x][y+1] == 1 and state[current_player][x][y+2] > 0:
         state[other_player][x][y+1] = 0
     
     ## capturing normal pieces with the throne
     
     # if the king is on the throne then the white pieces cant be captured in this way
-    if not (player == at and state[df][throne[0]][throne[0]] == 2):
+    if not (current_player == at and state[df][throne[0]][throne[0]] == 2):
         # capturing upwards
-        if x > 1 and state[other_player][x-1][y] == 1 and np.mean(state[player][x-2][y] == throne):
+        if x > 1 and state[other_player][x-1][y] == 1 and np.mean(state[current_player][x-2][y] == throne):
             state[other_player][x-1][y] = 0
         # capturing downwards
-        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and np.mean(state[player][x+2][y] == throne):
+        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and np.mean(state[current_player][x+2][y] == throne):
             state[other_player][x+1][y] = 0
         # capturing left
-        elif y > 1 and state[other_player][x][y-1] == 1 and np.mean(state[player][x][y-2] == throne):
+        elif y > 1 and state[other_player][x][y-1] == 1 and np.mean(state[current_player][x][y-2] == throne):
             state[other_player][x][y-1] = 0
         # capturing right
-        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and np.mean(state[player][x][y+2] == throne):
+        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and np.mean(state[current_player][x][y+2] == throne):
             state[other_player][x][y+1] = 0
     
     ## capturing the king normally
 
     # capturing upwards
-    if x > 1 and state[df][x-1][y] == 2 and state[player][x-2][y] > 0:
+    if x > 1 and state[df][x-1][y] == 2 and state[current_player][x-2][y] > 0:
         state[df][x-1][y] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     # capturing downwards
-    if x < board_size - 2 and state[df][x+1][y] == 2 and state[player][x+2][y] > 0:
+    if x < board_size - 2 and state[df][x+1][y] == 2 and state[current_player][x+2][y] > 0:
         state[df][x+1][y] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
     
     # capturing left
-    if y > 1 and state[df][x][y-1] == 2 and state[player][x][y-2] > 0:
+    if y > 1 and state[df][x][y-1] == 2 and state[current_player][x][y-2] > 0:
         state[df][x][y-1] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     # capturing right
-    if y < board_size - 2 and state[df][x][y+1] == 2 and state[player][x][y+2] > 0:
+    if y < board_size - 2 and state[df][x][y+1] == 2 and state[current_player][x][y+2] > 0:
         state[df][x][y+1] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
@@ -207,7 +174,7 @@ def check_capture(state, action):
 
     ## capturing the king next to the throne
 
-    if player == at:
+    if current_player == at:
         # king is above throne
         if state[df][throne[0]-1][throne[0]] == 2 and state[at][throne[0]-1][throne[0]-1] and state[at][throne[0]-1][throne[0]+1] and state[at][throne[0]-2][throne[0]]:
             state[df][throne[0]-1][throne[0]] = 0
@@ -242,28 +209,33 @@ def next_state(state, action):
     # it gets too long, the only question is whether is should be a part of the state or a part of this class
 
     # define the current player
-    turn = int(np.max(state[hnef_vars.TURN_CHNL]))
+    current_player = turn(state)
     
     # assert that the action is valid i.e. that the action is in state[valid_actions]
     valid_moves = compute_valid_moves(state)
     assert action in valid_moves
 
-    # move the piece
-    state[turn][action[0][0]][action[0][1]] = 0
-    state[turn][action[1][0]][action[1][1]] = 1
+    if state[current_player][action[0][0]][action[0][1]] == 2:
+        state[current_player][action[0][0]][action[0][1]] = 0
+        state[current_player][action[1][0]][action[1][1]] = 2
+    else:
+        state[current_player][action[0][0]][action[0][1]] = 0
+        state[current_player][action[1][0]][action[1][1]] = 1
+
+        
 
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
 
     # check if game is over
-    
 
     # switch turns
-    state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
-
+    state[hnef_vars.TURN_CHNL][0][0] = np.abs(current_player - 1)
 
     # update state[valid_actions] for next player
     valid_moves = compute_valid_moves(state)
+
+    return state
 
 # In: state (current state), x-position of piece, y-position of piece
 # Out: list of all possible actions where action a = ((x, y), (new_x, new_y))
@@ -329,11 +301,11 @@ def compute_valid_moves(state):
 
     board_size = state.shape[1]
 
-    turn = turn(state)
+    current_player = turn(state)
 
     for i in range(board_size):
             for j in range(board_size):
-                if state[turn, i, j]:
+                if state[current_player, i, j]:
                     piece_actions = actions_for_piece(state, i, j)
 
                     # this isn't the most efficient way of doing this 
@@ -397,13 +369,15 @@ def is_over(state, action):
 
         # has the king been captured?
         if np.max(state[df]) < 2:
+            print("***King captured")
             return True, at
         # has the king escaped?
         elif np.max(state[df][0]) == 2 or np.max(state[df][:,0]) == 2 or np.max(state[df][:,board_size-1]) == 2 or np.max(state[df][board_size-1]) == 2:
+            print("***King escaped")
             return True, df
         # has the attacker enclosed the defender?
-        elif check_enclosure(state,action)[0]:
-            return True, at
+        # elif check_enclosure(state,action)[0]:
+        #     return True, at
         # no win
         else:
             return False, -1
@@ -426,8 +400,8 @@ def str(state):
                 board_str += ' A'
             elif state[1, i, j] == 1:
                 board_str += ' D'
-            elif state[2, i, j] == 1:
-                board_str += ' .'
+            elif state[1, i, j] == 2:
+                board_str += ' K'
             else:
                 board_str += '  '
 

@@ -66,12 +66,13 @@ class HnefEnv(gym.Env):
             other_first = self.all_states[-6][hnef_vars.ATTACKER] + self.all_states[-6][hnef_vars.DEFENDER]
 
             if (this_last == this_next and this_last == this_first) and (other_last == other_next and other_last == other_first):
-                self.state[hnef_vars.DONE_CHNL] = 1
+                print("***Repitition condition met")
+                self.done = True
                 winner = hnef_game.turn(self.state)
 
         # time constraint of 150 moves per player
-        if self.state[hnef_vars.TIME_CHNL] > 300:
-            self.state[hnef_vars.DONE_CHNL] = 1
+        if np.max(self.state[hnef_vars.TIME_CHNL]) > 300:
+            self.done = True
             winner = 2
         else:
             self.state[hnef_vars.TIME_CHNL] += 1
@@ -100,11 +101,11 @@ class HnefEnv(gym.Env):
         return np.copy(self.state)
 
     def reward(self, winner):
-        if not self[hnef_vars.DONE_CHNL]:
+        if not self.done:
             return 0
         else:
-            turn = hnef_game.turn(self.state)
-            if turn == winner:
+            current_player = hnef_game.turn(self.state)
+            if current_player == winner:
                 return 1
             else:
                 return 0

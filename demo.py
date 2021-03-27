@@ -4,6 +4,7 @@ import gym
 parser = argparse.ArgumentParser(description='Hnefatafl')
 parser.add_argument('--mode', type=str, default='terminal')
 parser.add_argument('--rules', type=str, default='historical')
+parser.add_argument('--side', type=str, default='attacker')
 args = parser.parse_args()
 
 # create gym environment
@@ -24,34 +25,66 @@ while not done:
         action = tuple(src, dest)
         state, reward, done, info = hnef_env.step(action)
 
-        if hnef_env.is_over()[0]:
+        if hnef_env.is_over():
             break
 
         # player 2 / RL model / random action
-        action = hnef_env.uniform_random_action()
+        action = hnef_env.random_action()
         state, reward, done, info = hnef_env.step(action)
 
     elif args.mode == 'terminal':
-        hnef_env.render(mode="terminal")
+        # add option to play as attacker or defender
+        
 
-        # player 1
-        move = input("Type move =>\nSource 'row,col': ").split(',')
-        src = int(move[0]), int(move[1])
-        move = input("Destination 'row,col': ").split(',')
-        dest = int(move[0]), int(move[1])
-        action = src, dest
-        print(action)
-        state, reward, done, info = hnef_env.step(action)
+        if args.side == 'attacker':
+            hnef_env.render(mode="terminal")
+            # take input from terminal
+            move = input("Type move =>\nSource 'row,col': ").split(',')
+            src = int(move[0]), int(move[1])
+            move = input("Destination 'row,col': ").split(',')
+            dest = int(move[0]), int(move[1])
+            action = src, dest
+            state, reward, done, info = hnef_env.step(action)
+            
+            # 
+            if hnef_env.is_over():
+                print(">>Game Over<<")
+                break
 
+            # RL model / random action
+            action = hnef_env.random_action()
+            state, reward, done, info = hnef_env.step(action)
 
-        if hnef_env.is_over()[0]:
-            break
+            if hnef_env.is_over():
+                print(">>Game Over<<")
+                break
+        else:
+            # RL model / random action
+            action = hnef_env.random_action()
+            state, reward, done, info = hnef_env.step(action)
 
-        # RL model / random action
-        action = hnef_env.uniform_random_action()
-        state, reward, done, info = hnef_env.step(action)
+            hnef_env.render(mode="terminal")
+
+            if hnef_env.is_over():
+                print(">>Game Over<<")
+                break
+
+            # take input from terminal
+            move = input("Type move =>\nSource 'row,col': ").split(',')
+            src = int(move[0]), int(move[1])
+            move = input("Destination 'row,col': ").split(',')
+            dest = int(move[0]), int(move[1])
+            action = src, dest
+            state, reward, done, info = hnef_env.step(action)
+
+            if hnef_env.is_over():
+                print(">>Game Over<<")
+                break 
     else: 
         print("*** Invalid game mode -> Valid game modes include 'gui' and 'terminal'")
+        break
+
+
 if args.mode == 'gui':
     hnef_env.render(mode="human")
 elif args.mode == 'terminal':
