@@ -20,6 +20,7 @@ class HnefEnv(gym.Env):
         self.rule_set = rule_set
         self.render_mode = render_mode
         self.reward_method = reward_method
+        self.all_states = list()
 
         if rule_set.lower() == 'historical':
             self.size = 9
@@ -44,8 +45,10 @@ class HnefEnv(gym.Env):
     # In: tuple of tuples action ((pos_x, pos_y), (new_pos_x, new_pos_y))
     # Out: observation (the new state), reward, done (True if game is finished, False otherwise), info (information of the state)
     def step(self, action):
+
         assert not self.done    # make sure that the game is not over
         
+        self.all_states.append(self.state)  # keep track of all game states
         self.state = hnef_game.next_state(self.state, action)   # get next state
         self.done = hnef_game.is_over(self.state, action)       # check if the game is over
 
@@ -69,8 +72,14 @@ class HnefEnv(gym.Env):
             'turn' : hnef_game.turn(self.state),
         }
 
+    def state(self):
+        return np.copy(self.state)
+
+    def winning(self):
+        return hnef_game.winning(self.state)
+
     def winner(self):
-        if self.game_ended():
+        if self.is_over():
             return self.winning()
         else:
             return 0
@@ -79,7 +88,13 @@ class HnefEnv(gym.Env):
         return self.winner()
 
     def __str__(self):
-        return gogame.str(self.state_)
+        return hnef_game.str(self.state)
+
+    def close(self):
+        if hasattr(self, 'window'):
+            assert hasattr(self, 'pyglet')
+            self.window.close()
+            self.pyglet.app.exit()
 
     def render(self, mode='human'):
         if mode == 'terminal':
@@ -115,7 +130,7 @@ class HnefEnv(gym.Env):
                 rendering.draw_grid(batch, delta, self.size, lower_grid_coord, upper_grid_coord)
 
                 # info on top of the board
-                rendering.draw_info(batch, window_width, window_height, upper_grid_coord, self.state_)
+                rendering.draw_info(batch, window_width, window_height, upper_grid_coord, self.state)
 
                 # Inform user what they can do
                 rendering.draw_command_labels(batch, window_width, window_height)
@@ -125,9 +140,9 @@ class HnefEnv(gym.Env):
                 batch.draw()
 
                 # draw the pieces
-                rendering.draw_pieces(batch, lower_grid_coord, delta, piece_r, self.size, self.state_)
+                rendering.draw_pieces(batch, lower_grid_coord, delta, piece_r, self.size, self.state)
 
-             @window.event
+            @window.event
             def on_mouse_press(x, y, button, modifiers):
                 if button == mouse.LEFT:
                     grid_x = (x - lower_grid_coord)
