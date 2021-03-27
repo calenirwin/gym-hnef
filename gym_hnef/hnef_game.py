@@ -77,12 +77,46 @@ def init_state(rule_set):
         print("*Error: Given rule set has not been implemented.\n Existing rule sets are:\n-copenhagen\n-historial")
         return -1
 
+
+# In: state (current state), action (action taken by current player)
+# Out: state (new state), valid_moves (list of valid moves from new state)
+# At the end of this method we want to check whether the new state ends the game
+def next_state(state, action):
+
+    # How will we handle repetitions?
+    # we can either include the last two board positions in the state variable or keep track of the "timestamp"
+    # I think the timestamp is a good way to handle this because with the same variable we can stop the game if
+    # it gets too long, the only question is whether is should be a part of the state or a part of this class
+
+    # define the current player
+    turn = turn(state)
+    
+    # assert that the action is valid i.e. that the action is in state[valid_actions]
+    valid_moves = compute_valid_moves(state)
+    assert action in valid_moves
+
+    # move the piece
+    state[turn][test_action[0][0]][test_action[0][1]] = 0
+    state[turn][test_action[1][0]][test_action[1][1]] = 1
+
+    # check if the player just captured a piece and update the state if so
+    state = check_capture(state, action)
+
+    # check if game is over
+
+    # switch turns
+    state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
+
+    # # update state[valid_actions] for next player
+    # valid_moves = compute_valid_moves(state)
+
+    return state
 # Method for checking whether a capture has taken place
 # In: state (current state), action (action taken by current player)
 # Out: state (new state)
 def check_capture(state, action):
     # current player
-    player = int(np.max(state[hnef_vars.TURN_CHNL]))
+    player = turn(state)
     # other player
     other_player = np.abs(player - 1)
     # defender
@@ -194,39 +228,6 @@ def check_capture(state, action):
 
     return state
 
-# In: state (current state), action (action taken by current player)
-# Out: state (new state)
-# At the end of this method we want to check whether the new state ends the game
-def next_state(state, action):
-
-    # How will we handle repetitions?
-    # we can either include the last two board positions in the state variable or keep track of the "timestamp"
-    # I think the timestamp is a good way to handle this because with the same variable we can stop the game if
-    # it gets too long, the only question is whether is should be a part of the state or a part of this class
-
-    # define the current player
-    turn = int(np.max(state[hnef_vars.TURN_CHNL]))
-    
-    # assert that the action is valid i.e. that the action is in state[valid_actions]
-    valid_moves = compute_valid_moves(state)
-    assert action in valid_moves
-
-    # move the piece
-    state[turn][test_action[0][0]][test_action[0][1]] = 0
-    state[turn][test_action[1][0]][test_action[1][1]] = 1
-
-    # check if the player just captured a piece and update the state if so
-    state = check_capture(state, action)
-
-    # check if game is over
-    
-
-    # switch turns
-    state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
-
-
-    # update state[valid_actions] for next player
-    valid_moves = compute_valid_moves(state)
 
 # In: state (current state), x-position of piece, y-position of piece
 # Out: list of all possible actions where action a = ((x, y), (new_x, new_y))
@@ -292,7 +293,7 @@ def compute_valid_moves(state):
 
     board_size = state.shape[1]
 
-    turn = int(np.max(state[hnef_vars.TURN_CHNL]))
+    turn = turn(state)
 
     for i in range(board_size):
             for j in range(board_size):
@@ -353,7 +354,7 @@ def is_over(state, action):
     full_board = state[at] + state[df]
     board_size = state.shape[1]    
     # current player
-    player = int(np.max(state[hnef_vars.TURN_CHNL]))
+    player = turn(state)
     # other player
     other_player = np.abs(player - 1)
 
@@ -369,3 +370,6 @@ def is_over(state, action):
     # no win
     else:
         return False, -1
+    
+def turn(state):
+    return int(np.max(state[hnef_vars.TURN_CHNL]))
