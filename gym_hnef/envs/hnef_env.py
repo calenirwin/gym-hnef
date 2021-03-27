@@ -8,7 +8,9 @@
 # https://github.com/aigagror/GymGo
 
 import gym
-
+import numpy as np
+import random
+import pyglet
 from hnef_gym import hnef_game, hnef_vars, rendering_helpers
 
 class HnefEnv(gym.Env):
@@ -51,6 +53,12 @@ class HnefEnv(gym.Env):
         self.all_states.append(self.state)  # keep track of all game states
         self.state = hnef_game.next_state(self.state, action)   # get next state
         self.done = hnef_game.is_over(self.state, action)       # check if the game is over
+
+        # time constraint of 150 moves per player
+        if self.state[hnef_vars.TIME_CHNL] > 300:
+            self.state[hnef_vars.DONE_CHNL] = 1
+        else:
+            self.state[hnef_vars.TIME_CHNL] += 1
 
         return np.copy(self.state), self.reward(), self.done, self.info()
 
