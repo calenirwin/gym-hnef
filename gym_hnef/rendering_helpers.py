@@ -1,6 +1,8 @@
 import numpy as np
 import pyglet
 
+from gym_hnef import hnef_vars, hnef_game
+
 #from gym_hnef inmport hnef_vars, hnef_game
 
 def draw_circle(x, y, color, radius):
@@ -25,8 +27,8 @@ def draw_command_labels(batch, window_width, window_height):
 def draw_info(batch, window_width, window_height, upper_grid_coord, state):
     turn = hnef_game.turn(state)
     turn_str = 'Attacker' if turn == hnef_vars.ATTACKER else 'Defender'
-    game_ended = hnef_game.game_ended(state)
-    info_label = "Turn: {}\nGame: {}".format(turn_str,"Game Over" if game_ended else "In Progress")
+    # game_ended = hnef_game.game_ended(state)
+    info_label = "Turn: {}".format(turn_str)
 
     pyglet.text.Label(info_label, font_name='Helvetica', font_size=11, x=window_width - 20, y=window_height - 20,
                       anchor_x='right', anchor_y='top', color=(0, 0, 0, 192), batch=batch, width=window_width / 2,
@@ -77,11 +79,10 @@ def draw_pieces(batch, lower_grid_coord, delta, piece_r, size, state):
     for i in range(size):
         for j in range(size):
             # ATTACKER
-            if state[hnef_vars.ATTACKER, i, j] == 0:
+            if state[hnef_vars.ATTACKER, i, j] == 1:
                 draw_circle(lower_grid_coord + i * delta, lower_grid_coord + j * delta,
                             [0.05882352963, 0.180392161, 0.2470588237],
                             piece_r)  # 0 for black
-
             # DEFENDER
             if state[hnef_vars.DEFENDER, i, j] == 1:
                 draw_circle(lower_grid_coord + i * delta, lower_grid_coord + j * delta,

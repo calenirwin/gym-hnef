@@ -11,30 +11,30 @@ import gym
 import numpy as np
 import random
 import pyglet
-from hnef_gym import hnef_game, hnef_vars, rendering_helpers
+
+from gym_hnef import hnef_game, hnef_vars, rendering_helpers
 
 class HnefEnv(gym.Env):
     metadata = {'render.modes': ['terminal', 'gui']}
     hnef_vars = hnef_vars
     hnef_game = hnef_game
 
-    def __init__(self, rule_set, render_mode, reward_method):
+    def __init__(self, rule_set, render_mode):
         self.rule_set = rule_set
         self.render_mode = render_mode
-        self.reward_method = reward_method
         self.all_states = list()
 
         if rule_set.lower() == 'historical':
             self.size = 9
             self.state = hnef_game.init_state('historical')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 9, 9))
-            self.action_space = gym.spaces.Discrete(hnef_game.action_size(self.state))
+            self.action_space = gym.spaces.Discrete(80)
             
         else:
             self.size = 11
             self.state = hnef_game.init_state('copenhagen')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 11, 11))
-            self.action_space = gym.spaces.Discrete(hnef_game.action_size(self.state))
+            self.action_space = gym.spaces.Discrete(80)
             
         self.done = False
 
@@ -127,7 +127,9 @@ class HnefEnv(gym.Env):
             from pyglet.window import key
 
             screen = pyglet.canvas.get_display().get_default_screen()
-            window = pyglet.window.Window(540, 540, style=window.Window.WINDOW_STYLE_TOOL, caption='Hnefatafl')
+            window_width = int(min(screen.width, screen.height) * 2 / 3)
+            window_height = int(window_width * 1.2)
+            window = pyglet.window.Window(window_width, window_height, caption='Hnefatafl')
 
             # set a custom window icon --IF HAVE TIME--
             # icon2 = pyglet.image.load('32x32.png')
@@ -140,6 +142,12 @@ class HnefEnv(gym.Env):
             cursor = window.get_system_mouse_cursor(window.CURSOR_HAND)
             window.set_mouse_cursor(cursor)
 
+            lower_grid_coord = window_width * 0.075
+            board_size = window_width * 0.85
+            upper_grid_coord = board_size + lower_grid_coord
+            delta = board_size / (self.size - 1)
+            piece_r = delta / 3.3  # radius
+
             @window.event
             def on_draw():
                 pyglet.gl.glClearColor(0.7, 0.5, 0.3, 1)
@@ -149,21 +157,21 @@ class HnefEnv(gym.Env):
                 batch = pyglet.graphics.Batch()
 
                 # draw the grid and labels
-                rendering.draw_grid(batch, delta, self.size, lower_grid_coord, upper_grid_coord)
+                rendering_helpers.draw_grid(batch, delta, self.size, lower_grid_coord, upper_grid_coord)
 
                 # info on top of the board
-                rendering.draw_info(batch, window_width, window_height, upper_grid_coord, self.state)
+                rendering_helpers.draw_info(batch, window_width, window_height, upper_grid_coord, self.state)
 
                 # Inform user what they can do
-                rendering.draw_command_labels(batch, window_width, window_height)
+                rendering_helpers.draw_command_labels(batch, window_width, window_height)
 
-                rendering.draw_title(batch, window_width, window_height)
+                rendering_helpers.draw_title(batch, window_width, window_height)
 
                 batch.draw()
 
                 # draw the pieces
-                rendering.draw_pieces(batch, lower_grid_coord, delta, piece_r, self.size, self.state)
-
+                rendering_helpers.draw_pieces(batch, lower_grid_coord, delta, piece_r, self.size, self.state)
+                
             @window.event
             def on_mouse_press(x, y, button, modifiers):
                 if button == mouse.LEFT:
@@ -178,7 +186,7 @@ class HnefEnv(gym.Env):
                     except:
                         pass
 
-             @window.event
+            @window.event
             def on_key_press(symbol, modifiers):
                 if symbol == key.R:
                     self.reset()
