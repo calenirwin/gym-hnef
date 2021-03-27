@@ -67,7 +67,7 @@ class HnefEnv(gym.Env):
 
             if (this_last == this_next and this_last == this_first) and (other_last == other_next and other_last == other_first):
                 self.state[hnef_vars.DONE_CHNL] = 1
-                winner = hnef_game.turn(state)
+                winner = hnef_game.turn(self.state)
 
         # time constraint of 150 moves per player
         if self.state[hnef_vars.TIME_CHNL] > 300:
@@ -103,7 +103,7 @@ class HnefEnv(gym.Env):
         if not self[hnef_vars.DONE_CHNL]:
             return 0
         else:
-            turn = hnef_game.turn(state)
+            turn = hnef_game.turn(self.state)
             if turn == winner:
                 return 1
             else:
