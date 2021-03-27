@@ -23,6 +23,7 @@ class HnefEnv(gym.Env):
         self.rule_set = rule_set
         self.render_mode = render_mode
         self.all_states = list()
+        self.all_actions = list()
 
         if rule_set.lower() == 'historical':
             self.size = 9
@@ -51,19 +52,20 @@ class HnefEnv(gym.Env):
         assert not self.done    # make sure that the game is not over
         
         self.all_states.append(self.state)  # keep track of all game states
+        self.all_actions.append(action)  # keep track of all actions taken
         self.state = hnef_game.next_state(self.state, action)   # get next state
         self.done, winner = hnef_game.is_over(self.state, action)       # check if the game is over
 
         # check for repetition
-        if len(self.all_states) > 6 and not self.done:
+        if len(self.all_actions) > 6 and not self.done:
             
             # get the full board positions over the last six moves
-            this_last = self.all_states[-1][hnef_vars.ATTACKER] + self.all_states[-1][hnef_vars.DEFENDER]
-            this_next = self.all_states[-3][hnef_vars.ATTACKER] + self.all_states[-3][hnef_vars.DEFENDER] 
-            this_first = self.all_states[-5][hnef_vars.ATTACKER] +  self.all_states[-5][hnef_vars.DEFENDER]
-            other_last = self.all_states[-2][hnef_vars.ATTACKER] + self.all_states[-2][hnef_vars.DEFENDER]
-            other_next = self.all_states[-4][hnef_vars.ATTACKER] + self.all_states[-4][hnef_vars.DEFENDER]
-            other_first = self.all_states[-6][hnef_vars.ATTACKER] + self.all_states[-6][hnef_vars.DEFENDER]
+            this_last = self.all_actions[-1]
+            this_next = self.all_actions[-3]
+            this_first = self.all_actions[-5]
+            other_last = self.all_actions[-2]
+            other_next = self.all_actions[-4]
+            other_first = self.all_actions[-6]
 
             if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
                 print("***Repitition condition met")
