@@ -65,7 +65,7 @@ class HnefEnv(gym.Env):
             other_next = self.all_states[-4][hnef_vars.ATTACKER] + self.all_states[-4][hnef_vars.DEFENDER]
             other_first = self.all_states[-6][hnef_vars.ATTACKER] + self.all_states[-6][hnef_vars.DEFENDER]
 
-            if (this_last == this_next and this_last == this_first) and (other_last == other_next and other_last == other_first):
+            if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
                 self.state[hnef_vars.DONE_CHNL] = 1
                 winner = hnef_game.turn(self.state)
 
