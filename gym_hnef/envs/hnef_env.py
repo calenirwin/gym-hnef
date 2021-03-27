@@ -52,15 +52,31 @@ class HnefEnv(gym.Env):
         
         self.all_states.append(self.state)  # keep track of all game states
         self.state = hnef_game.next_state(self.state, action)   # get next state
-        self.done = hnef_game.is_over(self.state, action)       # check if the game is over
+        self.done, winner = hnef_game.is_over(self.state, action)       # check if the game is over
+
+        # check for repetition
+        if len(self.all_states) > 6 and not self.done:
+            
+            # get the full board positions over the last six moves
+            this_last = self.all_states[-1][hnef_vars.ATTACKER] + self.all_states[-1][hnef_vars.DEFENDER]
+            this_next = self.all_states[-3][hnef_vars.ATTACKER] + self.all_states[-3][hnef_vars.DEFENDER] 
+            this_first = self.all_states[-5][hnef_vars.ATTACKER] +  self.all_states[-5][hnef_vars.DEFENDER]
+            other_last = self.all_states[-2][hnef_vars.ATTACKER] + self.all_states[-2][hnef_vars.DEFENDER]
+            other_next = self.all_states[-4][hnef_vars.ATTACKER] + self.all_states[-4][hnef_vars.DEFENDER]
+            other_first = self.all_states[-6][hnef_vars.ATTACKER] + self.all_states[-6][hnef_vars.DEFENDER]
+
+            if (this_last == this_next and this_last == this_first) and (other_last == other_next and other_last == other_first):
+                self.state[hnef_vars.DONE_CHNL] = 1
+                winner = hnef_game.turn(state)
 
         # time constraint of 150 moves per player
         if self.state[hnef_vars.TIME_CHNL] > 300:
             self.state[hnef_vars.DONE_CHNL] = 1
+            winner = 2
         else:
             self.state[hnef_vars.TIME_CHNL] += 1
 
-        return np.copy(self.state), self.reward(), self.done, self.info()
+        return np.copy(self.state), self.reward(winner), self.done, self.info()
 
     def is_over(self):
         return self.done
@@ -83,17 +99,15 @@ class HnefEnv(gym.Env):
     def state(self):
         return np.copy(self.state)
 
-    def winning(self):
-        return hnef_game.winning(self.state)
-
-    def winner(self):
-        if self.is_over():
-            return self.winning()
-        else:
+    def reward(self, winner):
+        if not self[hnef_vars.DONE_CHNL]:
             return 0
-
-    def reward(self):
-        return self.winner()
+        else:
+            turn = hnef_game.turn(state)
+            if turn == winner:
+                return 1
+            else:
+                return 0
 
     def __str__(self):
         return hnef_game.str(self.state)
