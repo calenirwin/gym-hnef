@@ -1,5 +1,8 @@
-import argparse
 import gym
+import argparse
+import numpy as np
+
+from gym_hnef import hnef_vars
 
 parser = argparse.ArgumentParser(description='Hnefatafl')
 parser.add_argument('--mode', type=str, default='terminal')
@@ -12,7 +15,7 @@ hnef_env = gym.make('gym_hnef:hnef-v0', rule_set=args.rules, render_mode=args.mo
 
 done = False    # termination flag
 # start main game loop
-while not done:
+while not done:   
     if args.mode == 'gui':
         print(hnef_env.state[0] + hnef_env.state[1])
         hnef_env.render(mode="human")
@@ -33,9 +36,6 @@ while not done:
         state, reward, done, info = hnef_env.step(action)
 
     elif args.mode == 'terminal':
-        # add option to play as attacker or defender
-        
-
         if args.side == 'attacker':
             hnef_env.render(mode="terminal")
             # take input from terminal
@@ -45,7 +45,7 @@ while not done:
             dest = int(move[0]), int(move[1])
             action = src, dest
             state, reward, done, info = hnef_env.step(action)
-            
+        
             # 
             if hnef_env.is_over():
                 print(">>Game Over<<")
@@ -80,14 +80,35 @@ while not done:
             if hnef_env.is_over():
                 print(">>Game Over<<")
                 break 
-    else: 
-        print("*** Invalid game mode -> Valid game modes include 'gui' and 'terminal'")
-        break
+    elif args.mode == 'simulate':
+        # RL model / random action
+        action = hnef_env.random_action()
+        state, reward, done, info = hnef_env.step(action)
 
+        if hnef_env.is_over():
+            print(">>Game Finished<<")
+            print("The Attacker won!")
+            print("Total of ", np.max(hnef_env.state[hnef_vars.TIME_CHNL]), " turns")
+            break
+
+        # RL model / random action
+        action = hnef_env.random_action()
+        state, reward, done, info = hnef_env.step(action)
+
+        if hnef_env.is_over():
+            print(">>Game Finished<<")
+            print("The Defender won!")
+            print("Total of ", np.max(hnef_env.state[hnef_vars.TIME_CHNL]), " turns")
+            break
+    else: 
+        print("*** Invalid game mode -> Valid game modes include 'gui', 'terminal', and 'simulate'")
+        break
 
 if args.mode == 'gui':
     hnef_env.render(mode="human")
 elif args.mode == 'terminal':
     hnef_env.render(mode="terminal")
+elif args.mode == 'simulate':
+    hnef_env.render(mode="terminal")
 else: 
-    print("*** Invalid game mode -> Valid game modes include 'gui' and 'terminal'")
+    print("*** Invalid game mode -> Valid game modes include 'gui', 'terminal', and 'simulate'")

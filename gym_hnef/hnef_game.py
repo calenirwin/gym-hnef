@@ -384,6 +384,21 @@ def is_over(state, action):
     else:
         return False, 1
 
+def simulate_step(state, action):
+    new_state = next_state(state, action)
+    done, winner = is_over(state, action) 
+
+    if not done:
+            reward = 0
+    else:
+        current_player = turn(state)
+        if current_player == winner:
+            reward =  1
+        else:
+            reward = 0
+
+    return np.copy(state), reward, done
+
 def str(state):
     board_str = ' '
 
