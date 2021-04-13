@@ -4,11 +4,12 @@ from gym_hnef import hnef_game, hnef_vars
 from model import Residual_CNN
 from agent import Agent
 import config
+import memory
 
 
-def play_matches(p1, p2, memory=None, episodes=config.EPISODES, turn_until_tau0=config.TURNS_UNTIL_TAU0, rule_set='historical'):
-    for e in episodes:
-        env = hnef_env.HnefEnv(rule_set)
+def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=config.TURNS_UNTIL_TAU0, rule_set='historical'):
+    for e in range(episodes):
+        env = hnef_env.HnefEnv(rule_set, 'terminal')
         state = env.state
         done = 0
         t = 0
@@ -30,21 +31,21 @@ def play_matches(p1, p2, memory=None, episodes=config.EPISODES, turn_until_tau0=
             else:
                 action, pi, MCTS_val, NN_val = players[state[2, 0, 0]]['agent'].act(state, 0)
             
-            if memory != None:
-                memory.commit_stmemory(state, pi)
+            if mem != None:
+                mem.commit_stmemory(state, pi)
 
             state, reward, done, info = env.step(action)
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)
             if done == 1:
-                if memory != None:
-                    for move in memory.stmemory:
+                if mem != None:
+                    for move in mem.stmemory:
                         if move['player_turn'] == other_turn:
                             move['value'] = reward
                         else:
                             move['value'] = 0
 
-                    memory.commit_ltmemory()
+                    mem.commit_ltmemory()
 
 
                 if reward == 2:
@@ -53,4 +54,4 @@ def play_matches(p1, p2, memory=None, episodes=config.EPISODES, turn_until_tau0=
                     scores[p1.name] += 1
                 elif turn == 0:
                     scores[p2.name] += 1
-    return scores
+    return scores, mem
