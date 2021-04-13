@@ -109,6 +109,8 @@ class HnefEnv(gym.Env):
             current_player = hnef_game.turn(self.state)
             if current_player == winner:
                 return 1
+            elif winner == 2:
+                return 2
             else:
                 return 0
 
