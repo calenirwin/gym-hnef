@@ -2,6 +2,7 @@
 # https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/agent.py
 
 import numpy as np
+import random
 from matplotlib import pyplot as plt
 
 from gym_hnef import hnef_game, hnef_vars
@@ -93,7 +94,7 @@ class Agent():
         odds = np.exp(logits)
         probabilities = odds / np.sum(odds)
 
-        return ((value, probabilities, possible_actions))
+        return ((values, probabilities, possible_actions))
 
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
@@ -104,7 +105,7 @@ class Agent():
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
 
-                if new_State.id not in self.mcts.tree:
+                if new_state.id not in self.mcts.tree:
                     node = monte.Node(new_state)
                 else:
                     node = self.mcts.tree[new_state.id]
@@ -116,10 +117,9 @@ class Agent():
 
 
     def get_action_values(self, tau):
-        actions = hnef_game.compute_valid_moves(state)
         edges = self.mcts.edges
-        pi = np.zeros(len(actions), dtype=np.integer)
-        values = np.zeros(len(actions), dtype=np.float32)
+        pi = np.zeros(self.action_size, dtype=np.integer)
+        values = np.zeros(self.action_size, dtype=np.float32)
 
         for action, edge in edges:
             pi[action] = edge.stats['N']**(1/tau)
@@ -152,7 +152,7 @@ class Agent():
         new_root = monte.Node(state)
         self.mcts.root = self.mcts.tree[new_root.id]
 
-    def replay(self, ltememory):
+    def replay(self, ltmemory):
         for i in range(config.TRAINING_LOOPS):
             minibatch = random.sample(ltmemory, min(config.BATCH_SIZE, len(ltmemory)))
 
