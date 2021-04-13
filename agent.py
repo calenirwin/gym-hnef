@@ -106,10 +106,10 @@ class Agent():
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
 
-                if new_state.id not in self.mcts.tree:
+                if Node.get_state_id(new_state) not in self.mcts.tree:
                     node = monte.Node(new_state)
                 else:
-                    node = self.mcts.tree[new_state.id]
+                    node = self.mcts.tree[new_state].id
 
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
@@ -151,7 +151,7 @@ class Agent():
 
     def change_root_mcts(self, state):
         new_root = monte.Node(state)
-        self.mcts.root = self.mcts.tree[new_root.id]
+        self.mcts.root = self.mcts.tree[new_root].id
 
     def replay(self, ltmemory):
         for i in range(config.TRAINING_LOOPS):
