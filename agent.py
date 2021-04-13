@@ -10,6 +10,7 @@ from gym_hnef.envs import hnef_env
 
 import config
 import mcts as monte
+from mcts import Node
 
 # class User():
 # 	def __init__(self, name, state_size, action_size):
@@ -54,7 +55,7 @@ class Agent():
         self.mcts.backpropagation(leaf, value)
 
     def act(self, state, tau):
-        if self.mcts == None or state.id not in self.mcts.tree:
+        if self.mcts == None or Node.get_state_id(state) not in self.mcts.tree:
             self.build_mcts(state)
         else:
             self.change_root_mcts(state)
