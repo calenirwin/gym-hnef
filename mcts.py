@@ -6,6 +6,8 @@ import numpy as np
 from gym_hnef import hnef_game, hnef_vars
 from gym_hnef.envs import hnef_env
 
+import config
+
 class Node():
     def __init__(self, state):
         self.state = state
@@ -55,14 +57,17 @@ class MCTS():
         # cpuct is a constant that helps control the balance between exploring
         # the tree and exploiting the discovered paths
         # Cp in UCT (Upper confidence bound for tree)
-        self.cpuct = cpuct 
+        self.cpuct = config.CPUCT
 
     def __len__(self):
         return len(self.tree)
 
     def traverse_tree(self):
+        epsilon = config.EPSILON
+        alpha = config.ALPHA
+
         done = False
-        reward = 0
+        value = 0
 
         path = []
 
@@ -91,13 +96,13 @@ class MCTS():
                     next_simulated_action = action
                     next_simulated_edge = edge
                 
-            new_state, reward, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
+            new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
             current_node = next_edge.dest
             path.append(current_node)
 
         return current_node, value, done, path
 
-        def backpropagation(self, leaf_node, reward, path):
+        def backpropagation(self, leaf_node, value, path):
             current_player = hnef_game.turn(leaf_node.state)
 
             for edge in path:
@@ -109,7 +114,7 @@ class MCTS():
                     direction = -1
 
                 edge.metrics['N'] += 1
-                edge.metrics['W'] = edge.metrics['W'] + reward * direction
+                edge.metrics['W'] = edge.metrics['W'] + value * direction
                 edge.metrics['Q'] = edge.metrics['W'] / edge.metrics['N']
 
         def add_node(self, node):
@@ -119,5 +124,3 @@ class MCTS():
                 node.set_node_id(new_id)
 
             self.tree[node.id] = node
-
-    
