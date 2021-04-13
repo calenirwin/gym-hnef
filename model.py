@@ -171,4 +171,5 @@ class Residual_CNN(Gen_Model):
 		return model
 
 	def convert_to_input(self, state):
-		return np.reshape(state, self.input_dim)
+		state = np.expand_dims(state, axis=0)
+		return state
