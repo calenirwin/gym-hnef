@@ -14,7 +14,7 @@ class Node():
         self.id = self.get_state_id(state)
         self.turn = hnef_game.turn(state)
 
-        self.edges
+        self.edges = []
         
     def is_leaf(self):
         # returns true if edges list is empty
@@ -23,9 +23,9 @@ class Node():
         else:
             return False
 
-    def get_state_id(self):
+    def get_state_id(self, state):
         # make each board state a unique id for each node
-        position = np.append(self.state[hnef_vars.ATTACKER], self.state[hnef_vars.DEFNEDER])
+        position = np.append(state[hnef_vars.ATTACKER], state[hnef_vars.DEFENDER])
         id = ''.join(map(str,position))
         return id
 
@@ -70,6 +70,8 @@ class MCTS():
         value = 0
 
         path = []
+
+        current_node = self.root
 
         while not current_node.is_leaf():
             if current_node == self.root:
