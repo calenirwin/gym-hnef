@@ -1,3 +1,6 @@
+# References:
+# https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/model.py
+
 import numpy as np
 from matplotlib import pyplot as plt
 import tensorflow as tf
@@ -6,11 +9,7 @@ from tensorflow.keras.layers import Input, Dense, Conv2D, Flatten, BatchNormaliz
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import load_model
 
-
-
-
 def softmax_cross_entropy_with_logits(y_true, y_pred):
-
 	p = y_pred
 	pi = y_true
 
@@ -171,5 +170,5 @@ class Residual_CNN(Gen_Model):
 
 		return model
 
-	def convertToModelInput(self, state):
+	def convert_to_input(self, state):
 		return np.reshape(state, self.input_dim)
