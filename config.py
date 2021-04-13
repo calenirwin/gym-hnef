@@ -17,12 +17,12 @@ MOMENTUM = 0.9
 TRAINING_LOOPS = 10
 
 HIDDEN_CNN_LAYERS = [
-	{'filters':75, 'kernel_size': (4,4)}
-	 , {'filters':75, 'kernel_size': (4,4)}
-	 , {'filters':75, 'kernel_size': (4,4)}
-	 , {'filters':75, 'kernel_size': (4,4)}
-	 , {'filters':75, 'kernel_size': (4,4)}
-	 , {'filters':75, 'kernel_size': (4,4)}
+	{'filters':64, 'kernel_size': (4,4)}
+	 , {'filters':64, 'kernel_size': (4,4)}
+	 , {'filters':64, 'kernel_size': (4,4)}
+	 , {'filters':64, 'kernel_size': (4,4)}
+	 , {'filters':64, 'kernel_size': (4,4)}
+	 , {'filters':64, 'kernel_size': (4,4)}
 	]
 
 #### EVALUATION

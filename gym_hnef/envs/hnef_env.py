@@ -29,13 +29,13 @@ class HnefEnv(gym.Env):
             self.size = 9
             self.state = hnef_game.init_state('historical')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 9, 9))
-            self.action_space = gym.spaces.Discrete(80)
+            self.action_space = gym.spaces.Discrete(6561)
             
         else:
             self.size = 11
             self.state = hnef_game.init_state('copenhagen')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 11, 11))
-            self.action_space = gym.spaces.Discrete(80)
+            self.action_space = gym.spaces.Discrete(14641)
             
         self.done = False
 
