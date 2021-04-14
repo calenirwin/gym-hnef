@@ -84,7 +84,7 @@ class MCTS():
                 NU = np.random.dirichlet([alpha] * len(current_node.edges))
             else:
                 epsilon = 0
-                NU [0] * len(current_node.edges)
+                NU = [0] * len(current_node.edges)
 
             NB = 0
             for action, edge in current_node.edges:
@@ -94,9 +94,9 @@ class MCTS():
             for i, (action, edge) in enumerate(current_node.edges):
                 # print(epsilon)
                 # print(edge.metrics)
-                print('NU:',len(NU))
-                print('i:',i)
-                print('current_node.edges length:',len(current_node.edges))
+                # print('NU:',len(NU))
+                # print('i:',i)
+                # print('current_node.edges length:',len(current_node.edges))
                 # print(NB)
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
 
