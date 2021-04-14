@@ -75,7 +75,6 @@ class MCTS():
         current_node = self.root
         
         while not current_node.is_leaf():
-            count += 1
             if current_node == self.root:
                 epsilon = config.EPSILON
 
