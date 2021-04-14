@@ -85,14 +85,7 @@ class MCTS():
         while not current_node.is_leaf():
             count += 1
 
-            if count > 1000:
-                # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
-                # print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
-                # print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
-                # print(next_simulated_action)
-                # print(self)
-                # print("Path Length: ", len(path))
-                # assert False
+            if count > 100:
                 inspect_flag = 1
 
             if current_node == self.root:
@@ -146,13 +139,11 @@ class MCTS():
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
             # print("state after action: ", new_state[0]+new_state[1])
             # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
-            if inspect_flag:   
-                print("Current State: ", current_node.state[0]+current_node.state[1])
-                print("Next action: ", next_simulated_action)
-                print("Input Edge node: ", next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
-                print("Output Edge node: ", next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
+            
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
+            if inspect_flag:   
+                return current_node, value, done, path
            # print(current_node)
 
         # print("I left this function!!!")
