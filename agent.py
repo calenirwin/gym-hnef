@@ -12,6 +12,8 @@ import config
 import mcts as monte
 from mcts import Node
 
+import action_ids
+
 # class User():
 # 	def __init__(self, name, state_size, action_size):
 # 		self.name = name
@@ -88,29 +90,29 @@ class Agent():
 
         possible_actions = hnef_game.compute_valid_moves(state)
 
+        possible_actions_ids = []
+
+        for i in range(len(possible_actions)):
+            possible_actions_ids.append(action_ids.get_id(possible_actions[i]))
+        possible_actions_ids = np.array(possible_actions_ids)
+
         # not sure what is going on here
         mask = np.ones(logits.shape, dtype=bool)
-        mask[possible_actions] = False
+        mask[possible_actions_ids] = False
         logits[mask] = -100
 
         # apply softmax
         odds = np.exp(logits)
         probabilities = odds / np.sum(odds)
 
-        return ((values, probabilities, possible_actions))
+        return ((values, probabilities, possible_actions, possible_actions_ids))
 
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
-            value, probabilities, possible_actions = self.get_predictions(leaf.state)
-            probabilities = probabilities[possible_actions] # what is going on here?
+            value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
+            probabilities = probabilities[possible_actions_ids] # what is going on here?
             
-            stor_summa = 0
-            litil_summa = 0
-            for t in range(len(probabilities)):
-                stor_summa += np.sum(probabilities[t])
-                litil_summa += np.average(probabilities[t])
-            
-            print(stor_summa, litil_summa)
+            print(np.sum(probabilities))
 
             for i, action in enumerate(possible_actions):
                 # print(action)
