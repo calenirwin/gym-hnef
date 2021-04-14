@@ -123,7 +123,6 @@ class MCTS():
             edge.metrics['Q'] = edge.metrics['W'] / edge.metrics['N']
 
     def add_node(self, node):
-        node = Node(node)
         # check to see if the node id already exists in tree
         if node.id in self.tree:
             new_id = node.id + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5)) # add 5 random characters to the end of the duplicate state id
