@@ -48,6 +48,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
             
             # state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
             if done == 1:
+                print('Final state: ',state[0]+state[1])
                 if mem != None:
                     for move in mem.stmemory:
                         if move['player_turn'] == other_turn:
