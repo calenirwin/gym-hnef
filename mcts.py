@@ -96,7 +96,7 @@ class MCTS():
 
                 Q = edge.metrics['Q']
 
-                print(Q, U, Q+U, max_QU)
+                print('Q:',Q, 'U:', U, 'Q+U:', Q+U, 'max_QU:', max_QU)
 
                 if Q + U > max_QU:
                     max_QU = Q + U
