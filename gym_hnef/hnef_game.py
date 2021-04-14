@@ -412,7 +412,7 @@ def simulate_next_state(state, action):
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
 
-    return state
+    return np.copy(state)
 
 def str(state):
     board_str = ' '
