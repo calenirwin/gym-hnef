@@ -65,6 +65,7 @@ class MCTS():
         return len(self.tree)
 
     def traverse_tree(self):
+        print("Start traverse, root edges = ", self.root.edges)
         alpha = config.ALPHA
 
         done = 0
@@ -79,6 +80,7 @@ class MCTS():
                 epsilon = config.EPSILON
 
                 NU = np.random.dirichlet([alpha] * len(current_node.edges))
+                print("NU = ", NU)
             else:
                 epsilon = 0
                 NU = [0] * len(current_node.edges)
