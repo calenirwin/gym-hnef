@@ -88,8 +88,8 @@ class MCTS():
                 # print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
                 # print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
                 # print(next_simulated_action)
-                print(self)
-                print("Path Length: ", len(path))
+                # print(self)
+                # print("Path Length: ", len(path))
                 # assert False
                 inspect_flag = 1
 
@@ -130,7 +130,10 @@ class MCTS():
             # print("state after action: ", new_state[0]+new_state[1])
             # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
             if inspect_flag:   
-                print("Current Node:", current_node, "Next Sim Edge: ", next_simulated_edge.dest)
+                print("Current State: ", current_node.state[0]+current_node.state[1])
+                print("Next action: ", next_simulated_action)
+                print("Input Edge node: ", next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
+                print("Output Edge node: ", next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
            # print(current_node)
