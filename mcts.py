@@ -76,7 +76,10 @@ class MCTS():
 
         current_node = self.root
         # print('Is current node a leaf?', current_node.is_leaf())
+        count = 0
         while not current_node.is_leaf():
+            count += 1
+            print(count)
             if current_node == self.root:
                 epsilon = 0.2
                 alpha = 0.8
