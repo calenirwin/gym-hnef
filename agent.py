@@ -49,7 +49,7 @@ class Agent():
         # self.val_value_loss = []
         # self.val_policy_loss = []
 
-    def simulate(self):
+    def simulate(self, state):
         # move to terminal node and evaluate
         print('1',state[0]+state[1])
         leaf, value, done, path = self.mcts.traverse_tree()
