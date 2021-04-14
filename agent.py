@@ -136,7 +136,7 @@ class Agent():
             pi[action_id] = np.power(edge.metrics['N'],(1/tau))
             values[action_id] = edge.metrics['Q']
         
-        pi /= (np.sum(pi) * 1.0)
+        pi /= np.sum(pi)
 
         return pi, values
 
