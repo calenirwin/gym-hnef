@@ -59,21 +59,23 @@ class Agent():
 
     def act(self, state, tau):
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
+            print('1-1',state[0]+state[1])
             self.build_mcts(state)
         else:
+            print('1-2')
             self.change_root_mcts(state)
-
+        print('2',state[0]+state[1])
         for sim in range(self.num_sims):
             self.simulate()
-        print('1',state[0]+state[1])
-        pi, values, = self.get_action_values(tau=1)
-        print('2',state[0]+state[1])
-        action, value = self.choose_action(pi, values, tau)
         print('3',state[0]+state[1])
+        pi, values, = self.get_action_values(tau=1)
+        
+        action, value = self.choose_action(pi, values, tau)
+        
         next_state, _, _ = hnef_game.simulate_step(state, action_ids.action_id[action])
-        print('4',state[0]+state[1])
+        
         NN_value = -self.get_predictions(next_state)[0]
-        print('5',state[0]+state[1])
+        
         return (action_ids.action_id[action], pi, value, NN_value)
 
     def get_predictions(self, state):
