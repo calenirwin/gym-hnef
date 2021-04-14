@@ -49,13 +49,13 @@ class Agent():
         # self.val_value_loss = []
         # self.val_policy_loss = []
 
-    def simulate(self, state):
+    def simulate(self):
         # move to terminal node and evaluate
-        print('1',state[0]+state[1])
+        
         leaf, value, done, path = self.mcts.traverse_tree()
-        print('2',state[0]+state[1])
+        
         value, path = self.evaluate_leaf(leaf, value, done, path)
-        print('3',state[0]+state[1])
+        
         self.mcts.backpropagation(leaf, value, path)
 
     def act(self, state, tau):
@@ -67,7 +67,7 @@ class Agent():
             self.change_root_mcts(state)
         
         for sim in range(self.num_sims):
-            self.simulate(state)
+            self.simulate()
         
         pi, values, = self.get_action_values(tau=1)
         
@@ -111,7 +111,9 @@ class Agent():
 
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
+            print('1',leaf.state[0]+leaf.state[1])
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
+            print('2',leaf.state[0]+leaf.state[1])
             probabilities = probabilities[possible_actions_ids] # what is going on here?
             
             for i, action in enumerate(possible_actions):
@@ -125,7 +127,7 @@ class Agent():
 
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
-
+            print('3',leaf.state[0]+leaf.state[1])
         return ((value, path))
 
 
