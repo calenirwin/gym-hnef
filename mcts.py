@@ -20,7 +20,7 @@ class Node():
         
     def is_leaf(self):
         # returns true if edges list is empty
-        if not self.edges:
+        if len(self.edges) == 0:
             return True
         else:
             return False
@@ -76,7 +76,9 @@ class MCTS():
 
         current_node = self.root
         # print('Is current node a leaf?', current_node.is_leaf())
+        
         count = 0
+        
         while not current_node.is_leaf():
             count += 1
             print(count)
