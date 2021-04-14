@@ -393,10 +393,10 @@ def simulate_step(state, action):
     return np.copy(state), reward, done
 
 def simulate_next_state(state, action):
-    valid_moves = compute_valid_moves(state)
-    assert action in valid_moves
-        # define the current player
+
+    # define the current player
     current_player = turn(state)
+    print(current_player)
     
     # assert that the action is valid i.e. that the action is in state[valid_actions]
     valid_moves = compute_valid_moves(state)
