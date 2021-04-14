@@ -67,7 +67,7 @@ class MCTS():
 
     def traverse_tree(self):
         self.traverse_count += 1
-        print("Start traverse, root edges = ", self.root.edges)
+        # print("Start traverse, root edges = ", self.root.edges)
         alpha = config.ALPHA
         # if self.traverse_count > 1:
         #     quit()
@@ -105,22 +105,23 @@ class MCTS():
                 Q = edge.metrics['Q']
 
                 # print('Q:',Q, 'U:', U, 'Q+U:', Q+U, 'max_QU:', max_QU)
-                print("Q + U ", Q+U)
-                print("maxQU ", max_QU)
+                # print("Q + U ", Q+U)
+                # print("maxQU ", max_QU)
                 if Q + U > max_QU:
                     max_QU = Q + U
                     next_simulated_action = action
                     next_simulated_edge = edge
 
-            print("state before action: ", current_node.state[0] + current_node.state[1])
+            # print("state before action: ", current_node.state[0] + current_node.state[1])
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
-            print("state after action: ", new_state[0]+new_state[1])
-            print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
+            # print("state after action: ", new_state[0]+new_state[1])
+            # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
             
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
            # print(current_node)
 
+        print("I left this function!!!")
         return current_node, value, done, path
 
     def backpropagation(self, leaf_node, value, path):
