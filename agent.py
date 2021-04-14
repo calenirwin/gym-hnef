@@ -54,7 +54,7 @@ class Agent():
         # print('Output of traverse_tree(): ', leaf, value, done, path)
         value, path = self.evaluate_leaf(leaf, value, done, path)
 
-        self.mcts.backpropagation(leaf, value)
+        self.mcts.backpropagation(leaf, value, path)
 
     def act(self, state, tau):
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
