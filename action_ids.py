@@ -1,6 +1,7 @@
 import numpy as np
 
 def get_id(a):
+    print(a)
     return np.where(action_id == a)[0][0]
 
 
