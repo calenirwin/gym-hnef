@@ -28,14 +28,14 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
             t += 1
 
             # Pick action
+            print(env.state[0]+env.state[1])
             if t < turn_until_tau0:
-                action, pi, MCTS_val, NN_val = players[state[2, 0, 0]]['agent'].act(state, 1)
+                action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
             else:
-                action, pi, MCTS_val, NN_val = players[state[2, 0, 0]]['agent'].act(state, 0)
+                action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 0)
             print(env.state[0]+env.state[1])
             if mem != None:
                 mem.commit_stmemory(state, pi)
-            print(env.state[0]+env.state[1])
             state, reward, done, info = env.step(action)
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)
