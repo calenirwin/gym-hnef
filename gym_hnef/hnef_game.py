@@ -203,11 +203,6 @@ def check_capture(state, action):
 # At the end of this method we want to check whether the new state ends the game
 def next_state(state, action):
 
-    # How will we handle repetitions?
-    # we can either include the last two board positions in the state variable or keep track of the "timestamp"
-    # I think the timestamp is a good way to handle this because with the same variable we can stop the game if
-    # it gets too long, the only question is whether is should be a part of the state or a part of this class
-
     # define the current player
     current_player = turn(state)
     
@@ -230,13 +225,8 @@ def next_state(state, action):
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
 
-    # check if game is over
-
     # switch turns
     state[hnef_vars.TURN_CHNL][0][0] = np.abs(current_player - 1)
-
-    # update state[valid_actions] for next player
-    valid_moves = compute_valid_moves(state)
 
     return state
 
@@ -388,7 +378,7 @@ def is_over(state, action):
         return False, 1
 
 def simulate_step(state, action):
-    new_state = next_state(state, action)
+    new_state = simulate_next_state(state, action)
     done, winner = is_over(state, action) 
 
     if not done:
@@ -401,6 +391,29 @@ def simulate_step(state, action):
             reward = 0
 
     return np.copy(state), reward, done
+
+def simulate_next_state(state, action):
+    valid_moves = compute_valid_moves(state)
+    assert action in valid_moves
+        # define the current player
+    current_player = turn(state)
+    
+    # assert that the action is valid i.e. that the action is in state[valid_actions]
+    valid_moves = compute_valid_moves(state)
+
+    assert action in valid_moves
+
+    if state[current_player][action[0][0]][action[0][1]] == 2:
+        state[current_player][action[0][0]][action[0][1]] = 0
+        state[current_player][action[1][0]][action[1][1]] = 2
+    else:
+        state[current_player][action[0][0]][action[0][1]] = 0
+        state[current_player][action[1][0]][action[1][1]] = 1
+
+    # check if the player just captured a piece and update the state if so
+    state = check_capture(state, action)
+
+    return state
 
 def str(state):
     board_str = ' '
