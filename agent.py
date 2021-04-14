@@ -111,15 +111,15 @@ class Agent():
 
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
-            print('1',leaf.state[0]+leaf.state[1])
+            
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
-            print('2',leaf.state[0]+leaf.state[1])
+            
             probabilities = probabilities[possible_actions_ids] # what is going on here?
             
             for i, action in enumerate(possible_actions):
-                # print(action)
+                print('1',leaf.state[0]+leaf.state[1])
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
-
+                print('2',leaf.state[0]+leaf.state[1])
                 if monte.Node(new_state).id not in self.mcts.tree:
                     node = monte.Node(new_state)
                 else:
@@ -127,7 +127,7 @@ class Agent():
 
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
-            print('3',leaf.state[0]+leaf.state[1])
+            
         return ((value, path))
 
 
