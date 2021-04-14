@@ -68,7 +68,7 @@ class MCTS():
         return len(self.tree)
 
     def __str__(self):
-        return "Root: " + root + "\nTree Length: "  + len(self)  
+        return "Root: " + self.root + "\nTree Length: "  + len(self)  
 
     def traverse_tree(self):
         alpha = config.ALPHA
