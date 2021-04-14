@@ -51,23 +51,24 @@ class Agent():
 
     def simulate(self):
         # move to terminal node and evaluate
+        print('1',state[0]+state[1])
         leaf, value, done, path = self.mcts.traverse_tree()
-
+        print('2',state[0]+state[1])
         value, path = self.evaluate_leaf(leaf, value, done, path)
-
+        print('3',state[0]+state[1])
         self.mcts.backpropagation(leaf, value, path)
 
     def act(self, state, tau):
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
-            print('1-1',state[0]+state[1])
+            
             self.build_mcts(state)
         else:
-            print('1-2')
+            
             self.change_root_mcts(state)
-        print('2',state[0]+state[1])
+        
         for sim in range(self.num_sims):
-            self.simulate()
-        print('3',state[0]+state[1])
+            self.simulate(state)
+        
         pi, values, = self.get_action_values(tau=1)
         
         action, value = self.choose_action(pi, values, tau)
