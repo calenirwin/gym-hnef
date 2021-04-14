@@ -60,11 +60,16 @@ class MCTS():
         # Cp in UCT (Upper confidence bound for tree)
         self.cpuct = config.CPUCT
         self.add_node(root)
+        self.traverse_count = 0
 
     def __len__(self):
         return len(self.tree)
 
     def traverse_tree(self):
+        self.traverse_count += 1
+        if traverse_count > 4:
+            quit()
+            
         print("Start traverse, root edges = ", self.root.edges)
         alpha = config.ALPHA
 
