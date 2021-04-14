@@ -132,7 +132,7 @@ class Agent():
         values = np.zeros(self.action_size, dtype=np.float32)
 
         for action, edge in edges:
-            pi[action] = edge.metrics['N']**(1/tau)
+            pi[action] = np.power(edge.metrics['N'],(1/tau))
             values[action] = edge.metrics['Q']
         
         pi /= (np.sum(pi) * 1.0)
