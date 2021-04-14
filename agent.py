@@ -104,10 +104,9 @@ class Agent():
             value, probabilities, possible_actions = self.get_predictions(leaf.state)
 
             probabilities = probabilities[possible_actions] # what is going on here?
-
-            assert possible_actions == hnef_game.compute_valid_moves(leaf.state)
             
             for i, action in enumerate(possible_actions):
+                print(action)
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
 
                 if monte.Node(new_state).id not in self.mcts.tree:
