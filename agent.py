@@ -123,7 +123,7 @@ class Agent():
                 if monte.Node(new_state).id not in self.mcts.tree:
                     node = monte.Node(new_state)
                 else:
-                    node = self.mcts.tree[new_state].id
+                    node = self.mcts.tree[monte.Node(new_state).id]
 
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
