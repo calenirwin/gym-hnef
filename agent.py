@@ -74,7 +74,7 @@ class Agent():
 
         NN_value = -self.get_predictions(next_state)[0]
 
-        return (action, pi, value, NN_value)
+        return (action_ids.action_id[action], pi, value, NN_value)
 
     def get_predictions(self, state):
         model_input = np.array(self.model.convert_to_input(state))
