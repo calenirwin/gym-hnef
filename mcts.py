@@ -17,6 +17,9 @@ class Node():
         self.turn = hnef_game.turn(state)
 
         self.edges = []
+
+    def __str__(self):
+        return "Node ID: " + self.id + "\nPlayer's Turn: " + self.turn + "\nNumber of Edges: " + len(self.edges)
         
     def is_leaf(self):
         # returns true if edges list is empty
@@ -60,21 +63,18 @@ class MCTS():
         # Cp in UCT (Upper confidence bound for tree)
         self.cpuct = config.CPUCT
         self.add_node(root)
-        self.traverse_count = 0
 
     def __len__(self):
         return len(self.tree)
 
+    def __str__(self):
+        return "Root: " + root + "\nTree Length: "  + len(self)  
+
     def traverse_tree(self):
-        self.traverse_count += 1
-        # print("Start traverse, root edges = ", self.root.edges)
         alpha = config.ALPHA
-        # if self.traverse_count > 1:
-        #     quit()
 
         done = 0
         value = 0
-
         path = []
 
         current_node = self.root
@@ -83,10 +83,12 @@ class MCTS():
             count += 1
 
             if count > 10000:
-                print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
-                print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
-                print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
-                print(next_simulated_action)
+                # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
+                # print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
+                # print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
+                # print(next_simulated_action)
+                print(self)
+                print("Path Length: ", len(path))
                 assert False
 
             if current_node == self.root:
