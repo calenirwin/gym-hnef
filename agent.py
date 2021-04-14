@@ -164,7 +164,9 @@ class Agent():
         self.mcts = monte.MCTS(self.root)
 
     def change_root_mcts(self, state):
+        print("change root: ", state)
         new_root = monte.Node(state)
+        print("new tree", self.mcts.tree)
         self.mcts.root = self.mcts.tree[new_root.id]
 
     def replay(self, ltmemory):

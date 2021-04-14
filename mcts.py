@@ -100,9 +100,7 @@ class MCTS():
                 Q = edge.metrics['Q']
 
                 # print('Q:',Q, 'U:', U, 'Q+U:', Q+U, 'max_QU:', max_QU)
-                print('before update')
                 if Q + U > max_QU:
-                    print('update')
                     max_QU = Q + U
                     next_simulated_action = action
                     next_simulated_edge = edge
