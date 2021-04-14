@@ -390,7 +390,7 @@ def simulate_step(state, action):
         else:
             reward = 0
 
-    return np.copy(state_copy), reward, done
+    return np.copy(new_state), reward, done
 
 def simulate_next_state(state, action):
     state_copy = np.copy(state)
