@@ -94,7 +94,9 @@ class MCTS():
             for i, (action, edge) in enumerate(current_node.edges):
                 # print(epsilon)
                 # print(edge.metrics)
-                # print(NU[i])
+                print(len(NU))
+                print(i)
+                print(len(current_node.edges))
                 # print(NB)
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
 
