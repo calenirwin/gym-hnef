@@ -79,17 +79,19 @@ class MCTS():
 
         current_node = self.root
         count = 0
+        inspect_flag = 0
         while not current_node.is_leaf():
             count += 1
 
-            if count > 10000:
+            if count > 1000:
                 # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
                 # print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
                 # print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
                 # print(next_simulated_action)
                 print(self)
                 print("Path Length: ", len(path))
-                assert False
+                # assert False
+                inspect_flag = 1
 
             if current_node == self.root:
                 epsilon = config.EPSILON
@@ -127,7 +129,8 @@ class MCTS():
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
             # print("state after action: ", new_state[0]+new_state[1])
             # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
-            
+            if inspect_flag:   
+                print("Current Node:", current_node, "Next Sim Edge: ", next_simulated_edge.dest)
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
            # print(current_node)
