@@ -58,6 +58,7 @@ class MCTS():
         # the tree and exploiting the discovered paths
         # Cp in UCT (Upper confidence bound for tree)
         self.cpuct = config.CPUCT
+        self.addNode(root)
 
     def __len__(self):
         return len(self.tree)
