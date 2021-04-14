@@ -86,7 +86,7 @@ class MCTS():
                 print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
                 print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
                 print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
-                print(new_simulated_action)
+                print(next_simulated_action)
                 assert False
 
             if current_node == self.root:
@@ -101,7 +101,7 @@ class MCTS():
             for action, edge in current_node.edges:
                 NB = NB + edge.metrics['N']
 
-            max_QU = -99999
+            max_QU = float('-inf')
             for i, (action, edge) in enumerate(current_node.edges):
                 # print(epsilon)
                 # print(edge.metrics)
