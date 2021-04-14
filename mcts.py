@@ -82,9 +82,13 @@ class MCTS():
         while not current_node.is_leaf():
             count += 1
 
-            if count > 10:
+            if count > 100:
                 print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
-                break
+                print(new_simulated_action)
+                print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
+                print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
+
+                assert False
 
             if current_node == self.root:
                 epsilon = config.EPSILON
