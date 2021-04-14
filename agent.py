@@ -70,7 +70,7 @@ class Agent():
 
         action, value = self.choose_action(pi, values, tau)
 
-        next_state, _, _ = hnef_game.simulate_step(state, action)
+        next_state, _, _ = hnef_game.simulate_step(state, action_ids.action_id[action])
 
         NN_value = -self.get_predictions(next_state)[0]
 
