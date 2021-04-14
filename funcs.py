@@ -29,7 +29,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
         while done == 0:
             # Number of turns taken
             t += 1
-            print("Current Player: ", hnef_game.turn(state))
+            # print("Current Player: ", hnef_game.turn(state))
             # Pick action
             if t < turn_until_tau0:
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
@@ -40,8 +40,8 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 mem.commit_stmemory(state, pi)
 
             state, reward, done, info = env.step(action)
-            print("Number of turns: ", t)
-            print("State after action: ", state[0]+state[1])
+            # print("Number of turns: ", t)
+            # print("State after action: ", state[0]+state[1])
 
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)

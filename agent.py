@@ -171,9 +171,9 @@ class Agent():
         for i in range(config.TRAINING_LOOPS):
             minibatch = random.sample(ltmemory, min(config.BATCH_SIZE, len(ltmemory)))
 
-            training_states = np.array([self.model.convert_to_input(row['state']) for row in minibatch])
-            training_targets = {'value_head': np.array([row['value'] for row in minibatch])
-								, 'policy_head': np.array([row['AV'] for row in minibatch])}
+            training_states = np.array([row['state'] for row in minibatch])
+            training_targets = {'value_head': np.array([row['value'] for row in minibatch]),
+                                'policy_head': np.array([row['AV'] for row in minibatch])}
                                 
             fit = self.model.fit(training_states, training_targets, epochs=config.EPOCHS, verbose=1, validation_split=0, batch_size=32)
 
