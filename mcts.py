@@ -19,7 +19,7 @@ class Node():
         self.edges = []
 
     def __str__(self):
-        return "Node ID: " + self.id + "\nPlayer's Turn: " + self.turn + "\nNumber of Edges: " + len(self.edges)
+        return "Node ID: " + self.id + "\nPlayer's Turn: " + str(self.turn) + "\nNumber of Edges: " + len(self.edges)
         
     def is_leaf(self):
         # returns true if edges list is empty
@@ -68,7 +68,7 @@ class MCTS():
         return len(self.tree)
 
     def __str__(self):
-        return "Root: " + self.root + "\nTree Length: "  + len(self)  
+        return "Root: " + str(self.root) + "\nTree Length: "  + str(len(self))  
 
     def traverse_tree(self):
         alpha = config.ALPHA
