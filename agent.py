@@ -145,8 +145,7 @@ class Agent():
     def choose_action(self, pi, values, tau):
         if tau == 0:
             actions = np.argwhere(pi == max(pi))
-            print(actions.shape)
-            action = np.random.choice(actions)
+            action = np.random.choice(actions.reshape(-1))
         else:
             action_idx = np.random.multinomial(1, pi)
             action = np.where(action_idx==1)[0][0]
