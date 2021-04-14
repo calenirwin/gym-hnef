@@ -109,7 +109,7 @@ class MCTS():
                 
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
             current_node = next_simulated_edge.dest
-            path.append(current_node)
+            path.append(next_simulated_edge)
 
         return current_node, value, done, path
 
