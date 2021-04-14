@@ -50,8 +50,8 @@ class Agent():
     def simulate(self):
         # move to terminal node and evaluate
         leaf, value, done, path = self.mcts.traverse_tree()
-        print('tree', self.mcts.tree)
-        print('Output of traverse_tree(): ', leaf, value, done, path)
+        # print('tree', self.mcts.tree)
+        # print('Output of traverse_tree(): ', leaf, value, done, path)
         value, path = self.evaluate_leaf(leaf, value, done, path)
 
         self.mcts.backpropagation(leaf, value)
@@ -105,6 +105,8 @@ class Agent():
 
             probabilities = probabilities[possible_actions] # what is going on here?
 
+            assert possible_actions == hnef_game.compute_valid_moves(leaf.state)
+            
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
 
