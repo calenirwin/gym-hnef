@@ -5,6 +5,7 @@ from model import Residual_CNN
 from agent import Agent
 import config
 import memory
+import action_ids
 
 
 def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=config.TURNS_UNTIL_TAU0, rule_set='historical'):
@@ -34,7 +35,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
             if mem != None:
                 mem.commit_stmemory(state, pi)
 
-            state, reward, done, info = env.step(action)
+            state, reward, done, info = env.step(action_ids.action_id[action])
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)
             if done == 1:
