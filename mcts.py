@@ -92,10 +92,10 @@ class MCTS():
 
             max_QU = -99999
             for i, (action, edge) in enumerate(current_node.edges):
-                print(epsilon)
-                print(edge.metrics)
-                print(NU[i])
-                print(NB)
+                # print(epsilon)
+                # print(edge.metrics)
+                # print(NU[i])
+                # print(NB)
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
 
                 Q = edge.metrics['Q']

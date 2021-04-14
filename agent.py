@@ -102,9 +102,9 @@ class Agent():
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
             value, probabilities, possible_actions = self.get_predictions(leaf.state)
-
+            print(probabilities.shape)
             probabilities = probabilities[possible_actions] # what is going on here?
-            
+            print(probabilities.shape)
             for i, action in enumerate(possible_actions):
                 # print(action)
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
