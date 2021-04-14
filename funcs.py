@@ -42,6 +42,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
             print(state[0]+state[1])
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)
+            state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
             if done == 1:
                 if mem != None:
                     for move in mem.stmemory:
