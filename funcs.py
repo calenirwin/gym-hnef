@@ -25,14 +25,13 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
         while done == 0:
             # Number of turns taken
             t += 1
-            state_copy = np.copy(state)
+
             # Pick action
             if t < turn_until_tau0:
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
             else:
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 0)
 
-            state = np.copy(state_copy)
             if mem != None:
                 mem.commit_stmemory(state, pi)
 

@@ -58,10 +58,10 @@ class Agent():
         self.mcts.backpropagation(leaf, value, path)
 
     def act(self, state, tau):
-        if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
-            self.build_mcts(state)
+        if self.mcts == None or monte.Node(np.copy(state)).id not in self.mcts.tree:
+            self.build_mcts(np.copy(state))
         else:
-            self.change_root_mcts(state)
+            self.change_root_mcts(np.copy(state))
 
         for sim in range(self.num_sims):
             self.simulate()
