@@ -6,11 +6,13 @@ from agent import Agent
 import config
 import memory
 import action_ids
+import gym
 
 
 def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=config.TURNS_UNTIL_TAU0, rule_set='historical'):
     for e in range(episodes):
-        env = hnef_env.HnefEnv(rule_set, 'terminal')
+        # create gym environment
+        env = gym.make('gym_hnef:hnef-v0', rule_set=args.rules, render_mode=args.mode)
         state = env.state
         done = 0
         t = 0
