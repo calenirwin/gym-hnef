@@ -26,8 +26,7 @@ class Node():
             return False
 
     def get_state_id(self, state):
-        # make each board state a unique id for each node
-        position = np.append(state[hnef_vars.ATTACKER], state[hnef_vars.DEFENDER])
+        position = state[hnef_vars.ATTACKER] + state[hnef_vars.DEFENDER]
         id = ''.join(map(str,position))
         return id
 
@@ -53,7 +52,7 @@ class Edge():
         }
 
 class MCTS():
-    def __init__(self, root, cpuct):
+    def __init__(self, root):
         self.root = root
         self.tree = {}
         # cpuct is a constant that helps control the balance between exploring
@@ -66,25 +65,19 @@ class MCTS():
         return len(self.tree)
 
     def traverse_tree(self):
-        epsilon = config.EPSILON
         alpha = config.ALPHA
 
-        done = False
+        done = 0
         value = 0
 
         path = []
 
         current_node = self.root
-        # print('Is current node a leaf?', current_node.is_leaf())
-        
-        count = 0
         
         while not current_node.is_leaf():
             count += 1
-            print(count)
             if current_node == self.root:
-                epsilon = 0.2
-                alpha = 0.8
+                epsilon = config.EPSILON
 
                 NU = np.random.dirichlet([alpha] * len(current_node.edges))
             else:
@@ -138,9 +131,4 @@ class MCTS():
             edge.metrics['Q'] = edge.metrics['W'] / edge.metrics['N']
 
     def add_node(self, node):
-        # check to see if the node id already exists in tree
-        if node.id in self.tree:
-            new_id = node.id + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5)) # add 5 random characters to the end of the duplicate state id
-            node.set_node_id(new_id)
-
         self.tree[node.id] = node

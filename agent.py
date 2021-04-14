@@ -40,7 +40,6 @@ class Agent():
         self.state_size = state_size
         self.action_size = action_size
         self.num_sims = config.MCTS_SIMS
-        self.cpuct = config.CPUCT
 
         # self.train_loss = []
         # self.train_value_loss = []
@@ -162,11 +161,11 @@ class Agent():
 
     def build_mcts(self, state):
         self.root = monte.Node(state)
-        self.mcts = monte.MCTS(self.root, self.cpuct)
+        self.mcts = monte.MCTS(self.root)
 
     def change_root_mcts(self, state):
         new_root = monte.Node(state)
-        self.mcts.root = self.mcts.tree[new_root].id
+        self.mcts.root = self.mcts.tree[new_root.id]
 
     def replay(self, ltmemory):
         for i in range(config.TRAINING_LOOPS):
