@@ -19,10 +19,10 @@ TRAINING_LOOPS = 10
 HIDDEN_CNN_LAYERS = [
 	{'filters':64, 'kernel_size': (3, 3)}
 	 , {'filters':64, 'kernel_size': (3, 3)}
-	 , {'filters':64, 'kernel_size': (3, 3)}
-	 , {'filters':64, 'kernel_size': (3, 3)}
-	 , {'filters':64, 'kernel_size': (3, 3)}
-	 , {'filters':64, 'kernel_size': (3, 3)}
+	#  , {'filters':64, 'kernel_size': (3, 3)}
+	#  , {'filters':64, 'kernel_size': (3, 3)}
+	#  , {'filters':64, 'kernel_size': (3, 3)}
+	#  , {'filters':64, 'kernel_size': (3, 3)}
 	]
 
 #### EVALUATION

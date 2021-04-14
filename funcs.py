@@ -36,6 +36,8 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 mem.commit_stmemory(state, pi)
 
             state, reward, done, info = env.step(action)
+            print(t)
+            print(state[0]+state[1])
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)
             if done == 1:
