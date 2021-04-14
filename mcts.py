@@ -114,6 +114,7 @@ class MCTS():
                     next_simulated_edge = edge
                 
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
+            print("next sim edge: ", next_simulated_edge.dest)
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
            # print(current_node)
