@@ -67,11 +67,12 @@ class MCTS():
 
     def traverse_tree(self):
         self.traverse_count += 1
+        print("Start traverse, root edges = ", self.root.edges)
+        alpha = config.ALPHA
         if self.traverse_count > 1:
             quit()
 
-        print("Start traverse, root edges = ", self.root.edges)
-        alpha = config.ALPHA
+        
 
         done = 0
         value = 0
