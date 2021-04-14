@@ -14,7 +14,7 @@ class Memory:
 			'board': state[0] + state[1]
 			, 'state': state
 			, 'AV': action_values
-			, 'playerTurn': state[2, 0, 0]
+			, 'player_turn': state[2, 0, 0]
 			})
 
 	def commit_ltmemory(self):
