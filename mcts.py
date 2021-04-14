@@ -82,7 +82,7 @@ class MCTS():
         while not current_node.is_leaf():
             count += 1
 
-            if count > 1000:
+            if count > 10000:
                 print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
                 print(next_simulated_edge.source.state[0]+next_simulated_edge.source.state[1])
                 print(next_simulated_edge.dest.state[0]+next_simulated_edge.dest.state[1])
