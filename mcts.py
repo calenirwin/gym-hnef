@@ -30,7 +30,7 @@ class Node():
 
     def get_state_id(self, state):
         position = state[hnef_vars.ATTACKER] + state[hnef_vars.DEFENDER]
-        id = ''.join(map(str,position))+str(state[hnef_vars.TIME_CHNL, 0, 0])
+        id = ''.join(map(str,position))#+str(state[hnef_vars.TIME_CHNL, 0, 0])
         return id
 
     def set_node_id(self, id):
@@ -76,6 +76,8 @@ class MCTS():
         done = 0
         value = 0
         path = []
+
+        prev_actions = []
 
         current_node = self.root
         count = 0
@@ -126,6 +128,21 @@ class MCTS():
                     next_simulated_edge = edge
 
             # print("state before action: ", current_node.state[0] + current_node.state[1])
+            prev_actions.append(action)
+
+            if len(prev_actions) > 6:
+                this_last   = prev_actions[-1]
+                this_next   = prev_actions[-3]
+                this_first  = prev_actions[-5]
+                other_last  = prev_actions[-2]
+                other_next  = prev_actions[-4]
+                other_first = prev_actions[-6]
+                if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
+                    new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
+                    current_node = next_simulated_edge.dest
+                    path.append(next_simulated_edge)
+                    return current_node, value, done, path
+
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
             # print("state after action: ", new_state[0]+new_state[1])
             # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
