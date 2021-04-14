@@ -115,7 +115,7 @@ class MCTS():
             # print("state before action: ", current_node.state[0] + current_node.state[1])
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
             # print("state after action: ", new_state[0]+new_state[1])
-            print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
+            # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
             
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
