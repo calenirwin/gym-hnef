@@ -208,8 +208,6 @@ def next_state(state, action):
     
     # assert that the action is valid i.e. that the action is in state[valid_actions]
     valid_moves = compute_valid_moves(state)
-    print(valid_moves)
-    print(action)
     assert action in valid_moves
 
     if state[current_player][action[0][0]][action[0][1]] == 2:
@@ -218,8 +216,6 @@ def next_state(state, action):
     else:
         state[current_player][action[0][0]][action[0][1]] = 0
         state[current_player][action[1][0]][action[1][1]] = 1
-
-        
 
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
