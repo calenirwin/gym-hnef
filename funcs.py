@@ -12,6 +12,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
     for e in range(episodes):
         env = hnef_env.HnefEnv(rule_set, 'terminal')
         state = env.state
+        print(env.state[0]+env.state[1])
         done = 0
         t = 0
         p1.mcts = None
@@ -31,7 +32,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 action, pi, MCTS_val, NN_val = players[state[2, 0, 0]]['agent'].act(state, 1)
             else:
                 action, pi, MCTS_val, NN_val = players[state[2, 0, 0]]['agent'].act(state, 0)
-            
+            print(env.state[0]+env.state[1])
             if mem != None:
                 mem.commit_stmemory(state, pi)
             print(env.state[0]+env.state[1])
