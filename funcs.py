@@ -31,8 +31,8 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
             else:
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 0)
-                
-            state = state_copy
+
+            state = np.copy(state_copy)
             if mem != None:
                 mem.commit_stmemory(state, pi)
 
