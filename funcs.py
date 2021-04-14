@@ -25,7 +25,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
         while done == 0:
             # Number of turns taken
             t += 1
-
+            print(hnef_game.turn(state))
             # Pick action
             if t < turn_until_tau0:
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
