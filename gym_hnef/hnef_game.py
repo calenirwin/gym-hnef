@@ -377,42 +377,44 @@ def is_over(state, action):
         return False, 1
 
 def simulate_step(state, action):
-    new_state = simulate_next_state(state, action)
-    done, winner = is_over(state, action) 
+    state_copy = np.copy(state)
+    new_state = simulate_next_state(state_copy, action)
+    done, winner = is_over(state_copy, action) 
 
     if not done:
             reward = 0
     else:
-        current_player = turn(state)
+        current_player = turn(state_copy)
         if current_player == winner:
             reward =  1
         else:
             reward = 0
 
-    return np.copy(state), reward, done
+    return np.copy(state_copy), reward, done
 
 def simulate_next_state(state, action):
+    state_copy = np.copy(state)
 
     # define the current player
-    current_player = turn(state)
+    current_player = turn(state_copy)
     # print(current_player)
     
     # assert that the action is valid i.e. that the action is in state[valid_actions]
-    valid_moves = compute_valid_moves(state)
+    valid_moves = compute_valid_moves(state_copy)
 
     # assert action in valid_moves
 
-    if state[current_player][action[0][0]][action[0][1]] == 2:
-        state[current_player][action[0][0]][action[0][1]] = 0
-        state[current_player][action[1][0]][action[1][1]] = 2
+    if state_copy[current_player][action[0][0]][action[0][1]] == 2:
+        state_copy[current_player][action[0][0]][action[0][1]] = 0
+        state_copy[current_player][action[1][0]][action[1][1]] = 2
     else:
-        state[current_player][action[0][0]][action[0][1]] = 0
-        state[current_player][action[1][0]][action[1][1]] = 1
+        state_copy[current_player][action[0][0]][action[0][1]] = 0
+        state_copy[current_player][action[1][0]][action[1][1]] = 1
 
     # check if the player just captured a piece and update the state if so
-    state = check_capture(state, action)
+    state_copy = check_capture(state_copy, action)
 
-    return np.copy(state)
+    return np.copy(state_copy)
 
 def str(state):
     board_str = ' '
