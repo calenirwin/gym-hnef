@@ -50,6 +50,8 @@ class Agent():
     def simulate(self):
         # move to terminal node and evaluate
         leaf, value, done, path = self.mcts.traverse_tree()
+        print('tree', self.mcts.tree)
+        print('Output of traverse_tree(): ', leaf, value, done, path)
         value, path = self.evaluate_leaf(leaf, value, done, path)
 
         self.mcts.backpropagation(leaf, value)
