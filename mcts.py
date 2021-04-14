@@ -19,7 +19,7 @@ class Node():
         self.edges = []
 
     def __str__(self):
-        return "Node ID: " + self.id + "\nPlayer's Turn: " + str(self.turn) + "\nNumber of Edges: " + len(self.edges)
+        return "Node ID: " + self.id + "\nPlayer's Turn: " + str(self.turn) + "\nNumber of Edges: " + str(len(self.edges))
         
     def is_leaf(self):
         # returns true if edges list is empty
