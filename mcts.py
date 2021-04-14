@@ -69,8 +69,8 @@ class MCTS():
         self.traverse_count += 1
         print("Start traverse, root edges = ", self.root.edges)
         alpha = config.ALPHA
-        if self.traverse_count > 1:
-            quit()
+        # if self.traverse_count > 1:
+        #     quit()
 
         
 
