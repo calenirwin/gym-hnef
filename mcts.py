@@ -72,8 +72,6 @@ class MCTS():
         # if self.traverse_count > 1:
         #     quit()
 
-        
-
         done = 0
         value = 0
 
@@ -86,7 +84,6 @@ class MCTS():
                 epsilon = config.EPSILON
 
                 NU = np.random.dirichlet([alpha] * len(current_node.edges))
-                print("NU = ", NU)
             else:
                 epsilon = 0
                 NU = [0] * len(current_node.edges)
@@ -108,13 +105,18 @@ class MCTS():
                 Q = edge.metrics['Q']
 
                 # print('Q:',Q, 'U:', U, 'Q+U:', Q+U, 'max_QU:', max_QU)
+                print("Q + U ", Q+U)
+                print("maxQU ", max_QU)
                 if Q + U > max_QU:
                     max_QU = Q + U
                     next_simulated_action = action
                     next_simulated_edge = edge
-                
+
+            print("next sim action: ", next_simulated_action)
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
-            print("next sim edge: ", next_simulated_edge.dest)
+            print("next sim edge source: ", next_simulated_edge.source.id)
+            print("next sim edge dest: ", next_simulated_edge.dest.id)
+            
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
            # print(current_node)
