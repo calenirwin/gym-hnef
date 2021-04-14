@@ -5,6 +5,8 @@ import numpy as np
 
 from gym_hnef import hnef_game, hnef_vars
 from gym_hnef.envs import hnef_env
+import random
+import string
 
 import config
 
@@ -100,30 +102,31 @@ class MCTS():
                     next_simulated_edge = edge
                 
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
-            current_node = next_edge.dest
+            current_node = next_simulated_edge.dest
             path.append(current_node)
 
         return current_node, value, done, path
 
-        def backpropagation(self, leaf_node, value, path):
-            current_player = hnef_game.turn(leaf_node.state)
+    def backpropagation(self, leaf_node, value, path):
+        current_player = hnef_game.turn(leaf_node.state)
 
-            for edge in path:
-                turn = edge.turn
+        for edge in path:
+            turn = edge.turn
 
-                if turn == current_player:
-                    direction = 1
-                else:
-                    direction = -1
+            if turn == current_player:
+                direction = 1
+            else:
+                direction = -1
 
-                edge.metrics['N'] += 1
-                edge.metrics['W'] = edge.metrics['W'] + value * direction
-                edge.metrics['Q'] = edge.metrics['W'] / edge.metrics['N']
+            edge.metrics['N'] += 1
+            edge.metrics['W'] = edge.metrics['W'] + value * direction
+            edge.metrics['Q'] = edge.metrics['W'] / edge.metrics['N']
 
-        def add_node(self, node):
-            # check to see if the node id already exists in tree
-            if node.id in self.tree:
-                new_id = node.id + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5)) # add 5 random characters to the end of the duplicate state id
-                node.set_node_id(new_id)
+    def add_node(self, node):
+        node = Node(node)
+        # check to see if the node id already exists in tree
+        if node.id in self.tree:
+            new_id = node.id + ''.join(random.choices(string.ascii_uppercase + string.digits, k=5)) # add 5 random characters to the end of the duplicate state id
+            node.set_node_id(new_id)
 
-            self.tree[node.id] = node
+        self.tree[node.id] = node
