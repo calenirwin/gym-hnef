@@ -30,7 +30,7 @@ class Node():
 
     def get_state_id(self, state):
         position = state[hnef_vars.ATTACKER] + state[hnef_vars.DEFENDER]
-        id = ''.join(map(str,position))
+        id = ''.join(map(str,position))+str(state[hnef_vars.TIME_CHNL, 0, 0])
         return id
 
     def set_node_id(self, id):
