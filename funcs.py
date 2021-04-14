@@ -10,24 +10,26 @@ import gym
 
 
 def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=config.TURNS_UNTIL_TAU0, rule_set='historical', render_mode='terminal'):
+    # create gym environment
+    env = gym.make('gym_hnef:hnef-v0', rule_set=rule_set, render_mode=render_mode)
+    
+    scores = {p1.name:0, 'draw':0, p2.name:0}
+
+    players = { 0 :{"agent": p1, "name":p1.name},
+                1 : {"agent": p2, "name":p2.name}}
+
     for e in range(episodes):
-        # create gym environment
-        env = gym.make('gym_hnef:hnef-v0', rule_set=rule_set, render_mode=render_mode)
-        state = env.state
+        state = env.reset()
+
         done = 0
         t = 0
         p1.mcts = None
         p2.mcts = None
-        scores = {p1.name:0, 'draw':0, p2.name:0}
-
-        players = {1:{"agent": p1, "name":p1.name}
-                        , 0: {"agent": p2, "name":p2.name}
-                        }
 
         while done == 0:
             # Number of turns taken
             t += 1
-            print(hnef_game.turn(state))
+            print("Current Player: ", hnef_game.turn(state))
             # Pick action
             if t < turn_until_tau0:
                 action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
@@ -38,11 +40,13 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 mem.commit_stmemory(state, pi)
 
             state, reward, done, info = env.step(action)
-            print(t)
-            print(state[0]+state[1])
+            print("Number of turns: ", t)
+            print("State after action: ", state[0]+state[1])
+
             turn = info['turn']
             other_turn = np.abs(int(turn) - 1)
-            state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
+            
+            # state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
             if done == 1:
                 if mem != None:
                     for move in mem.stmemory:
