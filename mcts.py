@@ -78,8 +78,14 @@ class MCTS():
         path = []
 
         current_node = self.root
-        
+        count = 0
         while not current_node.is_leaf():
+            count += 1
+
+            if count > 10:
+                print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
+                break
+
             if current_node == self.root:
                 epsilon = config.EPSILON
 
