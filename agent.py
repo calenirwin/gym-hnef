@@ -55,7 +55,7 @@ class Agent():
         self.mcts.backpropagation(leaf, value)
 
     def act(self, state, tau):
-        if self.mcts == None or Node.get_state_id(state) not in self.mcts.tree:
+        if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
             self.build_mcts(state)
         else:
             self.change_root_mcts(state)
@@ -106,7 +106,7 @@ class Agent():
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(leaf.state, action)
 
-                if Node.get_state_id(new_state) not in self.mcts.tree:
+                if monte.Node(new_state).id not in self.mcts.tree:
                     node = monte.Node(new_state)
                 else:
                     node = self.mcts.tree[new_state].id
