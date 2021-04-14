@@ -112,10 +112,12 @@ class MCTS():
                     next_simulated_action = action
                     next_simulated_edge = edge
 
-            print("next sim action: ", next_simulated_action)
+            print("state before action: ", current_node.state)
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
-            print("next sim edge source: ", next_simulated_edge.source.id)
-            print("next sim edge dest: ", next_simulated_edge.dest.id)
+            print("state after action: ", new_state)
+            print("next sim edge source: ", next_simulated_edge.source)
+            print("next sim edge dest: ", next_simulated_edge.dest)
+            print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
             
             current_node = next_simulated_edge.dest
             path.append(next_simulated_edge)
