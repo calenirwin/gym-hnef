@@ -1,7 +1,7 @@
 #### SELF PLAY
-EPISODES = 3
-MCTS_SIMS = 5
-MEMORY_SIZE = 300
+EPISODES = 20
+MCTS_SIMS = 20
+MEMORY_SIZE = 3e10
 TURNS_UNTIL_TAU0 = 10 # turn on which it starts playing deterministically
 CPUCT = 1
 EPSILON = 0.2
@@ -17,12 +17,56 @@ MOMENTUM = 0.9
 TRAINING_LOOPS = 10
 
 HIDDEN_CNN_LAYERS = [
-	{'filters':64, 'kernel_size': (3, 3)}
-	 , {'filters':64, 'kernel_size': (3, 3)}
-	  , {'filters':64, 'kernel_size': (3, 3)}
-	  , {'filters':64, 'kernel_size': (3, 3)}
-	  , {'filters':64, 'kernel_size': (3, 3)}
-	  , {'filters':64, 'kernel_size': (3, 3)}
+	{'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
+	  , {'filters':256, 'kernel_size': (3, 3)}
 	]
 
 #### EVALUATION
