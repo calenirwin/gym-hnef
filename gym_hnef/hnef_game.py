@@ -396,7 +396,7 @@ def simulate_next_state(state, action):
 
     # define the current player
     current_player = turn(state)
-    print(current_player)
+    # print(current_player)
     
     # assert that the action is valid i.e. that the action is in state[valid_actions]
     valid_moves = compute_valid_moves(state)
