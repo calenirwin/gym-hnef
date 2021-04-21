@@ -1,10 +1,13 @@
+# Purpose: Helper functions to create GUI for Hnefatafl Game
+# References:
+# https://github.com/aigagror/GymGo
+
 import numpy as np
 import pyglet
 
 from gym_hnef import hnef_vars, hnef_game
 
-#from gym_hnef inmport hnef_vars, hnef_game
-
+# draw game piece
 def draw_circle(x, y, color, radius):
     num_sides = 50
     verts = [x, y]
@@ -16,14 +19,14 @@ def draw_circle(x, y, color, radius):
     pyglet.graphics.draw(len(verts) // 2, pyglet.gl.GL_TRIANGLE_FAN,
                          ('v2f', verts), ('c3f', colors))
 
-
+# add labels to GUI
 def draw_command_labels(batch, window_width, window_height):
     pyglet.text.Label('Resart (r) | Quit (q)',
                       font_name='Helvetica',
                       font_size=11,
                       x=20, y=window_height - 20, anchor_y='top', batch=batch, multiline=True, width=window_width)
 
-
+# update game information
 def draw_info(batch, window_width, window_height, upper_grid_coord, state):
     turn = hnef_game.turn(state)
     turn_str = 'Attacker' if turn == hnef_vars.ATTACKER else 'Defender'
@@ -34,13 +37,13 @@ def draw_info(batch, window_width, window_height, upper_grid_coord, state):
                       anchor_x='right', anchor_y='top', color=(0, 0, 0, 192), batch=batch, width=window_width / 2,
                       align='right', multiline=True)
 
-
+# add title to window
 def draw_title(batch, window_width, window_height):
     pyglet.text.Label("Hnefatafl", font_name='Helvetica', font_size=20, bold=True, x=window_width / 2, y=window_height - 20,
                       anchor_x='center', anchor_y='top', color=(0, 0, 0, 255), batch=batch, width=window_width / 2,
                       align='center')
 
-
+# draw gameboard
 def draw_grid(batch, delta, board_size, lower_grid_coord, upper_grid_coord):
     label_offset = 20
     left_coord = lower_grid_coord
@@ -74,7 +77,7 @@ def draw_grid(batch, delta, board_size, lower_grid_coord, upper_grid_coord):
     batch.add(num_vert, pyglet.gl.GL_LINES, None,
               ('v2f/static', ver_list), ('c3f/static', color_list))
 
-
+# add all game pieces to the board
 def draw_pieces(batch, lower_grid_coord, delta, piece_r, size, state):
     for i in range(size):
         for j in range(size):

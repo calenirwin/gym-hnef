@@ -77,28 +77,22 @@ class MCTS():
     def __str__(self):
         return "Root: " + str(self.root) + "\nTree Length: "  + str(len(self))  
 
+    # traverse/build the tree 
     def traverse_tree(self):
-        alpha = config.ALPHA
+        alpha = config.ALPHA    # learning rate
 
-        done = 0
-        value = 0
-        path = []
+        done = 0    # environment termination criteria
+        value = 0   # holds predicted value of next state
+        path = []   # holds edges taken during tree traversal
+        prev_actions = []   # used to detect repetition problem
 
-        prev_actions = []
+        current_node = self.root    # always begin traversal at the root of the tree
 
-        current_node = self.root
-        count = 0
-        inspect_flag = 0
+        # until you reach the end of the tree (no more actions can be taken)
         while not current_node.is_leaf():
-            count += 1
-
-            if count > 100:
-                inspect_flag = 1
-
             if current_node == self.root:
                 epsilon = config.EPSILON
-
-                NU = np.random.dirichlet([alpha] * len(current_node.edges))
+                NU = np.random.dirichlet([alpha] * len(current_node.edges)) # dirichlet distributed random variables
             else:
                 epsilon = 0
                 NU = [0] * len(current_node.edges)
@@ -108,28 +102,20 @@ class MCTS():
                 NB = NB + edge.metrics['N']
 
             max_QU = float('-inf')
+            # loop through all actions to find the action that will maximize the expected value
             for i, (action, edge) in enumerate(current_node.edges):
-                # print(epsilon)
-                # print(edge.metrics)
-                # print('NU:',len(NU))
-                # print('i:',i)
-                # print('current_node.edges length:',len(current_node.edges))
-                # print(NB)
+                # calculate upper bound of for state value approximation
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
-
                 Q = edge.metrics['Q']
-
-                # print('Q:',Q, 'U:', U, 'Q+U:', Q+U, 'max_QU:', max_QU)
-                # print("Q + U ", Q+U)
-                # print("maxQU ", max_QU)
+                # set the next simulated action/edge pair as the action/edge that produces the highest value for the resulting state
                 if Q + U > max_QU:
                     max_QU = Q + U
                     next_simulated_action = action
                     next_simulated_edge = edge
 
-            # print("state before action: ", current_node.state[0] + current_node.state[1])
-            prev_actions.append(action)
+            prev_actions.append(action) # keep track of all simulated actions chosen
 
+            # check to see if that last 6 actions were repetitions
             if len(prev_actions) > 6:
                 this_last   = prev_actions[-1]
                 this_next   = prev_actions[-3]
@@ -137,25 +123,22 @@ class MCTS():
                 other_last  = prev_actions[-2]
                 other_next  = prev_actions[-4]
                 other_first = prev_actions[-6]
+                # if a repetition is found, finish the tree traversal
                 if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
                     new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
                     current_node = next_simulated_edge.dest
                     path.append(next_simulated_edge)
                     return current_node, value, done, path
 
-            new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
-            # print("state after action: ", new_state[0]+new_state[1])
-            # print(next_simulated_edge.source.id == next_simulated_edge.dest.id)
-            
-            current_node = next_simulated_edge.dest
-            path.append(next_simulated_edge)
-            if inspect_flag:   
-                return current_node, value, done, path
-           # print(current_node)
 
-        # print("I left this function!!!")
+            new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)    
+            current_node = next_simulated_edge.dest # new current node is the destination of the next simulated action
+            path.append(next_simulated_edge)    # store the edge taken
+
         return current_node, value, done, path
 
+    # update the edges contained within path with
+    # the results of the previous tree traversal
     def backpropagation(self, leaf_node, value, path):
         current_player = hnef_game.turn(leaf_node.state)
 

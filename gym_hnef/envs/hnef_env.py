@@ -1,7 +1,6 @@
 # Written By: Tindur Sigurdason & Calen Irwin
 # Written For: CISC-856 W21 (Reinforcement Learning) at Queen's U
-# Last Modified Date: 2021-03-06 [CI]
-# Purpose: 
+# Last Modified Date: 2021-04-21 [CI]
 
 # References:
 # https://github.com/slowen/hnefatafl/blob/master/hnefatafl.py
@@ -14,6 +13,9 @@ import pyglet
 
 from gym_hnef import hnef_game, hnef_vars, rendering_helpers
 
+# custom gym Env object built to play Hnefatafl (aka Viking Chess)
+# contains important information about the game environment
+# and basic RL enironment methods needed to implement more complex AI models
 class HnefEnv(gym.Env):
     metadata = {'render.modes': ['terminal', 'gui']}
     hnef_vars = hnef_vars
@@ -44,7 +46,6 @@ class HnefEnv(gym.Env):
         self.done = False
         return np.copy(self.state)
 
-    # needs work
     # In: tuple of tuples action ((pos_x, pos_y), (new_pos_x, new_pos_y))
     # Out: observation (the new state), reward, done (True if game is finished, False otherwise), info (information of the state)
     def step(self, action):
@@ -123,6 +124,8 @@ class HnefEnv(gym.Env):
             self.window.close()
             self.pyglet.app.exit()
 
+    # used to render GUI
+    # NEEDS WORK
     def render(self, mode='human'):
         if mode == 'terminal':
             print(self.__str__())
