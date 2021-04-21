@@ -1,3 +1,9 @@
+# Written By: davidADSP 
+# Minor Changes By: Tindur Sigurdason & Calen Irwin
+
+# Reference:
+# https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/config.py
+
 #### SELF PLAY
 EPISODES = 5
 MCTS_SIMS = 10

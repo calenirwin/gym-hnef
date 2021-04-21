@@ -1,3 +1,6 @@
+# Written By: davidADSP 
+# Adapted for Hnefatafl By: Tindur Sigurdason & Calen Irwin
+
 # References:
 # https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/agent.py
 
@@ -14,21 +17,6 @@ from mcts import Node
 
 import action_ids
 
-# class User():
-# 	def __init__(self, name, state_size, action_size):
-# 		self.name = name
-# 		self.state_size = state_size
-# 		self.action_size = action_size
-
-# 	def act(self, state, tau):
-# 		action = input('Enter your chosen action: ')
-# 		pi = np.zeros(self.action_size)
-# 		pi[action] = 1
-# 		value = None
-# 		NN_value = None
-# 		return (action, pi, value, NN_value)
-
-
 class Agent():
     def __init__(self, name, model, state_size, action_size):
         super().__init__()
@@ -41,22 +29,18 @@ class Agent():
         self.action_size = action_size
         self.num_sims = config.MCTS_SIMS
 
-        # self.train_loss = []
-        # self.train_value_loss = []
-        # self.train_policy_loss = []
-        # self.val_loss = []
-        # self.val_value_loss = []
-        # self.val_policy_loss = []
-
+    # Method for running simulations from the current state
+    #       moving to a terminal node, evaluating the leaf and updating the MCTS
     def simulate(self):
-        # move to terminal node and evaluate
-        
         leaf, value, done, path = self.mcts.traverse_tree()
         
         value, path = self.evaluate_leaf(leaf, value, done, path)
         
         self.mcts.backpropagation(leaf, value, path)
 
+    # Method for running simulations and choosing an action
+    # In: self, state (current state), tau (exploratory constant)
+    # Out: action selected, current policy and values as well as values from the neural network
     def act(self, state, tau):
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
             self.build_mcts(state)
@@ -76,6 +60,9 @@ class Agent():
         
         return (action_ids.action_id[action], pi, value, NN_value)
 
+    # Method for getting the predictions of values from the neural network
+    # In: self, state (current state)
+    # Out: values predicted, probabilities (policy), valid actions, id's of the valid actions
     def get_predictions(self, state):
         model_input = np.array(self.model.convert_to_input(state))
 
@@ -106,6 +93,9 @@ class Agent():
 
         return ((values, probabilities, possible_actions, possible_actions_ids))
 
+    # Method for evaluating a leaf, creates a new leaf node if the game isn't finished
+    # In: leaf Node, value (reward), done boolean, path taken to the leaf
+    # Out: value of the leaf node, path taken to the leaf node
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
             
@@ -127,7 +117,9 @@ class Agent():
             
         return ((value, path))
 
-
+    # Method for getting the action values of the possible actions in the curren state
+    # In: self, tau (controls exploration)
+    # Out: pi (policy), values of the actions
     def get_action_values(self, tau):
         edges = self.mcts.root.edges
         pi = np.zeros(self.action_size, dtype=np.integer)
@@ -142,6 +134,10 @@ class Agent():
 
         return pi, values
 
+    # Method for choosing an action from the given policy and values
+    #       comparable to epsilon greedy but different
+    # In: self, pi (policy), values of the actions, tau (controls exploration)
+    # Out: action selected and its value
     def choose_action(self, pi, values, tau):
         if tau == 0:
             actions = np.argwhere(pi == max(pi))
@@ -149,24 +145,27 @@ class Agent():
         else:
             action_idx = np.random.multinomial(1, pi)
             action = np.where(action_idx==1)[0][0]
-        
+
         value = values[action]
         
         return action, value
 
+    # Method for generating a prediction for a given state from the neural network
     def predict(self, model_input):
         return self.model.predict(model_input)
 
+    # Method for generating our Monte Carlo Search Tree
     def build_mcts(self, state):
         self.root = monte.Node(state)
         self.mcts = monte.MCTS(self.root)
 
+    # Method for changing the current root (state) in the MCTS
     def change_root_mcts(self, state):
-        print("change root: ", state)
         new_root = monte.Node(state)
-        print("new tree", self.mcts.tree)
         self.mcts.root = self.mcts.tree[new_root.id]
 
+    # Replays through the states in the long term memory and makes the neural network 
+    #       learn from them
     def replay(self, ltmemory):
         for i in range(config.TRAINING_LOOPS):
             minibatch = random.sample(ltmemory, min(config.BATCH_SIZE, len(ltmemory)))
@@ -176,18 +175,3 @@ class Agent():
                                 'policy_head': np.array([row['AV'] for row in minibatch])}
                                 
             fit = self.model.fit(training_states, training_targets, epochs=config.EPOCHS, verbose=1, validation_split=0, batch_size=32)
-
-			# self.train_overall_loss.append(round(fit.history['loss'][config.EPOCHS - 1],4))
-			# self.train_value_loss.append(round(fit.history['value_head_loss'][config.EPOCHS - 1],4)) 
-			# self.train_policy_loss.append(round(fit.history['policy_head_loss'][config.EPOCHS - 1],4)) 
-
-            # plt.plot(self.train_overall_loss, 'k')
-            # plt.plot(self.train_value_loss, 'k:')
-            # plt.plot(self.train_policy_loss, 'k--')
-
-            # plt.legend(['train_overall_loss', 'train_value_loss', 'train_policy_loss'], loc='lower left')
-
-            # display.clear_output(wait=True)
-            # display.display(pl.gcf())
-            # pl.gcf().clear()
-            # time.sleep(1.0)
