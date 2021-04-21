@@ -9,12 +9,6 @@ window_width = int(min(screen.width, screen.height) * 2 / 3)
 window_height = int(window_width * 1.2)
 window = pyglet.window.Window(window_width, window_height)
 
-# set a custom window icon --IF HAVE TIME--
-# icon2 = pyglet.image.load('32x32.png')
-# window.set_icon(icon1, icon2)
-
-
-
 cursor = window.get_system_mouse_cursor(window.CURSOR_HAND)
 window.set_mouse_cursor(cursor)
 
@@ -32,7 +26,7 @@ def on_draw():
     # info on top of the board
     #rendering_helpers.draw_info(batch, window_width, window_height, upper_grid_coord, self.state_)
 
-    # Inform user what they can do
+    # inform user what they can do
     rendering_helpers.draw_command_labels(batch, window_width, window_height)
 
     rendering_helpers.draw_title(batch, window_width, window_height)

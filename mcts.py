@@ -2,12 +2,11 @@
 # https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/MCTS.py
 
 import numpy as np
-
-from gym_hnef import hnef_game, hnef_vars
-from gym_hnef.envs import hnef_env
 import random
 import string
 
+from gym_hnef import hnef_game, hnef_vars
+from gym_hnef.envs import hnef_env
 import config
 
 class Node():
