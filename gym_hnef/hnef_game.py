@@ -1,7 +1,6 @@
 # Written By: Tindur Sigurdason & Calen Irwin
 # Written For: CISC-856 W21 (Reinforcement Learning) at Queen's U
-# Last Modified Date: 2021-03-06 [CI]
-# Purpose: 
+# Purpose: Contains various Hnefatafl game related methods, such as state initialization and transition
 
 # References:
 # https://github.com/slowen/hnefatafl/blob/master/hnefatafl.py
@@ -13,11 +12,16 @@ from sklearn import preprocessing
 
 import hnef_vars
 
+# Initialization function that gives the initial state of the game
+# In: rule set string, copenhagen or historical, copenhagen isn't implemented yet
+# Out: numpy array state of shape (5, board size, board size) 
+#       state[0]: binary matrix showing the position of all attacker pieces
+#       state[1]: binary matrix (except a 2 representing the king) showing the position of all defender pieces
+#       state[2]: starts as all zeros but state[2,0,0] is whose turn it is, 0 for attacker 1 for defender
+#       state[3]: starts as all zeros but state[3,0,0] is a boolean representing whether the game is finished
+#       state[4]: starts as all zeros but state[4,0,0] is the number of the turn
 def init_state(rule_set):
-    """
-    at the moment, 2 represents the king in the defender board,
-    may want to change this later
-    """
+    # Not implemented yet
     if rule_set == "copenhagen":
         state = np.zeros((hnef_vars.NUM_CHNLS, 11, 11))
         attacker_layout = np.array([[0,0,0,1,1,1,1,1,0,0,0],
@@ -77,6 +81,7 @@ def init_state(rule_set):
         print("*Error: Given rule set has not been implemented.\n Existing rule sets are:\n-copenhagen\n-historial")
         return -1
 
+# Returns whose turn it is based on the state given
 def turn(state):
     if state is not None:
         return int(np.max(state[hnef_vars.TURN_CHNL]))
@@ -198,9 +203,9 @@ def check_capture(state, action):
 
     return state
 
+# State transition function
 # In: state (current state), action (action taken by current player)
 # Out: state (new state)
-# At the end of this method we want to check whether the new state ends the game
 def next_state(state, action):
 
     # define the current player
@@ -225,6 +230,7 @@ def next_state(state, action):
 
     return state
 
+# Function for finding all actions for a given piece located at (x, y) on the board
 # In: state (current state), x-position of piece, y-position of piece
 # Out: list of all possible actions where action a = ((x, y), (new_x, new_y))
 def actions_for_piece(state, x, y):
@@ -280,7 +286,7 @@ def actions_for_piece(state, x, y):
 
     return actions
 
-
+# Function that computes all valid moves for a given state
 # In: state (current state)
 # Out: list of all possible actions for all pieces of the current player 
 #      where action a = ((x, y), (new_x, new_y))
@@ -291,23 +297,21 @@ def compute_valid_moves(state):
 
     current_player = turn(state)
 
+    # Iterate through the entire board
     for i in range(board_size):
             for j in range(board_size):
+                # if the current player has a piece at (i,j), check for valid actions
                 if state[current_player, i, j]:
                     piece_actions = actions_for_piece(state, i, j)
 
-                    # this isn't the most efficient way of doing this 
-                    # but I wanted to have a seperate helper method
                     for a in piece_actions:
                         actions.append(a)
     return actions
 
+## Not finished, will probably need DFS to properly check
 # In: state (current state), action (possible actions for current player)
 # Out: list of all possible actions for all pieces of the current player 
 #      where action a = ((x, y), (new_x, new_y))
-# note: because actiosn is only the list of actions for the current player
-# this check should only be done when it is the defenders turn
-# unless we change that later, which we might want to do
 def check_enclosure(state, action):
     board_size = state.shape[1] # get board size
     wall_positions = [] # holds wall positions for specific board size
@@ -344,6 +348,9 @@ def check_enclosure(state, action):
     else:
         return False, -1
 
+# Function for checking if the game is over
+# In: state (current state), action (action that was just taken)
+# Out: boolean (is the game over?), player who won
 def is_over(state, action):
     if (state is not None):
         at = hnef_vars.ATTACKER
@@ -372,6 +379,9 @@ def is_over(state, action):
     else:
         return False, 1
 
+# Method for simulating a step taken, without changing the current state
+# In: state (current state), action (action selected)
+# Out: New state, int reward, boolean representing whether the game is finished
 def simulate_step(state, action):
     state_copy = np.copy(state)
     new_state = simulate_next_state(state_copy, action)
@@ -388,17 +398,14 @@ def simulate_step(state, action):
 
     return np.copy(new_state), reward, done
 
+# State transition simulation method
+# In: state (current state), action (action taken by current player)
+# Out: state (new state)
 def simulate_next_state(state, action):
     state_copy = np.copy(state)
 
     # define the current player
     current_player = turn(state_copy)
-    # print(current_player)
-    
-    # assert that the action is valid i.e. that the action is in state[valid_actions]
-    valid_moves = compute_valid_moves(state_copy)
-
-    # assert action in valid_moves
 
     if state_copy[current_player][action[0][0]][action[0][1]] == 2:
         state_copy[current_player][action[0][0]][action[0][1]] = 0
@@ -412,6 +419,9 @@ def simulate_next_state(state, action):
 
     return np.copy(state_copy)
 
+# String method to show the state of the board
+# In: state (current state)
+# Out: board_str string of the board
 def str(state):
     board_str = ' '
 

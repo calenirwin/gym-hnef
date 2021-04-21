@@ -1,4 +1,7 @@
+# Written by davidADSP with minor changes by Tindur Sigurdarson and Calen Irwin
+
 # References:
+# https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/loss.py
 # https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/model.py
 
 import numpy as np
@@ -9,6 +12,9 @@ from tensorflow.keras.layers import Input, Dense, Conv2D, Flatten, BatchNormaliz
 from tensorflow.keras.optimizers import SGD
 from tensorflow.keras.models import load_model
 
+# Method for calculating softmax cross entropy with logits
+# In: y_true target values, y_pred predicted values
+# Out: loss between y_true & y_pred
 def softmax_cross_entropy_with_logits(y_true, y_pred):
 	p = y_pred
 	pi = y_true
@@ -23,6 +29,7 @@ def softmax_cross_entropy_with_logits(y_true, y_pred):
 
 	return loss
 
+# Generated model class
 class Gen_Model():
 	def __init__(self, reg_const, learning_rate, input_dim, output_dim):
 		self.reg_const = reg_const
@@ -36,7 +43,7 @@ class Gen_Model():
 	def fit(self, states, targets, epochs, verbose, validation_split, batch_size):
 		return self.model.fit(states, targets, epochs=epochs, verbose=verbose, validation_split = validation_split, batch_size = batch_size)
 
-
+# Class for the residual neural network
 class Residual_CNN(Gen_Model):
 	def __init__(self, reg_const, learning_rate, input_dim,  output_dim, hidden_layers):
 		Gen_Model.__init__(self, reg_const, learning_rate, input_dim, output_dim)
@@ -44,6 +51,7 @@ class Residual_CNN(Gen_Model):
 		self.num_layers = len(hidden_layers)
 		self.model = self._build_model()
 
+	# Method for generating a single residual layer
 	def residual_layer(self, input_block, filters, kernel_size):
 
 		x = self.conv_layer(input_block, filters, kernel_size)
@@ -65,7 +73,8 @@ class Residual_CNN(Gen_Model):
 		x = LeakyReLU()(x)
 
 		return (x)
-
+	
+	# Method for generating a single convolutional 2D layer
 	def conv_layer(self, x, filters, kernel_size):
 
 		x = Conv2D(
@@ -83,6 +92,7 @@ class Residual_CNN(Gen_Model):
 
 		return (x)
 
+	# Method for generating our value head
 	def value_head(self, x):
 
 		x = Conv2D(
@@ -122,6 +132,7 @@ class Residual_CNN(Gen_Model):
 
 		return (x)
 
+	# Method for generating our policy head
 	def policy_head(self, x):
 
 		x = Conv2D(
@@ -149,6 +160,8 @@ class Residual_CNN(Gen_Model):
 
 		return (x)
 
+	# Method for building our model, returns the compiled model with all the layers
+	# and output heads
 	def _build_model(self):
 
 		main_input = Input(shape = self.input_dim, name = 'main_input')
@@ -170,6 +183,7 @@ class Residual_CNN(Gen_Model):
 
 		return model
 
+	# Converts a single state into an input for our NN
 	def convert_to_input(self, state):
 		state = np.expand_dims(state, axis=0)
 		return state
