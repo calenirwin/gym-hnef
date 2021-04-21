@@ -19,6 +19,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 1 : {"agent": p2, "name":p2.name}}
 
     for e in range(episodes):
+        print("Starting Episode ",e+1,"...")
         state = env.reset()
 
         done = 0
@@ -48,7 +49,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
             
             # state[hnef_vars.TURN_CHNL][0][0] = np.abs(turn - 1)
             if done == 1:
-                print('Final state: ',state[0]+state[1])
+                print('Episode Completed. Final Game State:\n', hnef_game.str(state))
                 if mem != None:
                     for move in mem.stmemory:
                         if move['player_turn'] == other_turn:
