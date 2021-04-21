@@ -9,6 +9,7 @@ from gym_hnef import hnef_game, hnef_vars
 from gym_hnef.envs import hnef_env
 import config
 
+# Node class to represent game states in the MCTS
 class Node():
     def __init__(self, state):
         self.state = state
@@ -27,6 +28,8 @@ class Node():
         else:
             return False
 
+    # sets the id for each node equal to the board positions of the given state
+    # associated with a node
     def get_state_id(self, state):
         position = state[hnef_vars.ATTACKER] + state[hnef_vars.DEFENDER]
         id = ''.join(map(str,position))#+str(state[hnef_vars.TIME_CHNL, 0, 0])
@@ -35,12 +38,15 @@ class Node():
     def set_node_id(self, id):
         self.id = id
 
+# Edge class to represent connections between game states
+# Each edge is directed meaning that there is a source node and
+# a destination node, i.e., state 1 (source) + action -> state 2 (dest)
 class Edge():
     def __init__(self, source, dest, prior, action):
         self.source = source    # input node
         self.dest = dest        # output node
-        self.turn = hnef_game.turn(source.state)
-        self.action = action
+        self.turn = hnef_game.turn(source.state)    # current players turn
+        self.action = action    # action taken to get from source to dest
         
         # N: How many times has this action been taken?
         # W: Total value for the next state
@@ -53,6 +59,8 @@ class Edge():
             'P': prior,
         }
 
+# Class that represents a Monte Carlo Search tree with 
+# a dict representing the tree itself, containing Nodes and Edges
 class MCTS():
     def __init__(self, root):
         self.root = root
