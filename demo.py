@@ -1,3 +1,11 @@
+# Purpose: Utilize Gym-Hnef environment to play Hnefatafl 
+# using either the terminal or a rendered GUI
+# TODO
+# - integrate AlphaGo inspired model to play against
+
+# References:
+# https://github.com/aigagror/GymGo
+
 import gym
 import argparse
 import numpy as np
@@ -46,7 +54,6 @@ while not done:
             action = src, dest
             state, reward, done, info = hnef_env.step(action)
         
-            # 
             if hnef_env.is_over():
                 print(">>Game Over<<")
                 break

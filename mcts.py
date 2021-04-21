@@ -1,3 +1,10 @@
+# Purpose: Implement a Monte Carlo Search Tree algorithm for the purposes of training an 
+# agent to learn how to play Hnefatafl aka Viking Chess. This code was modified from the given
+# reference in an attempt to recreate the same approach used to implement famous AlphaZero architecture.
+
+# Written By: davidADSP 
+# Adapted for Hnefatafl By: Tindur Sigurdason & Calen Irwin
+
 # References: 
 # https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/MCTS.py
 
@@ -9,7 +16,7 @@ from gym_hnef import hnef_game, hnef_vars
 from gym_hnef.envs import hnef_env
 import config
 
-# Node class to represent game states in the MCTS
+# Class to represent game states (as Nodes) in the Monte Carlo Search Tree
 class Node():
     def __init__(self, state):
         self.state = state
@@ -28,7 +35,7 @@ class Node():
         else:
             return False
 
-    # sets the id for each node equal to the board positions of the given state
+    # Method that sets the id for each node equal to the board positions of the given state
     # associated with a node
     def get_state_id(self, state):
         position = state[hnef_vars.ATTACKER] + state[hnef_vars.DEFENDER]
@@ -38,7 +45,7 @@ class Node():
     def set_node_id(self, id):
         self.id = id
 
-# Edge class to represent connections between game states
+# Class to represent connections between game states (Edges)
 # Each edge is directed meaning that there is a source node and
 # a destination node, i.e., state 1 (source) + action -> state 2 (dest)
 class Edge():
@@ -77,7 +84,8 @@ class MCTS():
     def __str__(self):
         return "Root: " + str(self.root) + "\nTree Length: "  + str(len(self))  
 
-    # traverse/build the tree 
+    # Method to traverse/build the tree by simulating actions with the highest expected value
+    # and keeping track of the actions taken
     def traverse_tree(self):
         alpha = config.ALPHA    # learning rate
 
@@ -137,8 +145,10 @@ class MCTS():
 
         return current_node, value, done, path
 
-    # update the edges contained within path with
+    # Method that update the edges contained within path with
     # the results of the previous tree traversal
+    # In: node that MCTS terminated at, value of the outcome of the tree traversal, path taken during tree traversal
+    # Out: None
     def backpropagation(self, leaf_node, value, path):
         current_player = hnef_game.turn(leaf_node.state)
 
@@ -154,5 +164,6 @@ class MCTS():
             edge.metrics['W'] = edge.metrics['W'] + value * direction
             edge.metrics['Q'] = edge.metrics['W'] / edge.metrics['N']
 
+    # Method to add a new node to the tree
     def add_node(self, node):
         self.tree[node.id] = node
