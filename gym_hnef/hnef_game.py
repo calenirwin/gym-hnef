@@ -162,25 +162,25 @@ def check_capture(state, action):
     ## capturing the king normally
 
     # capturing upwards
-    if x > 1 and state[df][x-1][y] == 2 and state[current_player][x-2][y] > 0:
+    if x > 1 and state[df][x-1][y] == 2 and state[at][x-2][y] > 0 and not state[df][throne[0]][throne[0]]:
         state[df][x-1][y] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     # capturing downwards
-    if x < board_size - 2 and state[df][x+1][y] == 2 and state[current_player][x+2][y] > 0:
+    if x < board_size - 2 and state[df][x+1][y] == 2 and state[at][x+2][y] > 0 and not state[df][throne[0]][throne[0]]:
         state[df][x+1][y] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
     
     # capturing left
-    if y > 1 and state[df][x][y-1] == 2 and state[current_player][x][y-2] > 0:
+    if y > 1 and state[df][x][y-1] == 2 and state[at][x][y-2] > 0 and not state[df][throne[0]][throne[0]]:
         state[df][x][y-1] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     # capturing right
-    if y < board_size - 2 and state[df][x][y+1] == 2 and state[current_player][x][y+2] > 0:
+    if y < board_size - 2 and state[df][x][y+1] == 2 and state[at][x][y+2] > 0 and not state[df][throne[0]][throne[0]]:
         state[df][x][y+1] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
