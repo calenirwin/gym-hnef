@@ -91,6 +91,8 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
     players = { 0 :{"agent": p1, "name":p1.name},
                 1 : {"agent": p2, "name":p2.name}}
 
+    all_end_state = []
+
     done = 0
 
     for game in range(num_games+1):
@@ -112,6 +114,10 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
         elif turn == 0:
             scores[p2.name] += 1
 
+        all_end_states.append(state)
+
     print("Games Completed: ", num_games)
     print(scores)
+
+    return scores, all_end_states
 
