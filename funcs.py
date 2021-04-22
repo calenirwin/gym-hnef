@@ -81,3 +81,37 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 elif turn == 0:
                     scores[p2.name] += 1
     return scores, mem
+
+def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='terminal'):
+    # create gym environment
+    env = gym.make('gym_hnef:hnef-v0', rule_set=rule_set, render_mode=render_mode)
+    #  libary of how many games are won by each player, as well as draws
+    scores = {p1.name:0, 'draw':0, p2.name:0}
+    # library containing the agents
+    players = { 0 :{"agent": p1, "name":p1.name},
+                1 : {"agent": p2, "name":p2.name}}
+
+    done = 0
+
+    for game in range(num_games+1):
+
+        game +=1 
+
+        while done == 0:
+            action, _, _, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
+
+            state, reward, done, info = env.step(action)
+
+        # print the final game state
+        print('Game ', game, ' Finished.\nFinal Game State:\n', hnef_game.str(state))
+        # add the score to the player who won
+        if reward == 2:
+            scores['draw'] += 1
+        elif turn == 1:
+            scores[p1.name] += 1
+        elif turn == 0:
+            scores[p2.name] += 1
+
+    print("Games Completed: ", num_games)
+    print(scores)
+
