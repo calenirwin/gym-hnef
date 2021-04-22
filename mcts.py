@@ -44,7 +44,7 @@ class Node():
         # position = attacker_position + defender_position
         #id = ''.join(map(str,position)) #+ str(state[hnef_vars.TIME_CHNL, 0, 0])
         id = hash(str([state[0], state[1]]))
-        return id
+        return str(id)
 
     def set_node_id(self, id):
         self.id = id
