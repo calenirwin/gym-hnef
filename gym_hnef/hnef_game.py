@@ -51,6 +51,23 @@ def init_state(rule_set):
         state[hnef_vars.ATTACKER] = attacker_layout
         state[hnef_vars.DEFENDER] = defender_layout
         return state
+    
+    elif rule_set == 'mini':
+        state = np.zeros((hnef_vars.NUM_CHNLS, 5, 5))
+        attacker_layout = np.array([[0,1,0,1,0],
+                                    [1,0,0,0,1],
+                                    [0,0,0,0,0],
+                                    [1,0,0,0,1],
+                                    [0,1,0,1,0]])
+
+        defender_layout = np.array([[0,0,0,0,0],
+                                    [0,0,1,0,0],
+                                    [0,1,2,1,0],
+                                    [0,0,1,0,0],
+                                    [0,0,0,0,0]])
+
+        state[hnef_vars.ATTACKER] = attacker_layout
+        state[hnef_vars.DEFENDER] = defender_layout
         
     elif rule_set == "historical":
         state = np.zeros((hnef_vars.NUM_CHNLS, 9, 9))

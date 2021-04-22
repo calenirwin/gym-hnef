@@ -26,7 +26,7 @@ class Node():
         self.edges = []
 
     def __str__(self):
-        return "Node ID: " + self.id + "\nPlayer's Turn: " + str(self.turn) + "\nNumber of Edges: " + str(len(self.edges))
+        return "State: " + self.id + "\nPlayer's Turn: " + str(self.turn) + "\nNumber of Edges: " + str(len(self.edges))
         
     def is_leaf(self):
         # returns true if edges list is empty
@@ -65,6 +65,9 @@ class Edge():
             'Q': 0,
             'P': prior,
         }
+    
+    def __str__(self):
+        return "***Edge - Source State:\n" + str(self.source) + "\nAction: " + str(self.action) + "\nDestination State:\n" + str(self.dest)
 
 # Class that represents a Monte Carlo Search tree with 
 # a dict representing the tree itself, containing Nodes and Edges
@@ -82,7 +85,15 @@ class MCTS():
         return len(self.tree)
 
     def __str__(self):
-        return "Root: " + str(self.root) + "\nTree Length: "  + str(len(self))  
+        return "Root: " + str(self.root) + "\nTree Length: "  + str(len(self))
+
+    # Method to print out each state node that exists within the tree
+    def print_tree(self):
+        state_count = 1
+        for key in self.tree:
+            print("State Count: " + str(state_count) + str(tree[key]))
+            state_count += 1
+
 
     # Method to traverse/build the tree by simulating actions with the highest expected value
     # and keeping track of the actions taken

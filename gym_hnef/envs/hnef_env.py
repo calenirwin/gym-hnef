@@ -32,6 +32,12 @@ class HnefEnv(gym.Env):
             self.state = hnef_game.init_state('historical')
             self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 9, 9))
             self.action_space = gym.spaces.Discrete(6561)
+
+        elif rule_set.lower() == 'mini':
+            self.size = 5
+            self.state = hnef_game.init_state('mini')
+            self.observation_space = gym.spaces.Box(np.float32(0), np.float32(hnef_vars.NUM_CHNLS), shape=(hnef_vars.NUM_CHNLS, 5, 5))
+            self.action_space = gym.spaces.Discrete(625)
             
         else:
             self.size = 11

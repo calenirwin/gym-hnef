@@ -115,11 +115,11 @@ class Agent():
             
             probabilities = probabilities[possible_actions_ids] 
 
-            print("Evaluating leaf:\n", leaf)
-            print("Value: ", value)
-            print("Probs: ",probabilities)
-            print("Actions: ",possible_actions)
-            assert False
+            # print("Evaluating leaf:\n", leaf)
+            # print("Value: ", value)
+            # print("Probs: ",probabilities)
+            # print("Actions: ",possible_actions)
+            # assert False
 
             # loop through all possible actions at a given state
             for i, action in enumerate(possible_actions):
