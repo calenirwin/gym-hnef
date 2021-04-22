@@ -62,6 +62,7 @@ class Agent():
         
         for sim in range(self.num_sims):
             self.simulate()
+            self.mcts.print_tree()
         
         pi, values, = self.get_action_values(tau=1)
         
@@ -88,7 +89,7 @@ class Agent():
         logits = all_logits[0]
 
         possible_actions = hnef_game.compute_valid_moves(state)
-        print("State: \n" + hnef_game.str(state) + "Possible Actions:\n" + str(possible_actions))
+        # print("State: \n" + hnef_game.str(state) + "Possible Actions:\n" + str(possible_actions))
 
         possible_actions_ids = []
 
