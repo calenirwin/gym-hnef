@@ -96,8 +96,10 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
     done = 0
 
     for game in range(num_games+1):
-
+        
         game +=1 
+
+        state = env.reset()
 
         while done == 0:
             action, _, _, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
