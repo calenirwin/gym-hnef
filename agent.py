@@ -87,6 +87,7 @@ class Agent():
         logits = all_logits[0]
 
         possible_actions = hnef_game.compute_valid_moves(state)
+        print("State: \n" + hnef_game.str(state) + "Possible Actions:\n" + str(possible_actions))
 
         possible_actions_ids = []
 
