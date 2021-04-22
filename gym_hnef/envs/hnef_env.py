@@ -69,7 +69,7 @@ class HnefEnv(gym.Env):
             other_first = self.all_actions[-6]
 
             if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
-               # print("***Repitition condition met")
+                print("***Repitition condition met")
                 self.done = True
                 winner = hnef_game.turn(self.state)
 
@@ -77,6 +77,7 @@ class HnefEnv(gym.Env):
         if np.max(self.state[hnef_vars.TIME_CHNL]) > 300:
             self.done = True
             winner = 2
+            print("***Exceeded time limit")
         else:
             self.state[hnef_vars.TIME_CHNL] += 1
 
