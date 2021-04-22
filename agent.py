@@ -128,11 +128,14 @@ class Agent():
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
                 # if the node doesn't already exist in the tree, create it
-                if monte.Node(new_state).id not in self.mcts.tree:
+                new_node_id = str(hash(str([new_state[0], new_state[1]])))
+
+                if new_node_id not in self.mcts.tree:
                     node = monte.Node(new_state)
                     self.mcts.add_node(node)
                 else:
-                    node = self.mcts.tree[monte.Node(new_state).id]
+                    print("I am a node that already exists: " + new_node_id)
+                    node = self.mcts.tree[new_node_id]
 
                 # set the source node as the leaf and the dest node aka 'node' as the state of a given action
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
