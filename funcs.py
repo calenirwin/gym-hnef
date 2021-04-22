@@ -94,11 +94,10 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
     all_end_states = []
 
     done = 0
+    p1.mcts = None
+    p2.mcts = None
 
-    for game in range(num_games+1):
-        
-        game +=1 
-
+    for game in range(num_games):
         state = env.reset()
 
         while done == 0:
@@ -107,20 +106,21 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
             state, reward, done, info = env.step(action)
             # current player
             turn = info['turn']
+            
+            if done == 1:
+                # print the final game state
+                print('Game ' + game + ' Final State:\n' + hnef_game.str(state))
+                # add the score to the player who won
+                if reward == 2:
+                    scores['draw'] += 1
+                elif turn == 1:
+                    scores[p1.name] += 1
+                elif turn == 0:
+                    scores[p2.name] += 1
 
-        # print the final game state
-        print('Game ', game, ' Finished.\nFinal Game State:\n', hnef_game.str(state))
-        # add the score to the player who won
-        if reward == 2:
-            scores['draw'] += 1
-        elif turn == 1:
-            scores[p1.name] += 1
-        elif turn == 0:
-            scores[p2.name] += 1
+                all_end_states.append(state)
 
-        all_end_states.append(state)
-
-    print("Games Completed: ", num_games)
+    print("\nScores after " + str(num_games) + " games completed") 
     print(scores)
 
     return scores, all_end_states
