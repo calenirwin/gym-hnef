@@ -109,7 +109,7 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
             
             if done == 1:
                 # print the final game state
-                print('Game ' + game + ' Final State:\n' + hnef_game.str(state))
+                print('Game ' + str(game) + ' Final State:\n' + hnef_game.str(state))
                 # add the score to the player who won
                 if reward == 2:
                     scores['draw'] += 1
