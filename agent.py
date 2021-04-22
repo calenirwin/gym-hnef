@@ -114,15 +114,24 @@ class Agent():
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
             
             probabilities = probabilities[possible_actions_ids] 
-            
+
+            print("Evaluating leaf:\n", leaf)
+            print("Value: ", value)
+            print("Probs: ",probabilities)
+            print("Actions: ",possible_actions)
+            assert False
+
+            # loop through all possible actions at a given state
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
+                # if the node doesn't already exist in the tree, create it
                 if monte.Node(new_state).id not in self.mcts.tree:
                     node = monte.Node(new_state)
                     self.mcts.add_node(node)
                 else:
                     node = self.mcts.tree[monte.Node(new_state).id]
 
+                # set the source node as the leaf and the dest node aka 'node' as the state of a given action
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
             
