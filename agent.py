@@ -16,6 +16,7 @@ import mcts as monte
 from mcts import Node
 
 import action_ids
+import small_action_space as small_action_ids
 
 
 class RandomAgent():
@@ -92,7 +93,7 @@ class Agent():
         possible_actions_ids = []
 
         for i in range(len(possible_actions)):
-            possible_actions_ids.append(action_ids.get_id(possible_actions[i]))
+            possible_actions_ids.append(small_action_ids.get_id(possible_actions[i]))
         possible_actions_ids = np.array(possible_actions_ids)
 
         # not sure what is going on here
