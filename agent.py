@@ -17,6 +17,18 @@ from mcts import Node
 
 import action_ids
 
+
+class RandomAgent():
+    def __init__(self, name, state_size, action_size):
+        self.name = name
+        self.state_size = state_size
+        self.action_size = action_size
+
+    # Method for the random agent to pick a valid action randomly
+    def act(self, state, tau):
+        valid_moves = hnef_game.compute_valid_moves(state)
+        return valid_moves[random.randrange(len(valid_moves))]
+
 class Agent():
     def __init__(self, name, model, state_size, action_size):
         super().__init__()
