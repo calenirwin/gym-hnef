@@ -231,9 +231,9 @@ def next_state(state, action):
     
     # assert that the action is valid i.e. that the action is in state[valid_actions]
     valid_moves = compute_valid_moves(state)
-    
+
     if action not in valid_moves:
-        print("***Invalid action: " + str(action))
+        print("***Invalid action: ", action)
         assert False
 
     if state[current_player][action[0][0]][action[0][1]] == 2:
