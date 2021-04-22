@@ -116,11 +116,10 @@ class Agent():
             probabilities = probabilities[possible_actions_ids] # what is going on here?
             
             for i, action in enumerate(possible_actions):
-                # print('1', leaf.state[0]+leaf.state[1])
                 new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
-                # print('2', leaf.state[0]+leaf.state[1])
                 if monte.Node(new_state).id not in self.mcts.tree:
                     node = monte.Node(new_state)
+                    self.mcts.add_node(node)
                 else:
                     node = self.mcts.tree[monte.Node(new_state).id]
 
