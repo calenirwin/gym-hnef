@@ -185,6 +185,7 @@ class Agent():
     # Method for changing the current root (state) in the MCTS
     def change_root_mcts(self, state):
         new_root = monte.Node(state)
+        print("Changed root:\n New root edges: " + str(len(self.mcts.root.edges)))
         self.mcts.root = self.mcts.tree[new_root.id]
 
     # Replays through the states in the long term memory and makes the neural network 

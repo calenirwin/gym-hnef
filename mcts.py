@@ -91,7 +91,7 @@ class MCTS():
     def print_tree(self):
         state_count = 1
         for key in self.tree:
-            print("State Count: " + str(state_count) + str(self.tree[key]))
+            print("State Count: " + str(state_count) + "\n" + str(self.tree[key]))
             state_count += 1
 
 
