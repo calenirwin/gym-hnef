@@ -123,7 +123,7 @@ class Agent():
             # print("Probs: ",probabilities)
             # print("Actions: ",possible_actions)
             # assert False
-
+            numedge = 0
             # loop through all possible actions at a given state
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
@@ -137,7 +137,8 @@ class Agent():
                 # set the source node as the leaf and the dest node aka 'node' as the state of a given action
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
-            
+                numedge += 1
+            print('Number of edges added: ', numedge)
         return ((value, path))
 
     # Method for getting the action values of the possible actions in the curren state
