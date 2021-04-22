@@ -233,6 +233,7 @@ def next_state(state, action):
     valid_moves = compute_valid_moves(state)
 
     if action not in valid_moves:
+        print(str(state))
         print("***Invalid action: ", action)
         assert False
 
