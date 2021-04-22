@@ -68,6 +68,7 @@ def init_state(rule_set):
 
         state[hnef_vars.ATTACKER] = attacker_layout
         state[hnef_vars.DEFENDER] = defender_layout
+        return state
         
     elif rule_set == "historical":
         state = np.zeros((hnef_vars.NUM_CHNLS, 9, 9))
