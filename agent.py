@@ -67,11 +67,11 @@ class Agent():
         
         action, value = self.choose_action(pi, values, tau)
         
-        next_state, _, _ = hnef_game.simulate_step(state, action_ids.action_id[action])
+        next_state, _, _ = hnef_game.simulate_step(state, small_action_ids.action_id[action])
         
         NN_value = -self.get_predictions(next_state)[0]
         
-        return (action_ids.action_id[action], pi, value, NN_value)
+        return (small_action_ids.action_id[action], pi, value, NN_value)
 
     # Method for getting the predictions of values from the neural network
     # In: self, state (current state)
@@ -148,7 +148,7 @@ class Agent():
         values = np.zeros(self.action_size, dtype=np.float32)
 
         for action, edge in edges:
-            action_id = action_ids.get_id(action)
+            action_id = small_action_ids.get_id(action)
             pi[action_id] = np.power(edge.metrics['N'],(1/tau))
             values[action_id] = edge.metrics['Q']
         
