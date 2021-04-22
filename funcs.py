@@ -91,7 +91,7 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
     players = { 0 :{"agent": p1, "name":p1.name},
                 1 : {"agent": p2, "name":p2.name}}
 
-    all_end_state = []
+    all_end_states = []
 
     done = 0
 
@@ -103,6 +103,8 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
             action, _, _, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
 
             state, reward, done, info = env.step(action)
+            # current player
+            turn = info['turn']
 
         # print the final game state
         print('Game ', game, ' Finished.\nFinal Game State:\n', hnef_game.str(state))
