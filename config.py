@@ -33,46 +33,46 @@ HIDDEN_CNN_LAYERS = [
 	  , {'filters':256, 'kernel_size': (3, 3)}
 	  , {'filters':256, 'kernel_size': (3, 3)}
 	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
-	  , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
+	#   , {'filters':256, 'kernel_size': (3, 3)}
 	]
 
 #### EVALUATION
