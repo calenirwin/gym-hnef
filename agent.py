@@ -173,7 +173,11 @@ class Agent():
             for i in possible_actions_ids:
                 probs.append(probabilities[i])
             probabilities = probs 
-
+            valid_moves = hnef_game.compute_valid_moves(leaf.state)
+            if possible_actions != valid_moves:
+                print('Turn:', hnef_game.turn(leaf.state))
+                print('Possible actions: ', possible_actions)
+                print('Actual valid moves: ', valid_moves )
             # print("Evaluating leaf:\n", leaf)
             # print("Value: ", value)
             # print("Probs: ",probabilities)
