@@ -78,8 +78,10 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                     scores['draw'] += 1
                 elif turn == 1:
                     scores[p1.name] += 1
+                    print('Attacker win')
                 elif turn == 0:
                     scores[p2.name] += 1
+                    print('Defender win')
     return scores, mem
 
 def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='terminal'):

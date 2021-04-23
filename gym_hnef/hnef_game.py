@@ -229,14 +229,17 @@ def next_state(state, action):
     # define the current player
     current_player = turn(state)
     
-    # assert that the action is valid i.e. that the action is in state[valid_actions]
-    # valid_moves = compute_valid_moves(state)
+    # switch turns
+    state[hnef_vars.TURN_CHNL][0][0] = np.abs(current_player - 1)
 
-    # if action not in valid_moves:
-    #     print("Valid moves: ", valid_moves)
-    #     print(str(state))
-    #     print("***Invalid action: ", action)
-    #     assert False
+    # assert that the action is valid i.e. that the action is in state[valid_actions]
+    valid_moves = compute_valid_moves(state)
+
+    if action not in valid_moves:
+        print("Valid moves: ", valid_moves)
+        print(str(state))
+        print("***Invalid action: ", action)
+        assert False
 
     if state[current_player][action[0][0]][action[0][1]] == 2:
         state[current_player][action[0][0]][action[0][1]] = 0
@@ -247,9 +250,6 @@ def next_state(state, action):
 
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
-
-    # switch turns
-    state[hnef_vars.TURN_CHNL][0][0] = np.abs(current_player - 1)
 
     return state
 
@@ -429,6 +429,15 @@ def simulate_next_state(state, action):
 
     # define the current player
     current_player = turn(state_copy)
+
+    # assert that the action is valid i.e. that the action is in state[valid_actions]
+    valid_moves = compute_valid_moves(state)
+
+    if action not in valid_moves:
+        print("Valid moves: ", valid_moves)
+        print(str(state))
+        print("***Invalid action: ", action)
+        assert False
 
     if state_copy[current_player][action[0][0]][action[0][1]] == 2:
         state_copy[current_player][action[0][0]][action[0][1]] = 0
