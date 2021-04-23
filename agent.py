@@ -117,7 +117,7 @@ class Agent():
         if done == 0:
             
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
-            
+            print(possible_actions)
             probabilities = probabilities[possible_actions_ids] 
 
             # print("Evaluating leaf:\n", leaf)
