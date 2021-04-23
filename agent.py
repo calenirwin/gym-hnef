@@ -150,6 +150,7 @@ class Agent():
     # Out: pi (policy), values of the actions
     def get_action_values(self, tau):
         edges = self.mcts.root.edges
+        print(len(edges))
         pi = np.zeros(self.action_size, dtype=np.integer)
         values = np.zeros(self.action_size, dtype=np.float32)
 
