@@ -90,7 +90,7 @@ class Agent():
         if action not in valid_moves:
             print("Valid moves: ", valid_moves)
             print("***Invalid action in agent.py> act(): ", action)
-            print('Edges in the current root:\n', str(rootedges))
+            print('Edges in the current root:\n', rootedges)
             assert False
         
         return (action, pi)
