@@ -110,13 +110,9 @@ class MCTS():
         prev_actions = []   # used to detect repetition problem
 
         current_node = self.root    # always begin traversal at the root of the tree
-        counter = 0
+
         # until you reach the end of the tree (no more actions can be taken)
         while not current_node.is_leaf():
-            counter += 1
-
-            if counter > 100000:
-                assert False
             if current_node == self.root:
                 epsilon = config.EPSILON
                 NU = np.random.dirichlet([alpha] * len(current_node.edges)) # dirichlet distributed random variables
@@ -135,6 +131,9 @@ class MCTS():
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
                 Q = edge.metrics['Q']
                 # set the next simulated action/edge pair as the action/edge that produces the highest value for the resulting state
+                if edge in path:
+                    print(path)
+                
                 if (Q + U > max_QU and (edge not in path)):
                     max_QU = Q + U
                     next_simulated_action = action
@@ -143,20 +142,20 @@ class MCTS():
             prev_actions.append(action) # keep track of all simulated actions chosen
 
             # check to see if that last 6 actions were repetitions
-            # if len(prev_actions) > 6:
-            #     this_last   = prev_actions[-1]
-            #     this_next   = prev_actions[-3]
-            #     this_first  = prev_actions[-5]
-            #     other_last  = prev_actions[-2]
-            #     other_next  = prev_actions[-4]
-            #     other_first = prev_actions[-6]
-            #     # if a repetition is found, finish the tree traversal
-            #     if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
-            #         new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
-            #         current_node = next_simulated_edge.dest
-            #         path.append(next_simulated_edge)
-            #         print("***Repitition condition met in MCTS")
-            #         return current_node, value, done, path
+            if len(prev_actions) > 6:
+                this_last   = prev_actions[-1]
+                this_next   = prev_actions[-3]
+                this_first  = prev_actions[-5]
+                other_last  = prev_actions[-2]
+                other_next  = prev_actions[-4]
+                other_first = prev_actions[-6]
+                # if a repetition is found, finish the tree traversal
+                if (np.mean(this_last == this_next) == 1 and np.mean(this_last == this_first) == 1) and (np.mean(other_last == other_next) == 1 and np.mean(other_last == other_first) == 1):
+                    new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)
+                    current_node = next_simulated_edge.dest
+                    path.append(next_simulated_edge)
+                    print("***Repitition condition met in MCTS")
+                    return current_node, value, done, path
 
 
             new_state, value, done = hnef_game.simulate_step(current_node.state, next_simulated_action)    
