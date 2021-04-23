@@ -28,7 +28,7 @@ class RandomAgent():
     # Method for the random agent to pick a valid action randomly
     def act(self, state, tau):
         valid_moves = hnef_game.compute_valid_moves(state)
-        return valid_moves[random.randrange(len(valid_moves))], None, None, None
+        return valid_moves[random.randrange(len(valid_moves))], None
 
 class Agent():
     def __init__(self, name, model, state_size, action_size):
