@@ -234,6 +234,7 @@ def next_state(state, action):
 
     if action not in valid_moves:
         print("Picking a random action because given action was not in valid moves")
+        valid_moves = np.array(valid_moves)
         action = np.random.choice(valid_moves.reshape(-1))
 
     if state[current_player][action[0][0]][action[0][1]] == 2:
