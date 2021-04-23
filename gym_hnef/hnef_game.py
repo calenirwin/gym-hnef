@@ -145,52 +145,52 @@ def check_capture(state, action):
     ## capturing normal pieces with the throne
     
     # if the king is on the throne then the white pieces cant be captured in this way
-    if not (current_player == at and state[df][throne[0]][throne[0]] == 2):
+    if (current_player == at and state[df][throne[0]][throne[0]] < 2):
         # capturing upwards
-        if x > 1 and state[other_player][x-1][y] == 1 and np.mean(state[current_player][x-2][y] == throne):
+        if x > 1 and state[other_player][x-1][y] == 1 and np.mean((x-2, y) == throne):
             state[other_player][x-1][y] = 0
         # capturing downwards
-        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and np.mean(state[current_player][x+2][y] == throne):
+        elif x < board_size - 2 and state[other_player][x+1][y] == 1 and np.mean((x+2, y) == throne):
             state[other_player][x+1][y] = 0
         # capturing left
-        elif y > 1 and state[other_player][x][y-1] == 1 and np.mean(state[current_player][x][y-2] == throne):
+        elif y > 1 and state[other_player][x][y-1] == 1 and np.mean((x, y-2) == throne):
             state[other_player][x][y-1] = 0
         # capturing right
-        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and np.mean(state[current_player][x][y+2] == throne):
+        elif y < board_size - 2 and state[other_player][x][y+1] == 1 and np.mean((x, y+2) == throne):
             state[other_player][x][y+1] = 0
     
     ## capturing the king normally
 
     # capturing upwards
-    if x > 1 and state[df][x-1][y] == 2 and state[at][x-2][y] > 0 and not state[df][throne[0]][throne[0]]:
+    if x > 1 and state[df][x-1][y] == 2 and state[at][x-2][y] > 0 and state[df][throne[0]][throne[0]] < 2:
         state[df][x-1][y] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     # capturing downwards
-    if x < board_size - 2 and state[df][x+1][y] == 2 and state[at][x+2][y] > 0 and not state[df][throne[0]][throne[0]]:
+    if x < board_size - 2 and state[df][x+1][y] == 2 and state[at][x+2][y] > 0 and state[df][throne[0]][throne[0]] < 2:
         state[df][x+1][y] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
     
     # capturing left
-    if y > 1 and state[df][x][y-1] == 2 and state[at][x][y-2] > 0 and not state[df][throne[0]][throne[0]]:
+    if y > 1 and state[df][x][y-1] == 2 and state[at][x][y-2] > 0 and state[df][throne[0]][throne[0]] < 2:
         state[df][x][y-1] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     # capturing right
-    if y < board_size - 2 and state[df][x][y+1] == 2 and state[at][x][y+2] > 0 and not state[df][throne[0]][throne[0]]:
+    if y < board_size - 2 and state[df][x][y+1] == 2 and state[at][x][y+2] > 0 and state[df][throne[0]][throne[0]] < 2:
         state[df][x][y+1] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
 
     ## capturing the king on the throne
     if (state[df][throne[0]][throne[0]] == 2 
-        and state[at][throne[0]-1][throne[0]] 
-        and state[at][throne[0]+1][throne[0]] 
-        and state[at][throne[0]][throne[0]-1] 
-        and state[at][throne[0]][throne[0]]+1):
+        and state[at][throne[0]-1][throne[0]] > 0
+        and state[at][throne[0]+1][throne[0]] > 0
+        and state[at][throne[0]][throne[0]-1] > 0
+        and state[at][throne[0]][throne[0]+1] > 0):
         state[df][throne[0]][throne[0]] = 0
         state[hnef_vars.DONE_CHNL] = 1
         return state
@@ -199,22 +199,22 @@ def check_capture(state, action):
 
     if current_player == at:
         # king is above throne
-        if state[df][throne[0]-1][throne[0]] == 2 and state[at][throne[0]-1][throne[0]-1] and state[at][throne[0]-1][throne[0]+1] and state[at][throne[0]-2][throne[0]]:
+        if state[df][throne[0]-1][throne[0]] == 2 and state[at][throne[0]-1][throne[0]-1] > 0 and state[at][throne[0]-1][throne[0]+1] > 0 and state[at][throne[0]-2][throne[0]] > 0:
             state[df][throne[0]-1][throne[0]] = 0
             state[hnef_vars.DONE_CHNL] = 1
             return state
         # king is below throne  
-        elif state[df][throne[0]+1][throne[0]] == 2 and state[at][throne[0]+1][throne[0]-1] and state[at][throne[0]+1][throne[0]+1] and state[at][throne[0]+2][throne[0]]:
+        elif state[df][throne[0]+1][throne[0]] == 2 and state[at][throne[0]+1][throne[0]-1] > 0 and state[at][throne[0]+1][throne[0]+1] > 0 and state[at][throne[0]+2][throne[0]] > 0:
             state[df][throne[0]+1][throne[0]] = 0
             state[hnef_vars.DONE_CHNL] = 1
             return state
         # king is left of throne 
-        elif state[df][throne[0]][throne[0]-1] == 2 and state[at][throne[0]-1][throne[0]-1] and state[at][throne[0]+1][throne[0]-1] and state[at][throne[0]][throne[0]-2]:
+        elif state[df][throne[0]][throne[0]-1] == 2 and state[at][throne[0]-1][throne[0]-1] > 0 and state[at][throne[0]+1][throne[0]-1] > 0 and state[at][throne[0]][throne[0]-2] > 0:
             state[df][throne[0]][throne[0]-1] = 0
             state[hnef_vars.DONE_CHNL] = 1
             return state
         # king is right of throne 
-        elif state[df][throne[0]][throne[0]+1] == 2 and state[at][throne[0]-1][throne[0]+1] and state[at][throne[0]+1][throne[0]+1] and state[at][throne[0]][throne[0]+2]:
+        elif state[df][throne[0]][throne[0]+1] == 2 and state[at][throne[0]-1][throne[0]+1] > 0 and state[at][throne[0]+1][throne[0]+1] > 0 and state[at][throne[0]][throne[0]+2] > 0:
             state[df][throne[0]][throne[0]+1] = 0
             state[hnef_vars.DONE_CHNL] = 1
             return state
