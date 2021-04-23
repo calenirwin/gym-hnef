@@ -89,7 +89,6 @@ class Agent():
 
         if action not in valid_moves:
             print("Valid moves: ", valid_moves)
-            print(str(state))
             print("***Invalid action in agent.py> act(): ", action)
             print('Edges in the current root:', rootedges)
             assert False
@@ -207,9 +206,11 @@ class Agent():
             actions = np.argwhere(pi == max(pi))
             # print('Actions: ', actions)
             action = np.random.choice(actions.reshape(-1))
+            print("action when tau = 0")
         else:
             action_idx = np.random.multinomial(1, pi)
             action = np.where(action_idx==1)[0][0]
+            print("action when tau != 0")
 
         value = values[action]
         
