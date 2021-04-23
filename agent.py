@@ -164,7 +164,8 @@ class Agent():
             action_id = small_action_ids.get_id(action)
             pi[action_id] = np.power(edge.metrics['N'],(1/tau))
             values[action_id] = edge.metrics['Q']
-        print('Sum of all possibilities:', np.sum(pi))
+        print('Sum of all policy values:', np.sum(pi))
+        print('Policy values: ', pi)
         pi = pi/float(np.sum(pi))
 
         return pi, values
