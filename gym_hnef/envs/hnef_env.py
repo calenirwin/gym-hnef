@@ -60,7 +60,9 @@ class HnefEnv(gym.Env):
         
         self.all_states.append(self.state)  # keep track of all game states
         self.all_actions.append(action)  # keep track of all actions taken
+        print('Turn before transition: ', self.turn())
         self.state = hnef_game.next_state(self.state, action)   # get next state
+        print('Turn after transition: ', self.turn())
         self.done, winner = hnef_game.is_over(self.state, action)       # check if the game is over
 
         # check for repetition
