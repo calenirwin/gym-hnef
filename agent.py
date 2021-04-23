@@ -168,8 +168,8 @@ class Agent():
             pi[action_id] = np.power(edge.metrics['N'],(1/tau))
             values[action_id] = edge.metrics['Q']
         
-        # if np.sum(pi) != 0:
-        pi = pi/float(np.sum(pi))
+        if np.sum(pi) != 0:
+            pi = pi/float(np.sum(pi))
 
         return pi, values
 
