@@ -131,7 +131,7 @@ class MCTS():
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
                 Q = edge.metrics['Q']
                 # set the next simulated action/edge pair as the action/edge that produces the highest value for the resulting state
-                if Q + U > max_QU:
+                if (Q + U > max_QU and (edge not in path)):
                     max_QU = Q + U
                     next_simulated_action = action
                     next_simulated_edge = edge
