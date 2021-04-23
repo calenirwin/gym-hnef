@@ -200,7 +200,7 @@ class Agent():
     # In: self, pi (policy), values of the actions, tau (controls exploration)
     # Out: action selected and its value
     def choose_action(self, pi, values, tau):
-        
+        print("tau: ", tau)
         # print('Pi:', pi)
         if tau == 0:
             actions = np.argwhere(pi == max(pi))
