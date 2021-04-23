@@ -86,6 +86,10 @@ class Agent():
         
         # NN_value = -self.get_predictions(next_state)[0]
         valid_moves = hnef_game.compute_valid_moves(state)
+
+        if action not in valid_moves:
+            fix_leaf(self.mcts.root)
+
         
         return (action, pi)
 
@@ -128,6 +132,28 @@ class Agent():
         probabilities = odds / np.sum(odds)
 
         return ((values, probabilities, possible_actions, possible_actions_ids))
+    
+    def fix_leaf(self, leaf):
+        print('I fix the leaf')
+        state_copy = np.copy(leaf.state)
+        leaf.edges = []
+        values, probabilities, possible_actions, possible_actions_ids = self.get_predictions(state_copy)
+
+        for i, action in enumerate(possible_actions):
+            new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
+            # if the node doesn't already exist in the tree, create it
+            new_node_id = str(hash(str([new_state[0], new_state[1]])))
+            
+            if new_node_id not in self.mcts.tree:
+                    node = monte.Node(new_state)
+                    self.mcts.add_node(node)
+            else:
+                # print("I am a node that already exists: " + new_node_id)
+                node = self.mcts.tree[new_node_id]
+
+            # set the source node as the leaf and the dest node aka 'node' as the state of a given action
+            new_edge = monte.Edge(leaf, node, probabilities[i], action)
+            self.mcts.tree[leaf.id].edges.append((action, new_edge))
 
     # Method for evaluating a leaf, creates a new leaf node if the game isn't finished
     # In: leaf Node, value (reward), done boolean, path taken to the leaf
