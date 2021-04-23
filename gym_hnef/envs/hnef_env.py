@@ -119,6 +119,9 @@ class HnefEnv(gym.Env):
                 return 1
             elif winner == 2:
                 return 2
+            elif winner == -1:
+                print('Something wrong happen')
+                assert False
             else:
                 return 0
 

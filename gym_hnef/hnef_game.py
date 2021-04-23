@@ -375,32 +375,28 @@ def check_enclosure(state, action):
 # In: state (current state), action (action that was just taken)
 # Out: boolean (is the game over?), player who won
 def is_over(state, action):
-    if (state is not None):
-        at = hnef_vars.ATTACKER
-        df = hnef_vars.DEFENDER
-        full_board = state[at] + state[df]
-        board_size = state.shape[1]    
-        # current player
-        player = int(np.max(state[hnef_vars.TURN_CHNL]))
-        # other player
-        other_player = np.abs(player - 1)
-
-        # has the king been captured?
-        if np.max(state[df]) < 2:
-            # print("***King captured")
-            return True, at
-        # has the king escaped?
-        elif np.max(state[df][0]) == 2 or np.max(state[df][:,0]) == 2 or np.max(state[df][:,board_size-1]) == 2 or np.max(state[df][board_size-1]) == 2:
-            # print("***King escaped")
-            return True, df
-        # has the attacker enclosed the defender?
-        # elif check_enclosure(state,action)[0]:
-        #     return True, at
-        # no win
-        else:
-            return False, -1
+    at = hnef_vars.ATTACKER
+    df = hnef_vars.DEFENDER
+    full_board = state[at] + state[df]
+    board_size = state.shape[1]    
+    # current player
+    player = int(np.max(state[hnef_vars.TURN_CHNL]))
+    # other player
+    other_player = np.abs(player - 1)
+    # has the king been captured?
+    if np.max(state[df]) < 2:
+        # print("***King captured")
+        return True, at
+    # has the king escaped?
+    elif np.max(state[df][0]) == 2 or np.max(state[df][:,0]) == 2 or np.max(state[df][:,board_size-1]) == 2 or np.max(state[df][board_size-1]) == 2:
+        # print("***King escaped")
+        return True, df
+    # has the attacker enclosed the defender? NOT IMPLEMENTED
+    # elif check_enclosure(state,action)[0]:
+    #     return True, at
+    # no win
     else:
-        return False, 1
+        return False, -1
 
 # Method for simulating a step taken, without changing the current state
 # In: state (current state), action (action selected)
