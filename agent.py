@@ -58,11 +58,11 @@ class Agent():
     # In: self, state (current state), tau (exploratory constant)
     # Out: action selected, current policy and values as well as values from the neural network
     def act(self, state, tau):
-        print("Initial State in Act: ", hnef_game.str(state))
+        # print("Initial State in Act: ", hnef_game.str(state))
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
             self.build_mcts(state)
         else:
-            print("I change the root!")
+            # print("I change the root!")
             self.change_root_mcts(state)
         
         for sim in range(self.num_sims):
@@ -72,7 +72,7 @@ class Agent():
         rootedges = []
         for e in self.mcts.root.edges:
             rootedges.append(e[0])
-        print('Edges in the current root:', rootedges)
+        # print('Edges in the current root:', rootedges)
 
         pi, values, = self.get_action_values(tau=1)
         
