@@ -43,9 +43,9 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
 
             # pick action
             if t < turn_until_tau0:
-                action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
+                action, pi = players[hnef_game.turn(state)]['agent'].act(state, 1)
             else:
-                action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 0)
+                action, pi = players[hnef_game.turn(state)]['agent'].act(state, 0)
 
             # commit to the short term memory
             if mem != None:
