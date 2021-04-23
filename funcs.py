@@ -58,6 +58,8 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
             turn = info['turn']
             # other player
             other_turn = np.abs(int(turn) - 1)
+
+            state[hnef_vars.TURN_CHNL, 0, 0] = np.abs(turn - 1)
             
             # if game is finished
             if done == 1:
