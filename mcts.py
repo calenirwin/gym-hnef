@@ -23,7 +23,7 @@ class Node():
         self.id = self.get_state_id(state)
         self.turn = hnef_game.turn(state)
 
-        self.edges = []
+        self.edges = [] # tuple pairs of (action, Edge)
 
     def __str__(self):
         return "State: " + self.id + "\nPlayer's Turn: " + str(self.turn) + "\nNumber of Edges: " + str(len(self.edges))
@@ -71,7 +71,7 @@ class Edge():
         }
     
     def __str__(self):
-        return "***Edge - Source State:\n" + str(self.source) + "\nAction: " + str(self.action) + "\nDestination State:\n" + str(self.dest)
+        return "Edge => Source State:" + str(self.source) + ", Action: " + str(self.action) + ", Turn: " + str(self.turn) + ", Destination State:" + str(self.dest)
 
 # Class that represents a Monte Carlo Search tree with 
 # a dict representing the tree itself, containing Nodes and Edges

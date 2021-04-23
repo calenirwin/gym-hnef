@@ -71,7 +71,7 @@ class Agent():
         
         rootedges = []
         for e in self.mcts.root.edges:
-            rootedges.append(e[0])
+            rootedges.append(e[1])
         
 
         pi, values, = self.get_action_values(tau=1)
@@ -90,7 +90,7 @@ class Agent():
         if action not in valid_moves:
             print("Valid moves: ", valid_moves)
             print("***Invalid action in agent.py> act(): ", action)
-            print('Edges in the current root:', rootedges)
+            print('Edges in the current root:\n', str(rootedges))
             assert False
         
         return (action, pi)
@@ -200,17 +200,12 @@ class Agent():
     # In: self, pi (policy), values of the actions, tau (controls exploration)
     # Out: action selected and its value
     def choose_action(self, pi, values, tau):
-        print("tau: ", tau)
-        # print('Pi:', pi)
         if tau == 0:
             actions = np.argwhere(pi == max(pi))
-            # print('Actions: ', actions)
             action = np.random.choice(actions.reshape(-1))
-            print("action when tau = 0")
         else:
             action_idx = np.random.multinomial(1, pi)
             action = np.where(action_idx==1)[0][0]
-            print("action when tau != 0")
 
         value = values[action]
         
