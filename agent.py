@@ -72,7 +72,7 @@ class Agent():
         rootedges = []
         for e in self.mcts.root.edges:
             rootedges.append(e[0])
-        # print('Edges in the current root:', rootedges)
+        
 
         pi, values, = self.get_action_values(tau=1)
         
@@ -91,6 +91,7 @@ class Agent():
             print("Valid moves: ", valid_moves)
             print(str(state))
             print("***Invalid action in agent.py> act(): ", action)
+            print('Edges in the current root:', rootedges)
             assert False
         
         return (action, pi)
