@@ -81,7 +81,8 @@ class Agent():
             action = small_action_ids.action_id[action]
         else:
             action = action_ids.action_id[action]
-        next_state, _, _ = hnef_game.simulate_step(state, small_action_ids.action_id[action])
+
+        next_state, _, _ = hnef_game.simulate_step(state, action)
         
         # NN_value = -self.get_predictions(next_state)[0]
         valid_moves = hnef_game.compute_valid_moves(state)
