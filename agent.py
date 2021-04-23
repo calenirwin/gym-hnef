@@ -89,7 +89,7 @@ class Agent():
 
         if action not in valid_moves:
             print("****Action not in valid moves")
-            for i in len(self.mcts.all_states):
+            for i in range(len(self.mcts.all_states)):
                 print(hnef_game.str(self.mcts.all_states[i]))
                 print("Action: ", str(self.mcts.all_actions[i]))
             
