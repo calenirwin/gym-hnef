@@ -387,7 +387,7 @@ def is_over(state, action):
 
         # has the king been captured?
         if np.max(state[df]) < 2:
-            # print("***King captured")
+            print("***King captured")
             return True, at
         # has the king escaped?
         elif np.max(state[df][0]) == 2 or np.max(state[df][:,0]) == 2 or np.max(state[df][:,board_size-1]) == 2 or np.max(state[df][board_size-1]) == 2:
