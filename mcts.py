@@ -85,6 +85,8 @@ class MCTS():
         self.cpuct = config.CPUCT
         self.add_node(root)
 
+        self.all_states = []
+
     def __len__(self):
         return len(self.tree)
 
