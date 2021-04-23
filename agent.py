@@ -78,11 +78,15 @@ class Agent():
         
         action, value = self.choose_action(pi, values, tau)
         
+        if self.action_size == 625:
+            action = small_action_ids.action_id[action]
+        else:
+            action = action_ids.action_id[action]
         # next_state, _, _ = hnef_game.simulate_step(state, small_action_ids.action_id[action])
         
         # NN_value = -self.get_predictions(next_state)[0]
         
-        return (small_action_ids.action_id[action], pi)
+        return (action, pi)
 
     # Method for getting the predictions of values from the neural network
     # In: self, state (current state)
@@ -104,7 +108,10 @@ class Agent():
         possible_actions_ids = []
 
         for i in range(len(possible_actions)):
-            possible_actions_ids.append(small_action_ids.get_id(possible_actions[i]))
+            if self.action_size == 625:
+                possible_actions_ids.append(small_action_ids.get_id(possible_actions[i]))
+            else:
+                possible_actions_ids.append(action_ids.get_id(possible_actions[i]))
         possible_actions_ids = np.array(possible_actions_ids)
 
         # print('Possible actions: ', len(possible_actions))
@@ -169,7 +176,10 @@ class Agent():
         values = np.zeros(self.action_size, dtype=np.float32)
 
         for action, edge in edges:
-            action_id = small_action_ids.get_id(action)
+            if self.action_size == 625:
+                action_id = small_action_ids.get_id(action)
+            else:
+                action_id = action_ids.get_id(action)
             pi[action_id] = np.power(edge.metrics['N'],(1/tau))
             values[action_id] = edge.metrics['Q']
         
