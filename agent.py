@@ -97,7 +97,7 @@ class Agent():
             possible_actions_ids.append(small_action_ids.get_id(possible_actions[i]))
         possible_actions_ids = np.array(possible_actions_ids)
 
-        print('Possible actions: ', len(possible_actions))
+        # print('Possible actions: ', len(possible_actions))
 
         # not sure what is going on here
         mask = np.ones(logits.shape, dtype=bool)
@@ -125,6 +125,7 @@ class Agent():
             # assert False
             numedge = 0
             # loop through all possible actions at a given state
+            print('Possible actions: ', len(possible_actions))
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
                 # if the node doesn't already exist in the tree, create it
@@ -139,9 +140,9 @@ class Agent():
 
                 # set the source node as the leaf and the dest node aka 'node' as the state of a given action
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
-                leaf.edges.append((action, new_edge))
+                self.mcts.tree[leaf.id].edges.append((action, new_edge))
                 numedge += 1
-            print('Number of edges added: ', numedge)
+            # print('Number of edges added: ', numedge)
         return ((value, path))
 
     # Method for getting the action values of the possible actions in the curren state
