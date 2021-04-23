@@ -111,6 +111,8 @@ class MCTS():
 
         current_node = self.root    # always begin traversal at the root of the tree
 
+        prev_nodes = [current_node.id]
+
         # until you reach the end of the tree (no more actions can be taken)
         while not current_node.is_leaf():
             if current_node == self.root:
@@ -131,15 +133,14 @@ class MCTS():
                 U = self.cpuct * ((1 - epsilon) * edge.metrics['P'] + epsilon * NU[i]) * np.sqrt(NB) / (1 + edge.metrics['N'])
                 Q = edge.metrics['Q']
                 # set the next simulated action/edge pair as the action/edge that produces the highest value for the resulting state
-                if edge in path:
-                    print(path)
                 
-                if (Q + U > max_QU and (edge not in path)):
+                if (Q + U > max_QU and (edge.dest.id not in prev_nodes)):
                     max_QU = Q + U
                     next_simulated_action = action
                     next_simulated_edge = edge
 
             prev_actions.append(action) # keep track of all simulated actions chosen
+            prev_nodes.append(next_simulated_edge.dest.id)
 
             # check to see if that last 6 actions were repetitions
             if len(prev_actions) > 6:
