@@ -6,7 +6,7 @@ import numpy as np
 def get_id(a):
     for i in range(len(action_id)):
         if a == action_id[i]:
-            return i
+            return int(i)
     return -1
 
 # List of all concievable actions in hnefatafl (a,b) -> (c,d) where 0 <= a,b,c,d <= 8, 
