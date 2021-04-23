@@ -88,6 +88,15 @@ class Agent():
 
         if action not in valid_moves:
             self.fix_leaf(self.mcts.root)
+            pi, values, = self.get_action_values(tau=1)
+        
+            action, value = self.choose_action(pi, values, tau)
+            
+            if self.action_size == 625:
+                action = small_action_ids.action_id[action]
+            else:
+                action = action_ids.action_id[action]
+
 
         
         return (action, pi)
@@ -135,7 +144,7 @@ class Agent():
     def fix_leaf(self, leaf):
         print('I fix the leaf')
         state_copy = np.copy(leaf.state)
-        state_copy[hnef_vars.TURN_CHNL, 0, 0] = np.abs(state_copy[hnef_vars.TURN_CHNL, 0, 0] - 1)
+        # state_copy[hnef_vars.TURN_CHNL, 0, 0] = np.abs(state_copy[hnef_vars.TURN_CHNL, 0, 0] - 1)
         leaf.edges = []
         values, probabilities, possible_actions, possible_actions_ids = self.get_predictions(state_copy)
 
