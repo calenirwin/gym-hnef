@@ -63,6 +63,8 @@ class Agent():
         for sim in range(self.num_sims):
             self.simulate()
             self.mcts.print_tree()
+            if sim == 2:
+                assert False
         
         pi, values, = self.get_action_values(tau=1)
         
