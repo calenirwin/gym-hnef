@@ -46,10 +46,13 @@ class Agent():
     #       moving to a terminal node, evaluating the leaf and updating the MCTS
     def simulate(self):
         leaf, value, done, path = self.mcts.traverse_tree()
+        print("Path length after tree traversal: " + str(len(path)))
         
         value, path = self.evaluate_leaf(leaf, value, done, path)
+        print("Path length after eval leaf: " + str(len(path)))
         
         self.mcts.backpropagation(leaf, value, path)
+        print("Path length after backprop: " + str(len(path)))
 
     # Method for running simulations and choosing an action
     # In: self, state (current state), tau (exploratory constant)
