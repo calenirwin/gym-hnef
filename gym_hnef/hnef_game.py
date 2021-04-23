@@ -228,7 +228,7 @@ def next_state(state, action):
 
     # define the current player
     current_player = turn(state)
-    print("Calling next state - current player = " + str(turn(state)))
+    print("Calling next state - current player = ", turn(state))
 
     # assert that the action is valid i.e. that the action is in state[valid_actions]
     valid_moves = compute_valid_moves(state)
@@ -246,7 +246,7 @@ def next_state(state, action):
 
     # check if the player just captured a piece and update the state if so
     state = check_capture(state, action)
-    print("After check capture - current player = " + str(turn(state)))
+    print("After check capture - current player = ", turn(state))
 
     # switch turns
     state[hnef_vars.TURN_CHNL][0][0] = np.abs(current_player - 1)
