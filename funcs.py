@@ -93,9 +93,12 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
     players = { 0 :{"agent": p1, "name":p1.name},
                 1 : {"agent": p2, "name":p2.name}}
 
+    players_switch_sides = { 1 :{"agent": p1, "name":p1.name},
+                             0 : {"agent": p2, "name":p2.name}}
+
     all_end_states = []
 
-    
+    switch_sides_flag = 0
 
     for game in range(num_games):
         state = env.reset()
@@ -103,28 +106,39 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
         done = 0
         p1.mcts = None
         p2.mcts = None
-        print("In main game loop")
 
         while done == 0:
-            action, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
+            if switch_sides_flag == 0:
+                action, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
+            else:
+                action, _ = players_switch_sides[hnef_game.turn(state)]['agent'].act(state, 0)
 
             state, reward, done, info = env.step(action)
             # current player
             turn = info['turn']
             
             if done == 1:
-                print("game finished")
                 # print the final game state
                 print('Game ' + str(game) + ' Final State:\n' + hnef_game.str(state))
                 # add the score to the player who won
-                if reward == 2:
-                    scores['draw'] += 1
-                elif turn == 1:
-                    scores[p1.name] += 1
-                elif turn == 0:
-                    scores[p2.name] += 1
+                if switch_sides_flag == 0:
+                    if reward == 2:
+                        scores['draw'] += 1
+                    elif turn == 1:
+                        scores[p1.name] += 1
+                    elif turn == 0:
+                        scores[p2.name] += 1
+                else:
+                    if reward == 2:
+                        scores['draw'] += 1
+                    elif turn == 0:
+                        scores[p1.name] += 1
+                    elif turn == 1:
+                        scores[p2.name] += 1
 
                 all_end_states.append(state)
+
+                switch_sides_flag = abs(switch_sides_flag - 1)  # make the agents play the other side
 
     print("\nScores after " + str(num_games) + " games completed") 
     print(scores)
