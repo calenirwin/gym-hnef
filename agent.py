@@ -83,16 +83,12 @@ class Agent():
             action = action_ids.action_id[action]
 
         self.mcts.all_states.append(state)
-
-        next_state, _, _ = hnef_game.simulate_step(state, action)
         
-        # NN_value = -self.get_predictions(next_state)[0]
         valid_moves = hnef_game.compute_valid_moves(state)
 
         if action not in valid_moves:
             for state in self.mcts.all_states:
                 print(hnef_game.str(state))
-            assert False
             
             self.fix_leaf(self.mcts.root)
             pi, values, = self.get_action_values(tau=1)
@@ -104,7 +100,7 @@ class Agent():
             else:
                 action = action_ids.action_id[action]
 
-        next_state, _, _ = hnef_game.simulate_step(state, action)
+        #next_state, _, _ = hnef_game.simulate_step(state, action)
 
         return (action, pi)
 
