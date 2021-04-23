@@ -62,7 +62,7 @@ class Agent():
         
         for sim in range(self.num_sims):
             self.simulate()
-            # self.mcts.print_tree()
+            self.mcts.print_tree()
         
         pi, values, = self.get_action_values(tau=1)
         
@@ -139,7 +139,7 @@ class Agent():
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
                 numedge += 1
-            # print('Number of edges added: ', numedge)
+            print('Number of edges added: ', numedge)
         return ((value, path))
 
     # Method for getting the action values of the possible actions in the curren state
