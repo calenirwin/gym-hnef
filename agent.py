@@ -83,12 +83,15 @@ class Agent():
             action = action_ids.action_id[action]
 
         self.mcts.all_states.append(state)
-        
+        self.mcts.all_actions.append(action)
+
         valid_moves = hnef_game.compute_valid_moves(state)
 
         if action not in valid_moves:
-            for state in self.mcts.all_states:
-                print(hnef_game.str(state))
+            print("****Action not in valid moves")
+            for i in len(self.mcts.all_states):
+                print(hnef_game.str(self.mcts.all_states[i]))
+                print("Action: ", str(self.mcts.all_actions[i]))
             
             self.fix_leaf(self.mcts.root)
             pi, values, = self.get_action_values(tau=1)

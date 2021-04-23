@@ -86,6 +86,7 @@ class MCTS():
         self.add_node(root)
 
         self.all_states = []
+        self.all_actions = []
 
     def __len__(self):
         return len(self.tree)
