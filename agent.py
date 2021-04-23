@@ -62,9 +62,7 @@ class Agent():
         
         for sim in range(self.num_sims):
             self.simulate()
-            self.mcts.print_tree()
-            if sim == 2:
-                assert False
+            # self.mcts.print_tree()
         
         pi, values, = self.get_action_values(tau=1)
         
@@ -115,9 +113,7 @@ class Agent():
     # Out: value of the leaf node, path taken to the leaf node
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
-            print(leaf.state.shape)
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
-            print(possible_actions)
             probabilities = probabilities[possible_actions_ids] 
 
             # print("Evaluating leaf:\n", leaf)
@@ -136,14 +132,14 @@ class Agent():
                     node = monte.Node(new_state)
                     self.mcts.add_node(node)
                 else:
-                    print("I am a node that already exists: " + new_node_id)
+                    # print("I am a node that already exists: " + new_node_id)
                     node = self.mcts.tree[new_node_id]
 
                 # set the source node as the leaf and the dest node aka 'node' as the state of a given action
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 leaf.edges.append((action, new_edge))
                 numedge += 1
-            print('Number of edges added: ', numedge)
+            # print('Number of edges added: ', numedge)
         return ((value, path))
 
     # Method for getting the action values of the possible actions in the curren state
@@ -191,7 +187,7 @@ class Agent():
     # Method for changing the current root (state) in the MCTS
     def change_root_mcts(self, state):
         new_root = monte.Node(state)
-        print("Changed root:\n New root edges: " + str(len(self.mcts.root.edges)))
+        # print("Changed root:\n New root edges: " + str(len(self.mcts.root.edges)))
         self.mcts.root = self.mcts.tree[new_root.id]
 
     # Replays through the states in the long term memory and makes the neural network 
