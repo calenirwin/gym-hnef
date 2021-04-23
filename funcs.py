@@ -42,7 +42,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
         while done == 0:
             # number of turns taken
             t += 1
-
+            print('Turn before picking: ',turn_var)
             # pick action
             if t < turn_until_tau0:
                 action, pi, MCTS_val, NN_val = players[turn_var]['agent'].act(state, 1)
@@ -50,7 +50,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                 action, pi, MCTS_val, NN_val = players[turn_var]['agent'].act(state, 0)
             
             turn_var = np.abs(turn_var - 1)
-                        
+            print('Turn after picking: ',turn_var)            
             # commit to the short term memory
             if mem != None:
                 mem.commit_stmemory(state, pi)
