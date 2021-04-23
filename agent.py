@@ -61,6 +61,7 @@ class Agent():
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
             self.build_mcts(state)
         else:
+            print("I change the root!")
             self.change_root_mcts(state)
         
         for sim in range(self.num_sims):
