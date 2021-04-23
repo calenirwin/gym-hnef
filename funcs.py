@@ -37,16 +37,20 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
         p1.mcts = None
         p2.mcts = None
 
+        turn_var = 0
+
         while done == 0:
             # number of turns taken
             t += 1
 
             # pick action
             if t < turn_until_tau0:
-                action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 1)
+                action, pi, MCTS_val, NN_val = players[turn_var]['agent'].act(state, 1)
             else:
-                action, pi, MCTS_val, NN_val = players[hnef_game.turn(state)]['agent'].act(state, 0)
-
+                action, pi, MCTS_val, NN_val = players[turn_var]['agent'].act(state, 0)
+            
+            turn_var = np.abs(turn_var - 1)
+                        
             # commit to the short term memory
             if mem != None:
                 mem.commit_stmemory(state, pi)
