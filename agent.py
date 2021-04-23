@@ -104,9 +104,8 @@ class Agent():
 
         # not sure what is going on here
         mask = np.ones(logits.shape, dtype=bool)
-        for i in range(len(mask)):
-            if i in possible_actions_ids:
-                mask[i] = False
+        for i in possible_actions_ids:
+            mask[i] = False
         logits[mask] = -100
 
         # apply softmax
@@ -122,9 +121,8 @@ class Agent():
         if done == 0:
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
             probs = []
-            for i in range(len(probabilities)):
-                if i in possible_actions_ids:
-                    probs.append(probabilities[i])
+            for i in possible_actions_ids:
+                probs.append(probabilities[i])
             probabilities = probs 
 
             # print("Evaluating leaf:\n", leaf)
