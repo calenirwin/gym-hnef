@@ -115,7 +115,7 @@ class Agent():
     # Out: value of the leaf node, path taken to the leaf node
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
-            
+            print(leaf.state.shape)
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
             print(possible_actions)
             probabilities = probabilities[possible_actions_ids] 
