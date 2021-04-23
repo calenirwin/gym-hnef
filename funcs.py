@@ -84,7 +84,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                     print('Defender win')
     return scores, mem
 
-def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='terminal'):
+def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='terminal', switch_sides=True):
     # create gym environment
     env = gym.make('gym_hnef:hnef-v0', rule_set=rule_set, render_mode=render_mode)
     #  libary of how many games are won by each player, as well as draws
@@ -108,10 +108,13 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
         p2.mcts = None
 
         while done == 0:
-            if switch_sides_flag == 0:
-                action, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
+            if switch_sides:
+                if switch_sides_flag == 0:
+                    action, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
+                else:
+                    action, _ = players_switch_sides[hnef_game.turn(state)]['agent'].act(state, 0)
             else:
-                action, _ = players_switch_sides[hnef_game.turn(state)]['agent'].act(state, 0)
+                action, _ = players[hnef_game.turn(state)]['agent'].act(state, 0)
 
             state, reward, done, info = env.step(action)
             # current player
@@ -121,19 +124,27 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
                 # print the final game state
                 print('Game ' + str(game) + ' Final State:\n' + hnef_game.str(state))
                 # add the score to the player who won
-                if switch_sides_flag == 0:
-                    if reward == 2:
-                        scores['draw'] += 1
-                    elif turn == 1:
-                        scores[p1.name] += 1
-                    elif turn == 0:
-                        scores[p2.name] += 1
+                if switch_sides:
+                    if switch_sides_flag == 0:
+                        if reward == 2:
+                            scores['draw'] += 1
+                        elif turn == 1:
+                            scores[p1.name] += 1
+                        elif turn == 0:
+                            scores[p2.name] += 1
+                    else:
+                        if reward == 2:
+                            scores['draw'] += 1
+                        elif turn == 0:
+                            scores[p1.name] += 1
+                        elif turn == 1:
+                            scores[p2.name] += 1
                 else:
                     if reward == 2:
-                        scores['draw'] += 1
-                    elif turn == 0:
-                        scores[p1.name] += 1
+                            scores['draw'] += 1
                     elif turn == 1:
+                        scores[p1.name] += 1
+                    elif turn == 0:
                         scores[p2.name] += 1
 
                 all_end_states.append(state)
