@@ -72,7 +72,6 @@ class Agent():
         rootedges = []
         for e in self.mcts.root.edges:
             rootedges.append(e[1])
-        
 
         pi, values, = self.get_action_values(tau=1)
         
@@ -136,6 +135,7 @@ class Agent():
     def fix_leaf(self, leaf):
         print('I fix the leaf')
         state_copy = np.copy(leaf.state)
+        state_copy[hnef_vars.TURN_CHNL, 0, 0] = np.abs(state_copy[hnef_vars.TURN_CHNL, 0, 0] - 1)
         leaf.edges = []
         values, probabilities, possible_actions, possible_actions_ids = self.get_predictions(state_copy)
 
