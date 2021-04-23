@@ -86,14 +86,6 @@ class Agent():
         
         # NN_value = -self.get_predictions(next_state)[0]
         valid_moves = hnef_game.compute_valid_moves(state)
-
-        if action not in valid_moves:
-            print("Valid moves: ", valid_moves)
-            print("***Invalid action in agent.py> act(): ", action)
-            print('Edges in the current root:')
-            for e in rootedges:
-                print(str(e))
-            assert False
         
         return (action, pi)
 

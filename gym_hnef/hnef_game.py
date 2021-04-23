@@ -233,10 +233,8 @@ def next_state(state, action):
     valid_moves = compute_valid_moves(state)
 
     if action not in valid_moves:
-        print("Valid moves: ", valid_moves)
-        print(str(state))
-        print("***Invalid action: ", action)
-        assert False
+        print("Picking a random action because given action was not in valid moves")
+        action = np.random.choice(valid_moves)
 
     if state[current_player][action[0][0]][action[0][1]] == 2:
         state[current_player][action[0][0]][action[0][1]] = 0
