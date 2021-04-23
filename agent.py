@@ -46,33 +46,21 @@ class Agent():
     #       moving to a terminal node, evaluating the leaf and updating the MCTS
     def simulate(self):
         leaf, value, done, path = self.mcts.traverse_tree()
-        # print("Path length after tree traversal: " + str(len(path)))
-        
         value, path = self.evaluate_leaf(leaf, value, done, path)
-        # print("Path length after eval leaf: " + str(len(path)))
-        
         self.mcts.backpropagation(leaf, value, path)
-        # print("Path length after backprop: " + str(len(path)))
 
     # Method for running simulations and choosing an action
     # In: self, state (current state), tau (exploratory constant)
     # Out: action selected, current policy and values as well as values from the neural network
     def act(self, state, tau):
-        # print("Initial State in Act: ", hnef_game.str(state))
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
             self.build_mcts(state)
         else:
-            # print("I change the root!")
             self.change_root_mcts(state)
         
         for sim in range(self.num_sims):
             self.simulate()
-            # self.mcts.print_tree()
         
-        rootedges = []
-        for e in self.mcts.root.edges:
-            rootedges.append(e[1])
-
         pi, values, = self.get_action_values(tau=1)
         
         action, value = self.choose_action(pi, values, tau)
@@ -81,32 +69,6 @@ class Agent():
             action = small_action_ids.action_id[action]
         else:
             action = action_ids.action_id[action]
-
-        self.mcts.all_states.append(state)
-        self.mcts.all_actions.append(action)
-
-        valid_moves = hnef_game.compute_valid_moves(state)
-
-        if action not in valid_moves:
-            print('I picked a random action')
-            action = valid_moves[np.random.randint(len(valid_moves))]
-            # print("****Action not in valid moves")
-            # for i in range(len(self.mcts.all_states)):
-            #     print(hnef_game.str(self.mcts.all_states[i]))
-            #     print("Action: ", str(self.mcts.all_actions[i]))
-            
-            # self.fix_leaf(self.mcts.root)
-            # pi, values, = self.get_action_values(tau=1)
-        
-            # action, value = self.choose_action(pi, values, tau)
-            
-            # if self.action_size == 625:
-            #     action = small_action_ids.action_id[action]
-            # else:
-            #     action = action_ids.action_id[action]
-            
-
-        #next_state, _, _ = hnef_game.simulate_step(state, action)
 
         return (action, pi)
 
@@ -125,7 +87,6 @@ class Agent():
         logits = all_logits[0]
 
         possible_actions = hnef_game.compute_valid_moves(state)
-        # print("State: \n" + hnef_game.str(state) + "Possible Actions:\n" + str(possible_actions))
 
         possible_actions_ids = []
 
@@ -136,9 +97,6 @@ class Agent():
                 possible_actions_ids.append(action_ids.get_id(possible_actions[i]))
         possible_actions_ids = np.array(possible_actions_ids)
 
-        # print('Possible actions: ', len(possible_actions))
-
-        # not sure what is going on here
         mask = np.ones(logits.shape, dtype=bool)
         for i in possible_actions_ids:
             mask[i] = False
@@ -149,52 +107,23 @@ class Agent():
         probabilities = odds / np.sum(odds)
 
         return ((values, probabilities, possible_actions, possible_actions_ids))
-    
-    # def fix_leaf(self, leaf):
-    #     print('I fix the leaf')
-    #     state_copy = np.copy(leaf.state)
-    #     leaf.edges = []
-    #     values, probabilities, possible_actions, possible_actions_ids = self.get_predictions(state_copy)
-
-    #     for i, action in enumerate(possible_actions):
-    #         new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
-    #         # if the node doesn't already exist in the tree, create it
-    #         new_node_id = str(hash(str([new_state[0], new_state[1]])))
-            
-    #         if new_node_id not in self.mcts.tree:
-    #                 node = monte.Node(new_state)
-    #                 self.mcts.add_node(node)
-    #         else:
-    #             # print("I am a node that already exists: " + new_node_id)
-    #             node = self.mcts.tree[new_node_id]
-
-    #         # set the source node as the leaf and the dest node aka 'node' as the state of a given action
-    #         new_edge = monte.Edge(leaf, node, probabilities[i], action)
-    #         self.mcts.tree[leaf.id].edges.append((action, new_edge))
 
     # Method for evaluating a leaf, creates a new leaf node if the game isn't finished
     # In: leaf Node, value (reward), done boolean, path taken to the leaf
     # Out: value of the leaf node, path taken to the leaf node
     def evaluate_leaf(self, leaf, value, done, path):
         if done == 0:
+
             value, probabilities, possible_actions, possible_actions_ids = self.get_predictions(leaf.state)
             probs = []
+
             for i in possible_actions_ids:
                 probs.append(probabilities[i])
+
             probabilities = probs 
             valid_moves = hnef_game.compute_valid_moves(leaf.state)
-            if possible_actions != valid_moves:
-                print('Turn:', hnef_game.turn(leaf.state))
-                print('Possible actions: ', possible_actions)
-                print('Actual valid moves: ', valid_moves )
-            # print("Evaluating leaf:\n", leaf)
-            # print("Value: ", value)
-            # print("Probs: ",probabilities)
-            # print("Actions: ",possible_actions)
-            # assert False
-            numedge = 0
+
             # loop through all possible actions at a given state
-            # print('Possible actions: ', len(possible_actions))
             for i, action in enumerate(possible_actions):
                 new_state, _, _ = hnef_game.simulate_step(np.copy(leaf.state), action)
                 # if the node doesn't already exist in the tree, create it
@@ -204,14 +133,12 @@ class Agent():
                     node = monte.Node(new_state)
                     self.mcts.add_node(node)
                 else:
-                    # print("I am a node that already exists: " + new_node_id)
                     node = self.mcts.tree[new_node_id]
 
                 # set the source node as the leaf and the dest node aka 'node' as the state of a given action
                 new_edge = monte.Edge(leaf, node, probabilities[i], action)
                 self.mcts.tree[leaf.id].edges.append((action, new_edge))
-                numedge += 1
-            # print('Number of edges added: ', numedge)
+
         return ((value, path))
 
     # Method for getting the action values of the possible actions in the curren state
@@ -219,7 +146,7 @@ class Agent():
     # Out: pi (policy), values of the actions
     def get_action_values(self, tau):
         edges = self.mcts.root.edges
-        # print('Number of edges in the root:', len(edges))
+
         pi = np.zeros(self.action_size, dtype=np.integer)
         values = np.zeros(self.action_size, dtype=np.float32)
 
@@ -264,7 +191,6 @@ class Agent():
     # Method for changing the current root (state) in the MCTS
     def change_root_mcts(self, state):
         new_root = monte.Node(state)
-        # print("Changed root:\n New root edges: " + str(len(self.mcts.root.edges)))
         self.mcts.root = self.mcts.tree[new_root.id]
 
     # Replays through the states in the long term memory and makes the neural network 

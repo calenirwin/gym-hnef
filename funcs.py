@@ -84,6 +84,7 @@ def play_matches(p1, p2, mem=None, episodes=config.EPISODES, turn_until_tau0=con
                     print('Defender win')
     return scores, mem
 
+# Method to pit two agents against one another and return the total scores of all games
 def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='terminal', switch_sides=True):
     # create gym environment
     env = gym.make('gym_hnef:hnef-v0', rule_set=rule_set, render_mode=render_mode)

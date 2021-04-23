@@ -1,6 +1,5 @@
 # Written By: Tindur Sigurdason & Calen Irwin
 # Written For: CISC-856 W21 (Reinforcement Learning) at Queen's U
-# Last Modified Date: 2021-04-21 [CI]
 
 # References:
 # https://github.com/slowen/hnefatafl/blob/master/hnefatafl.py
@@ -15,7 +14,7 @@ from gym_hnef import hnef_game, hnef_vars, rendering_helpers
 
 # custom gym Env object built to play Hnefatafl (aka Viking Chess)
 # contains important information about the game environment
-# and basic RL enironment methods needed to implement more complex AI models
+# and basic RL environment methods needed to implement more complex AI models
 class HnefEnv(gym.Env):
     metadata = {'render.modes': ['terminal', 'gui']}
     hnef_vars = hnef_vars
@@ -47,6 +46,7 @@ class HnefEnv(gym.Env):
             
         self.done = False
 
+    # Method to reset the game state to its initial position and reset the done flag
     def reset(self):
         self.state = hnef_game.init_state(self.rule_set)
         self.done = False
@@ -117,10 +117,10 @@ class HnefEnv(gym.Env):
             current_player = hnef_game.turn(self.state)
             if current_player == winner:
                 return 1
-            elif winner == 2:
+            elif winner == 2:   # game ended as a draw
                 return 2
             elif winner == -1:
-                print('Something wrong happen')
+                print('***Invalid winner')
                 assert False
             else:
                 return 0
