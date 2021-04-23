@@ -150,7 +150,7 @@ class Agent():
     # Out: pi (policy), values of the actions
     def get_action_values(self, tau):
         edges = self.mcts.root.edges
-        print(len(edges))
+        print('Number of edges in the root:', len(edges))
         pi = np.zeros(self.action_size, dtype=np.integer)
         values = np.zeros(self.action_size, dtype=np.float32)
 
@@ -158,7 +158,7 @@ class Agent():
             action_id = small_action_ids.get_id(action)
             pi[action_id] = np.power(edge.metrics['N'],(1/tau))
             values[action_id] = edge.metrics['Q']
-        
+        print('Sum of all possibilities:', np.sum(pi))
         pi = pi/float(np.sum(pi))
 
         return pi, values
