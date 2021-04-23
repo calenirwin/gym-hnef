@@ -178,8 +178,10 @@ class Agent():
     # In: self, pi (policy), values of the actions, tau (controls exploration)
     # Out: action selected and its value
     def choose_action(self, pi, values, tau):
+        print('Pi:', pi)
         if tau == 0:
             actions = np.argwhere(pi == max(pi))
+            print('Actions: ', actions)
             action = np.random.choice(actions.reshape(-1))
         else:
             action_idx = np.random.multinomial(1, pi)
