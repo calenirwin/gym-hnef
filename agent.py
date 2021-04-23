@@ -67,6 +67,11 @@ class Agent():
             self.simulate()
             # self.mcts.print_tree()
         
+        rootedges = []
+        for e in self.mcts.root.edges:
+            rootedges.append(e.action)
+        print('Edges in the current root:', rootedges)
+
         pi, values, = self.get_action_values(tau=1)
         
         action, value = self.choose_action(pi, values, tau)
@@ -176,10 +181,11 @@ class Agent():
     # In: self, pi (policy), values of the actions, tau (controls exploration)
     # Out: action selected and its value
     def choose_action(self, pi, values, tau):
-        print('Pi:', pi)
+        
+        # print('Pi:', pi)
         if tau == 0:
             actions = np.argwhere(pi == max(pi))
-            print('Actions: ', actions)
+            # print('Actions: ', actions)
             action = np.random.choice(actions.reshape(-1))
         else:
             action_idx = np.random.multinomial(1, pi)
