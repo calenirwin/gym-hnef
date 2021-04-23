@@ -69,8 +69,7 @@ class Agent():
         
         rootedges = []
         for e in self.mcts.root.edges:
-            print(e)
-            rootedges.append(e.action)
+            rootedges.append(e[0])
         print('Edges in the current root:', rootedges)
 
         pi, values, = self.get_action_values(tau=1)
