@@ -169,6 +169,7 @@ class MCTS():
         current_player = hnef_game.turn(leaf_node.state)
         print(len(path), path)
         for edge in path:
+            print(str(edge))
             turn = edge.turn
 
             if turn == current_player:
