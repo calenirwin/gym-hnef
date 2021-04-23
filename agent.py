@@ -85,6 +85,13 @@ class Agent():
         # next_state, _, _ = hnef_game.simulate_step(state, small_action_ids.action_id[action])
         
         # NN_value = -self.get_predictions(next_state)[0]
+        valid_moves = hnef_game.compute_valid_moves(state)
+
+        if action not in valid_moves:
+            print("Valid moves: ", valid_moves)
+            print(str(state))
+            print("***Invalid action in agent.py> act(): ", action)
+            assert False
         
         return (action, pi)
 
