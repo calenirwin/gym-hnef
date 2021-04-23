@@ -62,7 +62,7 @@ class Agent():
         
         for sim in range(self.num_sims):
             self.simulate()
-            self.mcts.print_tree()
+            # self.mcts.print_tree()
         
         pi, values, = self.get_action_values(tau=1)
         
@@ -96,6 +96,8 @@ class Agent():
         for i in range(len(possible_actions)):
             possible_actions_ids.append(small_action_ids.get_id(possible_actions[i]))
         possible_actions_ids = np.array(possible_actions_ids)
+
+        print('Possible actions: ', len(possible_actions))
 
         # not sure what is going on here
         mask = np.ones(logits.shape, dtype=bool)
