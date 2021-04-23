@@ -58,6 +58,7 @@ class Agent():
     # In: self, state (current state), tau (exploratory constant)
     # Out: action selected, current policy and values as well as values from the neural network
     def act(self, state, tau):
+        print("Initial State in Act: ", hnef_game(state))
         if self.mcts == None or monte.Node(state).id not in self.mcts.tree:
             self.build_mcts(state)
         else:
