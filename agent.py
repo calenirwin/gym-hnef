@@ -69,6 +69,7 @@ class Agent():
         
         rootedges = []
         for e in self.mcts.root.edges:
+            print(e)
             rootedges.append(e.action)
         print('Edges in the current root:', rootedges)
 
