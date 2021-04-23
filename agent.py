@@ -88,7 +88,7 @@ class Agent():
         valid_moves = hnef_game.compute_valid_moves(state)
 
         if action not in valid_moves:
-            fix_leaf(self.mcts.root)
+            self.fix_leaf(self.mcts.root)
 
         
         return (action, pi)
