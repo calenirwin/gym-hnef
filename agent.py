@@ -70,6 +70,12 @@ class Agent():
         else:
             action = action_ids.action_id[action]
 
+        valid_moves = hnef_game.compute_valid_moves(state)
+        # We rarely got errors where we got invalid moves, so when that
+        # happens, we choose a random action
+        if action not in valid_moves:
+            action = valid_moves[np.random.randint(len(valid_moves))]
+
         return (action, pi)
 
     # Method for getting the predictions of values from the neural network
