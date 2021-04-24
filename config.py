@@ -15,7 +15,7 @@ ALPHA = 0.8
 
 
 #### RETRAINING
-BATCH_SIZE = 256
+BATCH_SIZE = 32
 EPOCHS = 5
 REG_CONST = 0.0001
 LEARNING_RATE = 0.1
@@ -33,48 +33,9 @@ HIDDEN_CNN_LAYERS = [
 	  , {'filters':256, 'kernel_size': (3, 3)}
 	  , {'filters':256, 'kernel_size': (3, 3)}
 	  , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
-	#   , {'filters':256, 'kernel_size': (3, 3)}
+   	  , {'filters':256, 'kernel_size': (3, 3)}
 	]
 
 #### EVALUATION
-EVAL_EPISODES = 20
+EVAL_EPISODES = 6
 SCORING_THRESHOLD = 55/45
