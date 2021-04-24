@@ -38,11 +38,6 @@ class Node():
     # Method that sets the id for each node equal to the board positions of the given state
     # associated with a node
     def get_state_id(self, state):
-        # attacker_position = ['A' if x==1 else x for x in state[hnef_vars.ATTACKER]]
-        # defender_position = ['D' if x==1 else x for x in state[hnef_vars.ATTACKER]]
-        # defender_position = ['K' if x==2 else x for x in defender_position]
-        # position = attacker_position + defender_position
-        #id = ''.join(map(str,position)) #+ str(state[hnef_vars.TIME_CHNL, 0, 0])
         id = hash(str([state[0], state[1]]))
         return str(id)
 
