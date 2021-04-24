@@ -131,22 +131,28 @@ def evaluate_agents(p1, p2, num_games=100, rule_set='historical', render_mode='t
                             scores['draw'] += 1
                         elif turn == 1:
                             scores[p1.name] += 1
+                            print('Attacker win')
                         elif turn == 0:
                             scores[p2.name] += 1
+                            print('Defender win')
                     else:
                         if reward == 2:
                             scores['draw'] += 1
                         elif turn == 0:
                             scores[p1.name] += 1
+                            print('Defender win')
                         elif turn == 1:
                             scores[p2.name] += 1
+                            print('Attacker win')
                 else:
                     if reward == 2:
                             scores['draw'] += 1
                     elif turn == 1:
                         scores[p1.name] += 1
+                        print('Attacker win')
                     elif turn == 0:
                         scores[p2.name] += 1
+                        print('Defender win')
 
                 all_end_states.append(state)
 
