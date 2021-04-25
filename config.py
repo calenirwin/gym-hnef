@@ -5,8 +5,8 @@
 # https://github.com/AppliedDataSciencePartners/DeepReinforcementLearning/blob/master/config.py
 
 #### SELF PLAY
-EPISODES = 20
-MCTS_SIMS = 100
+EPISODES = 5
+MCTS_SIMS = 20
 MEMORY_SIZE = int(3e3)
 TURNS_UNTIL_TAU0 = 10 # turn on which it starts playing deterministically
 CPUCT = 1
@@ -67,5 +67,5 @@ HIDDEN_CNN_LAYERS = [
 	]
 
 #### EVALUATION
-EVAL_EPISODES = 10
+EVAL_EPISODES = 6
 SCORING_THRESHOLD = 55/45
