@@ -3,5 +3,5 @@
 
 
 Instructions:
--Download run.ipynb and upload file to a cloud computing platform, e.g. Google Colab
--Follow instructions contained within run.ipynb
+1. Download run.ipynb and upload file to a cloud computing platform, e.g. Google Colab
+2. Follow instructions contained within run.ipynb
