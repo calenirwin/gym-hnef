@@ -1,12 +1,14 @@
-"""Project mini-v1 rules, specified in docs/mini-rules.md (not Copenhagen)."""
+"""Deterministic transitions for mini-v1 and experimental Copenhagen."""
 
-from .state import SIZE, THRONE, GameState, Move, Outcome, Player, Square, position_key
+from .copenhagen import defenders_encircled, shieldwall_captures
+from .state import GameState, Move, Outcome, Player, Square, position_key
+from .variants import Ruleset
 
 DIRECTIONS = ((-1, 0), (0, -1), (0, 1), (1, 0))
 
 
-def _inside(square: Square) -> bool:
-    return all(0 <= coordinate < SIZE for coordinate in square)
+def _inside(square: Square, size: int) -> bool:
+    return all(0 <= coordinate < size for coordinate in square)
 
 
 def _add(square: Square, direction: Square) -> Square:
@@ -16,17 +18,19 @@ def _add(square: Square, direction: Square) -> Square:
 def legal_moves(state: GameState) -> tuple[Move, ...]:
     if state.outcome is not None:
         return ()
+    size = state.ruleset.size
+    restricted = state.ruleset.restricted
     moves = []
-    for row in range(SIZE):
-        for column in range(SIZE):
+    for row in range(size):
+        for column in range(size):
             source = (row, column)
             piece = state.at(source)
             if not state.player.owns(piece):
                 continue
             for direction in DIRECTIONS:
                 destination = _add(source, direction)
-                while _inside(destination) and state.at(destination) == ".":
-                    if destination != THRONE or piece == "K":
+                while _inside(destination, size) and state.at(destination) == ".":
+                    if destination not in restricted or piece == "K":
                         moves.append(Move(source, destination))
                     destination = _add(destination, direction)
     return tuple(moves)
@@ -35,6 +39,9 @@ def legal_moves(state: GameState) -> tuple[Move, ...]:
 def apply_move(state: GameState, move: Move) -> GameState:
     if move not in legal_moves(state):
         raise ValueError(f"Illegal move: {move}")
+    ruleset = state.ruleset
+    size, throne = ruleset.size, ruleset.throne
+    copenhagen = ruleset is Ruleset.COPENHAGEN
     board = [list(row) for row in state.board]
     source, destination = move.source, move.destination
     piece = board[source[0]][source[1]]
@@ -49,26 +56,32 @@ def apply_move(state: GameState, move: Move) -> GameState:
     for direction in DIRECTIONS:
         victim = _add(destination, direction)
         support = _add(victim, direction)
-        if not _inside(victim) or not _inside(support):
+        if not _inside(victim, size) or not _inside(support, size):
             continue
         if at(victim) == "K" or not state.player.opponent.owns(at(victim)):
             continue
-        hostile = state.player.owns(at(support)) or (
-            support == THRONE and (state.player is Player.DEFENDERS or at(THRONE) == ".")
+        hostile = (
+            state.player.owns(at(support))
+            or (support == throne and (state.player is Player.DEFENDERS or at(throne) == "."))
+            or (copenhagen and support in ruleset.corners)
         )
         if hostile:
             captured.add(victim)
 
-    king = next((r, c) for r in range(SIZE) for c in range(SIZE) if board[r][c] == "K")
+    if copenhagen:
+        captured.update(shieldwall_captures(board, state.player, destination))
+
+    king = next((r, c) for r in range(size) for c in range(size) if board[r][c] == "K")
     neighbors = tuple(_add(king, direction) for direction in DIRECTIONS)
     if state.player is Player.ATTACKERS and destination in neighbors:
-        if king == THRONE or THRONE in neighbors:
+        if copenhagen or king == throne or throne in neighbors:
             king_captured = all(
-                _inside(square) and (at(square) == "A" or square == THRONE) for square in neighbors
+                _inside(square, size) and (at(square) == "A" or square == throne)
+                for square in neighbors
             )
         else:
             opposite = (2 * king[0] - destination[0], 2 * king[1] - destination[1])
-            king_captured = _inside(opposite) and at(opposite) == "A"
+            king_captured = _inside(opposite, size) and at(opposite) == "A"
         if king_captured:
             captured.add(king)
     for row, column in captured:
@@ -77,18 +90,28 @@ def apply_move(state: GameState, move: Move) -> GameState:
     result = None
     if king in captured:
         result = Outcome(Player.ATTACKERS, "king_captured")
-    elif piece == "K" and any(coordinate in (0, SIZE - 1) for coordinate in destination):
+    elif piece == "K" and (
+        destination in ruleset.corners
+        if copenhagen
+        else any(coordinate in (0, size - 1) for coordinate in destination)
+    ):
         result = Outcome(Player.DEFENDERS, "king_escaped")
     next_board = tuple("".join(row) for row in board)
     next_player = state.player.opponent
-    key = position_key(next_board, next_player)
+    key = position_key(next_board, next_player, ruleset)
     history = (*state.history, key)
-    successor = GameState(next_board, next_player, state.ply + 1, history, result)
+    successor = GameState(next_board, next_player, state.ply + 1, history, result, ruleset)
     if result is None:
-        if not legal_moves(successor):
+        if copenhagen and defenders_encircled(next_board):
+            result = Outcome(Player.ATTACKERS, "encircled")
+        elif not legal_moves(successor):
             result = Outcome(state.player, "no_legal_moves")
         elif history.count(key) >= 3:
-            result = Outcome(None, "repetition")
+            result = (
+                Outcome(Player.ATTACKERS, "defender_repetition")
+                if copenhagen
+                else Outcome(None, "repetition")
+            )
         if result is not None:
-            successor = GameState(next_board, next_player, state.ply + 1, history, result)
+            successor = GameState(next_board, next_player, state.ply + 1, history, result, ruleset)
     return successor

@@ -4,9 +4,10 @@ Modernizing the Hnefatafl reinforcement-learning project built by Tindur
 Sigurdason and Calen Irwin for CISC-856 at Queen's University, Winter 2021.
 
 The new `hnef` package is a dependency-free, deterministic **5×5 mini-game
-engine**. Copenhagen 11×11, the modern RL adapter, training, and the web game
-are future milestones. See [the modernization checkpoint](docs/modernization.md)
-and [the exact mini rules](docs/mini-rules.md).
+engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. Copenhagen
+exit-fort and dead-position adjudication are still pending. The modern RL adapter,
+training, and web game follow engine completion. See [the modernization checkpoint](docs/modernization.md),
+[the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
 
 ## Quick start
 
@@ -17,6 +18,12 @@ uv sync --locked
 uv run hnef play --seed 42 --output /tmp/hnef-game.json
 uv run hnef replay /tmp/hnef-game.json
 uv run hnef benchmark --games 1000 --seed 0
+```
+
+To exercise the 11×11 implementation (not yet full Copenhagen):
+
+```sh
+uv run hnef play --ruleset copenhagen-experimental-v1 --seed 42
 ```
 
 The CLI runs random-vs-random games. A benchmark verifies every replay and
@@ -48,8 +55,8 @@ uv run ruff format --check .
 
 Tests and lint target the modern package. The wheel includes only `hnef`, with
 no Gym, NumPy, TensorFlow, or rendering dependency. The generated action codec
-supports 200 actions for mini and 2,420 for an 11×11 board; only mini gameplay is
-implemented so far.
+supports 200 actions for mini and 2,420 for Copenhagen. Mini remains the default;
+each replay identifies its ruleset, and old mini replays remain compatible.
 
 ## Original school project
 

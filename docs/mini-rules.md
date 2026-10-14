@@ -44,7 +44,7 @@ winner +1, loser −1, draw 0. There is no implicit reward tied to the next turn
 The generated action order is versioned with the replay schema: row-major source
 squares followed by row-major destinations in the same row or column, excluding
 the source. This gives 200 actions at 5×5 and 2,420 at 11×11. The 11×11 codec does
-not imply that Copenhagen gameplay is implemented.
+not imply complete Copenhagen support; see [experimental coverage](copenhagen-rules.md).
 
 `GameState` can also represent custom test positions. Callers must supply a
 nonterminal position with a movable side, or its explicit terminal outcome;

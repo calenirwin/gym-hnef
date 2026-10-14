@@ -23,16 +23,22 @@ agreed design. It is a new implementation, not a recovered copy of those commits
   tested 2,420-action vocabulary ready for an 11×11 engine.
 - Isolated modern package, locked development dependencies, automated rules,
   regression, replay, and CLI tests, and CI.
+- Opt-in experimental Copenhagen: opening, movement, restricted squares, corner
+  escape, strong king capture, shield walls, enclosure, repetition, and no-move
+  losses. Versioned state/replay support keeps mini-v1 compatible.
 
-## Next milestone: Copenhagen rules
+## Current milestone: Copenhagen rules
 
-Before RL training, specify and implement Copenhagen 11×11 against an authoritative
-rules reference, with fixture positions for:
+The initial Copenhagen increment implements items 1–3 below and enclosure,
+repetition, and blocked players from item 4. It uses an explicitly experimental
+ruleset identifier. Before calling Copenhagen complete or starting RL training,
+finish exit-fort and dead-position adjudication. Details and sources are in
+[Copenhagen coverage](copenhagen-rules.md).
 
 1. Opening, corner escape, restricted/hostile corners and throne.
 2. Four-sided king capture and edge behavior.
 3. Shield-wall captures, including king immunity and simultaneous captures.
-4. Encirclement, edge forts, repetition adjudication, and blocked players.
+4. Encirclement, edge forts, repetition adjudication, blocked players, and dead positions.
 5. Deterministic games and replay verification under a separate ruleset/version.
 
 Do not call an incomplete subset full Copenhagen. Keep mini-v1 reproducible.
@@ -50,10 +56,22 @@ Locally verified on Python 3.12.3 on October 14, 2026:
   Every recorded full-state digest matched when replayed from the opening.
 - Locked environment sync, wheel/source builds, and CLI save/load passed.
   Both distributions exclude the legacy notebooks and model weights.
-- CI is configured for Python 3.11–3.13; remote CI has not been run yet.
+- The foundation was pushed as `efa1531` to `codex/modernize-engine`.
+  [GitHub Actions passed on Python 3.11–3.13](https://github.com/calenirwin/gym-hnef/actions/runs/38623861231).
 
 Random-play results describe this development variant and these policies only;
 they do not establish Copenhagen balance or the strength of a trained agent.
+
+### Experimental Copenhagen increment
+
+- 145 tests pass, including rotated rule fixtures, both shield-wall closing
+  directions, king immunity/participation, simultaneous captures, disconnected
+  enclosures, repetition by either mover, and old mini replay compatibility.
+- 100 Copenhagen random games (seeds 0–99, 500-ply cap), all replay-verified:
+  39,848 plies; 51 defender wins, two attacker wins, 47 collection truncations.
+  These results use incomplete adjudication and are not Copenhagen balance data.
+- Ruff checks, locked sync, and source/wheel builds pass locally on Python 3.12.
+- CI now also exercises a short Copenhagen replay benchmark on each Python version.
 
 ## Legacy issues to avoid
 

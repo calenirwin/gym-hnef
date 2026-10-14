@@ -2,10 +2,11 @@
 
 import argparse
 import json
+import sys
 from collections import Counter
 from pathlib import Path
 
-from .engine import GameState
+from .engine import GameState, Ruleset
 from .replay import Replay, random_game
 
 
@@ -17,9 +18,11 @@ def _positive(value: str) -> int:
 
 
 def _show(state: GameState) -> None:
-    print("  0 1 2 3 4")
+    _warn_experimental(state.ruleset)
+    width = len(str(state.ruleset.size - 1))
+    print(" " * (width + 1) + " ".join(f"{i:>{width}}" for i in range(state.ruleset.size)))
     for index, row in enumerate(state.board):
-        print(f"{index} {' '.join(row)}")
+        print(f"{index:>{width}} " + " ".join(f"{piece:>{width}}" for piece in row))
     if state.outcome is None:
         print(f"Ply {state.ply}: {state.player.value} to move (collection limit reached)")
     else:
@@ -27,10 +30,18 @@ def _show(state: GameState) -> None:
         print(f"Ply {state.ply}: {winner} / {state.outcome.reason}")
 
 
+def _warn_experimental(ruleset: Ruleset) -> None:
+    if ruleset is Ruleset.COPENHAGEN:
+        print(
+            "Experimental Copenhagen: exit forts and dead-position draws are not adjudicated.",
+            file=sys.stderr,
+        )
+
+
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Hnef mini-v1 engine")
+    parser = argparse.ArgumentParser(description="Hnef mini and experimental Copenhagen engine")
     commands = parser.add_subparsers(dest="command", required=True)
-    play = commands.add_parser("play", help="run a random-vs-random mini game")
+    play = commands.add_parser("play", help="run a random-vs-random game")
     play.add_argument("--seed", type=int, default=0)
     play.add_argument("--max-plies", type=_positive, default=500)
     play.add_argument("--output", type=Path)
@@ -42,21 +53,24 @@ def main(argv: list[str] | None = None) -> None:
     benchmark.add_argument("--games", type=_positive, default=1000)
     benchmark.add_argument("--seed", type=int, default=0)
     benchmark.add_argument("--max-plies", type=_positive, default=500)
+    for command in (play, benchmark):
+        command.add_argument("--ruleset", choices=list(Ruleset), default=Ruleset.MINI, type=Ruleset)
     args = parser.parse_args(argv)
     try:
         if args.command == "replay":
             _show(Replay.from_json(args.path.read_text()).verify())
         elif args.command == "play":
-            record = random_game(args.seed, args.max_plies)
+            record = random_game(args.seed, args.max_plies, ruleset=args.ruleset)
             state = record.verify()
             if args.output:
                 args.output.write_text(record.to_json())
             _show(state)
         else:
+            _warn_experimental(args.ruleset)
             counts: Counter[str] = Counter()
             plies = 0
             for seed in range(args.seed, args.seed + args.games):
-                state = random_game(seed, args.max_plies).verify()
+                state = random_game(seed, args.max_plies, ruleset=args.ruleset).verify()
                 plies += state.ply
                 if state.outcome is None:
                     counts["truncated"] += 1

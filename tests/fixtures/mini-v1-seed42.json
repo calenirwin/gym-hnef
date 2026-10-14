@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "ruleset": "mini-v1",
+  "actions": [
+    173,
+    58,
+    8,
+    140,
+    76,
+    97,
+    122,
+    56
+  ],
+  "state_keys": [
+    "5dc081685b159748467cd57e46acf1c354a6d6866d89af3dc72fc1cef72a1fe8",
+    "c34da28ed77ec1b65d55d4699a6893c3deb7c9f7607181f86bda5df6f36356a1",
+    "656b7b53bdf79cef7f0c1b57201f0750cd447e48b1e1e75493fa2166d1cc7622",
+    "3ed37dcdf5a9d6b6cb4608a4f78bba19699c1bc26ae560fcd77d6cb97c2f06ac",
+    "4346712aa442a7d76e0b2587fbcf29b37fe0ef165c91d6b847435857af238994",
+    "5566f76bebd1f7fe3e816bd05809749c65bec22f3a94e0c6ee390d2326fbb70a",
+    "d918dce4f3fd9f4c0cb31c453740a915fa724c9bb786ec05eda3d7b8424dbe05",
+    "2b1ccc8a5e84e13d02e7bcec5b2450183b69cd6db71634d969be87a5e14157b1",
+    "970d1d878dcb55287ead40b164c8e618650da9693be83b7c75816cee42f66b34"
+  ]
+}
