@@ -30,6 +30,8 @@ agreed design. It is a new implementation, not a recovered copy of those commits
   and explicit draw adjudication with a recorded explanation. V1 remains replay-compatible.
 - Optional PettingZoo AEC adapter with legal masks, complete move history,
   player-specific rewards, seeded sampling, and API compliance tests for all profiles.
+- Dependency-free heuristic and UCT/MCTS policies, seeded policy matchups,
+  replay-verified benchmarks, and search diagnostics.
 
 ## Current milestone: Copenhagen rules
 
@@ -49,7 +51,8 @@ in [Copenhagen coverage](copenhagen-rules.md) and the [fort proof](fort-proof.md
 Do not call an incomplete adjudicator full Copenhagen. Keep old profiles reproducible.
 The [PettingZoo AEC adapter](rl-environment.md) now uses mini-v1 as the stable
 baseline while preserving the experimental status of Copenhagen profiles.
-Next: heuristic and pure MCTS baselines, then a small PyTorch policy/value network and self-play.
+The [reference opponents](baselines.md) now include heuristic and pure MCTS baselines.
+Next: a small PyTorch policy/value network and self-play, evaluated against those baselines.
 GPU training and the Albion-inspired human/AI web game follow those milestones.
 
 ## Validation of this increment
@@ -103,6 +106,21 @@ they do not establish Copenhagen balance or the strength of a trained agent.
   reset/seeding, invalid actions, and independent observation arrays.
 - Ruff checks and wheel/source builds pass. CI installs the optional RL extra;
   the base engine and CLI retain zero mandatory runtime dependencies.
+
+### Reference-opponent increment
+
+- 276 tests pass, including deterministic policy games, terminal reward
+  perspectives, adversarial UCT selection, repetition-preserving search,
+  bounded rollouts, saved reports/replays, and PettingZoo policy integration.
+- Added one-ply heuristic and pure random-rollout MCTS, independent seeded player
+  streams, configurable search budgets, and search visit/value/cutoff diagnostics.
+- 250 mini games across five matchups were replay-verified, with no draws or
+  truncations. At 64 iterations and 48 rollout plies, MCTS attackers won 27/50
+  against random defenders; heuristic attackers won 46/50. Both won 50/50 as
+  defenders against random attackers. Full parameters and counts are in
+  [baseline results](baselines.md#validation-and-measurements).
+- Random-vs-random defaults, frozen replays, and zero mandatory dependencies remain
+  compatible. CI also exercises a small MCTS-versus-heuristic benchmark.
 
 ## Legacy issues to avoid
 

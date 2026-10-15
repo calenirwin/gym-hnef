@@ -7,7 +7,8 @@ The new `hnef` package is a dependency-free, deterministic **5×5 mini-game
 engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. The v2 profile
 recognizes provably permanent exit forts and records external draw judgments;
 automatic adjudication remains conservative. An optional PettingZoo adapter
-supports training experiments; baselines, training, and the web game are next.
+supports training experiments. Seeded random, heuristic, and MCTS opponents are
+available; network training and the web game are next.
 See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
 
@@ -28,7 +29,9 @@ To exercise the 11×11 implementation (not yet full Copenhagen):
 uv run hnef play --ruleset copenhagen-experimental-v2 --seed 42
 ```
 
-The CLI runs random-vs-random games. A benchmark verifies every replay and
+The CLI defaults to random-vs-random games. Choose opponents with
+`--attackers mcts --defenders heuristic`; see [baseline opponents](docs/baselines.md)
+for search budgets and reproducible comparisons. A benchmark verifies every replay and
 reports attacker wins, defender wins, repetition draws, and collection-limit
 truncations separately. Saved games contain action IDs and a digest of every state.
 

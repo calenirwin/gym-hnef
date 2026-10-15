@@ -11,7 +11,27 @@ from pettingzoo.test import api_test, seed_test  # noqa: E402
 
 from hnef.engine import Move, Player, Ruleset, apply_move, initial_state, legal_moves  # noqa: E402
 from hnef.envs.pettingzoo import env, raw_env  # noqa: E402
+from hnef.policies import HeuristicPolicy, MCTSPolicy  # noqa: E402
 from hnef.replay import Replay, random_game  # noqa: E402
+
+
+def test_reference_policies_play_through_aec_masks():
+    game = env(max_plies=20)
+    game.reset(seed=7)
+    policies = {
+        "attackers": MCTSPolicy(7, iterations=4, rollout_plies=2),
+        "defenders": HeuristicPolicy(8),
+    }
+    for agent in game.agent_iter():
+        obs, _, terminated, truncated, _ = game.last()
+        if terminated or truncated:
+            game.step(None)
+        else:
+            move = policies[agent].choose_move(game.unwrapped.game_state)
+            action = game.unwrapped.codec.encode(move)
+            assert obs["action_mask"][action]
+            game.step(action)
+    game.close()
 
 
 @pytest.mark.parametrize("ruleset", list(Ruleset))
