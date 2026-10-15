@@ -6,8 +6,9 @@ Sigurdason and Calen Irwin for CISC-856 at Queen's University, Winter 2021.
 The new `hnef` package is a dependency-free, deterministic **5×5 mini-game
 engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. The v2 profile
 recognizes provably permanent exit forts and records external draw judgments;
-automatic adjudication remains conservative. The modern RL adapter,
-training, and web game follow engine completion. See [the modernization checkpoint](docs/modernization.md),
+automatic adjudication remains conservative. An optional PettingZoo adapter
+supports training experiments; baselines, training, and the web game are next.
+See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
 
 ## Quick start
@@ -49,13 +50,18 @@ assert successor.ply == 1
 ## Development
 
 ```sh
-uv run pytest
-uv run ruff check .
-uv run ruff format --check .
+uv sync --locked --extra rl
+uv run --no-sync pytest
+uv run --no-sync ruff check .
+uv run --no-sync ruff format --check .
 ```
 
+For masked multi-agent play, use `from hnef.envs.pettingzoo import env`.
+See [the RL environment guide](docs/rl-environment.md) for a runnable example,
+observation planes and history, rewards, and termination/truncation handling.
+
 Tests and lint target the modern package. The wheel includes only `hnef`, with
-no Gym, NumPy, TensorFlow, or rendering dependency. The generated action codec
+no mandatory Gym, NumPy, TensorFlow, or rendering dependency. The generated action codec
 supports 200 actions for mini and 2,420 for Copenhagen. Mini remains the default;
 each replay identifies its ruleset, and old mini replays remain compatible.
 

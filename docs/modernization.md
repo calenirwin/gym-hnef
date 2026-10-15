@@ -28,6 +28,8 @@ agreed design. It is a new implementation, not a recovered copy of those commits
   losses. Versioned state/replay support keeps mini-v1 compatible.
 - Copenhagen experimental v2 adds a conservative permanent-wall exit-fort proof
   and explicit draw adjudication with a recorded explanation. V1 remains replay-compatible.
+- Optional PettingZoo AEC adapter with legal masks, complete move history,
+  player-specific rewards, seeded sampling, and API compliance tests for all profiles.
 
 ## Current milestone: Copenhagen rules
 
@@ -45,9 +47,9 @@ in [Copenhagen coverage](copenhagen-rules.md) and the [fort proof](fort-proof.md
 5. Deterministic games and replay verification under a separate ruleset/version.
 
 Do not call an incomplete adjudicator full Copenhagen. Keep old profiles reproducible.
-Next, the PettingZoo AEC adapter and API compliance tests can use mini-v1 as the
-stable baseline while preserving the experimental status of Copenhagen profiles.
-Heuristic and pure MCTS baselines follow, then a small PyTorch policy/value network and self-play.
+The [PettingZoo AEC adapter](rl-environment.md) now uses mini-v1 as the stable
+baseline while preserving the experimental status of Copenhagen profiles.
+Next: heuristic and pure MCTS baselines, then a small PyTorch policy/value network and self-play.
 GPU training and the Albion-inspired human/AI web game follow those milestones.
 
 ## Validation of this increment
@@ -90,6 +92,17 @@ they do not establish Copenhagen balance or the strength of a trained agent.
   51 defender wins, two attacker wins, and 47 truncations. These random games did
   not exercise fort wins; the targeted fixtures provide that evidence.
 - CI exercises all three rule profiles on Python 3.11–3.13.
+
+### PettingZoo adapter increment
+
+- 229 tests pass, including official AEC/seed checks on all three rule profiles.
+- Board planes, turn/observer identity, legal masks, and padded action histories
+  expose the information needed to reconstruct each transition and repetition.
+- Tests cover both players' terminal rewards, draw versus loss on repetition,
+  collection truncation, terminal precedence at the cap, replay compatibility,
+  reset/seeding, invalid actions, and independent observation arrays.
+- Ruff checks and wheel/source builds pass. CI installs the optional RL extra;
+  the base engine and CLI retain zero mandatory runtime dependencies.
 
 ## Legacy issues to avoid
 
