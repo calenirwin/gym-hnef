@@ -49,6 +49,8 @@ class Outcome:
             "repetition": None,
             "defender_repetition": Player.ATTACKERS,
             "encircled": Player.ATTACKERS,
+            "exit_fort": Player.DEFENDERS,
+            "adjudicated_draw": None,
         }
         if self.reason == "no_legal_moves":
             if not isinstance(self.winner, Player):

@@ -1,4 +1,4 @@
-"""Versioned rule identities; experimental Copenhagen omits fort/draw adjudication."""
+"""Versioned rule identities: old profiles retain their replay semantics."""
 
 from enum import StrEnum
 
@@ -6,6 +6,15 @@ from enum import StrEnum
 class Ruleset(StrEnum):
     MINI = "mini-v1"
     COPENHAGEN = "copenhagen-experimental-v1"
+    COPENHAGEN_V2 = "copenhagen-experimental-v2"
+
+    @property
+    def is_copenhagen(self) -> bool:
+        return self is not Ruleset.MINI
+
+    @property
+    def adjudicates_forts(self) -> bool:
+        return self is Ruleset.COPENHAGEN_V2
 
     @property
     def size(self) -> int:
@@ -23,4 +32,4 @@ class Ruleset(StrEnum):
     @property
     def restricted(self) -> frozenset[tuple[int, int]]:
         squares = frozenset((self.throne,))
-        return squares | self.corners if self is Ruleset.COPENHAGEN else squares
+        return squares | self.corners if self.is_copenhagen else squares

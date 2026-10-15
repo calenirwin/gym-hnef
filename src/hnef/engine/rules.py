@@ -1,6 +1,7 @@
 """Deterministic transitions for mini-v1 and experimental Copenhagen."""
 
 from .copenhagen import defenders_encircled, shieldwall_captures
+from .forts import prove_exit_fort
 from .state import GameState, Move, Outcome, Player, Square, position_key
 from .variants import Ruleset
 
@@ -41,7 +42,7 @@ def apply_move(state: GameState, move: Move) -> GameState:
         raise ValueError(f"Illegal move: {move}")
     ruleset = state.ruleset
     size, throne = ruleset.size, ruleset.throne
-    copenhagen = ruleset is Ruleset.COPENHAGEN
+    copenhagen = ruleset.is_copenhagen
     board = [list(row) for row in state.board]
     source, destination = move.source, move.destination
     piece = board[source[0]][source[1]]
@@ -102,7 +103,9 @@ def apply_move(state: GameState, move: Move) -> GameState:
     history = (*state.history, key)
     successor = GameState(next_board, next_player, state.ply + 1, history, result, ruleset)
     if result is None:
-        if copenhagen and defenders_encircled(next_board):
+        if ruleset.adjudicates_forts and prove_exit_fort(next_board) is not None:
+            result = Outcome(Player.DEFENDERS, "exit_fort")
+        elif copenhagen and defenders_encircled(next_board):
             result = Outcome(Player.ATTACKERS, "encircled")
         elif not legal_moves(successor):
             result = Outcome(state.player, "no_legal_moves")
@@ -115,3 +118,23 @@ def apply_move(state: GameState, move: Move) -> GameState:
         if result is not None:
             successor = GameState(next_board, next_player, state.ply + 1, history, result, ruleset)
     return successor
+
+
+def adjudicate_draw(state: GameState) -> GameState:
+    """Record an external draw judgment, not an automatic dead-position proof.
+
+    A referee or application with both players' agreement supplies the judgment.
+    Use Replay.adjudicate_draw(note) to preserve that judgment in a saved game.
+    """
+    if state.ruleset is not Ruleset.COPENHAGEN_V2:
+        raise ValueError("Recorded draw adjudication requires Copenhagen experimental v2")
+    if state.outcome is not None:
+        raise ValueError("Cannot adjudicate an already finished game")
+    return GameState(
+        state.board,
+        state.player,
+        state.ply,
+        state.history,
+        Outcome(None, "adjudicated_draw"),
+        state.ruleset,
+    )

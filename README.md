@@ -4,8 +4,9 @@ Modernizing the Hnefatafl reinforcement-learning project built by Tindur
 Sigurdason and Calen Irwin for CISC-856 at Queen's University, Winter 2021.
 
 The new `hnef` package is a dependency-free, deterministic **5×5 mini-game
-engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. Copenhagen
-exit-fort and dead-position adjudication are still pending. The modern RL adapter,
+engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. The v2 profile
+recognizes provably permanent exit forts and records external draw judgments;
+automatic adjudication remains conservative. The modern RL adapter,
 training, and web game follow engine completion. See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
 
@@ -23,7 +24,7 @@ uv run hnef benchmark --games 1000 --seed 0
 To exercise the 11×11 implementation (not yet full Copenhagen):
 
 ```sh
-uv run hnef play --ruleset copenhagen-experimental-v1 --seed 42
+uv run hnef play --ruleset copenhagen-experimental-v2 --seed 42
 ```
 
 The CLI runs random-vs-random games. A benchmark verifies every replay and

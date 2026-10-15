@@ -23,3 +23,4 @@ jobs:
       - run: uv run --no-sync pytest
       - run: uv run --no-sync hnef benchmark --games 100 --seed 0
       - run: uv run --no-sync hnef benchmark --ruleset copenhagen-experimental-v1 --games 10 --max-plies 200 --seed 0
+      - run: uv run --no-sync hnef benchmark --ruleset copenhagen-experimental-v2 --games 10 --max-plies 200 --seed 0

@@ -31,9 +31,14 @@ def _show(state: GameState) -> None:
 
 
 def _warn_experimental(ruleset: Ruleset) -> None:
-    if ruleset is Ruleset.COPENHAGEN:
+    if ruleset.is_copenhagen:
+        limits = (
+            "exit forts and dead-position draws are not adjudicated."
+            if ruleset is Ruleset.COPENHAGEN
+            else "fort detection is conservative; draws require external adjudication."
+        )
         print(
-            "Experimental Copenhagen: exit forts and dead-position draws are not adjudicated.",
+            f"Experimental Copenhagen: {limits}",
             file=sys.stderr,
         )
 
@@ -47,6 +52,12 @@ def main(argv: list[str] | None = None) -> None:
     play.add_argument("--output", type=Path)
     replay = commands.add_parser("replay", help="verify and display a saved game")
     replay.add_argument("path", type=Path)
+    adjudicate = commands.add_parser(
+        "adjudicate-draw", help="record an external draw judgment in a Copenhagen v2 replay"
+    )
+    adjudicate.add_argument("path", type=Path)
+    adjudicate.add_argument("--note", required=True, help="explain the referee/player agreement")
+    adjudicate.add_argument("--output", type=Path, required=True)
     benchmark = commands.add_parser(
         "benchmark", help="verify seeded random games and their replays"
     )
@@ -59,6 +70,10 @@ def main(argv: list[str] | None = None) -> None:
     try:
         if args.command == "replay":
             _show(Replay.from_json(args.path.read_text()).verify())
+        elif args.command == "adjudicate-draw":
+            record = Replay.from_json(args.path.read_text()).adjudicate_draw(args.note)
+            args.output.write_text(record.to_json())
+            _show(record.verify())
         elif args.command == "play":
             record = random_game(args.seed, args.max_plies, ruleset=args.ruleset)
             state = record.verify()

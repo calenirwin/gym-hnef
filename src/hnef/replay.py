@@ -6,10 +6,10 @@ from functools import lru_cache
 from random import Random
 
 from .actions import ActionCodec
-from .engine import GameState, Ruleset, apply_move, initial_state, legal_moves
+from .engine import GameState, Ruleset, adjudicate_draw, apply_move, initial_state, legal_moves
 
 
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=3)
 def _codec(ruleset: Ruleset) -> ActionCodec:
     return ActionCodec(ruleset.size)
 
@@ -19,13 +19,20 @@ class Replay:
     actions: tuple[int, ...]
     state_keys: tuple[str, ...]
     ruleset: Ruleset = Ruleset.MINI
+    adjudication_note: str | None = None
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "ruleset", Ruleset(self.ruleset))
         object.__setattr__(self, "actions", tuple(self.actions))
         object.__setattr__(self, "state_keys", tuple(self.state_keys))
-        if len(self.state_keys) != len(self.actions) + 1:
-            raise ValueError("Replay needs one state key per position, including the opening")
+        if self.adjudication_note is not None and (
+            not isinstance(self.adjudication_note, str)
+            or not self.adjudication_note.strip()
+            or self.ruleset is not Ruleset.COPENHAGEN_V2
+        ):
+            raise ValueError("A draw adjudication needs a nonempty note and Copenhagen v2")
+        if len(self.state_keys) != len(self.actions) + 1 + (self.adjudication_note is not None):
+            raise ValueError("Replay needs a key for the opening, each move, and any adjudication")
         for action in self.actions:
             _codec(self.ruleset).decode(action)
         if any(not isinstance(key, str) for key in self.state_keys):
@@ -40,17 +47,30 @@ class Replay:
             state = apply_move(state, codec.decode(action))
             if self.state_keys[ply] != state.key:
                 raise ValueError(f"Replay state mismatch at ply {ply}")
+        if self.adjudication_note is not None:
+            state = adjudicate_draw(state)
+            if self.state_keys[-1] != state.key:
+                raise ValueError("Replay state mismatch after draw adjudication")
         return state
 
+    def adjudicate_draw(self, note: str) -> "Replay":
+        """Append a documented external judgment without adding a fictitious move."""
+        state = adjudicate_draw(self.verify())
+        return Replay(self.actions, (*self.state_keys, state.key), self.ruleset, note)
+
     def to_json(self) -> str:
+        data = {
+            "version": 1,
+            "ruleset": self.ruleset.value,
+            "actions": self.actions,
+            "state_keys": self.state_keys,
+        }
+        if self.adjudication_note is not None:
+            data["version"] = 2
+            data["adjudication"] = {"kind": "draw", "note": self.adjudication_note}
         return (
             json.dumps(
-                {
-                    "version": 1,
-                    "ruleset": self.ruleset.value,
-                    "actions": self.actions,
-                    "state_keys": self.state_keys,
-                },
+                data,
                 indent=2,
             )
             + "\n"
@@ -59,17 +79,34 @@ class Replay:
     @classmethod
     def from_json(cls, text: str) -> "Replay":
         data = json.loads(text)
+        if not isinstance(data, dict):
+            raise ValueError("Unsupported replay format or ruleset")
+        fields = {"version", "ruleset", "actions", "state_keys"}
+        note = None
+        if data.get("version") == 2:
+            fields.add("adjudication")
+            event = data.get("adjudication")
+            if (
+                not isinstance(event, dict)
+                or set(event) != {"kind", "note"}
+                or event["kind"] != "draw"
+                or not isinstance(event["note"], str)
+                or not event["note"].strip()
+            ):
+                raise ValueError("Invalid draw adjudication event")
+            note = event["note"]
         if (
-            not isinstance(data, dict)
-            or set(data) != {"version", "ruleset", "actions", "state_keys"}
+            set(data) != fields
             or type(data["version"]) is not int
-            or data["version"] != 1
+            or data["version"] not in (1, 2)
             or data["ruleset"] not in tuple(Ruleset)
             or not isinstance(data["actions"], list)
             or not isinstance(data["state_keys"], list)
         ):
             raise ValueError("Unsupported replay format or ruleset")
-        replay = cls(tuple(data["actions"]), tuple(data["state_keys"]), Ruleset(data["ruleset"]))
+        replay = cls(
+            tuple(data["actions"]), tuple(data["state_keys"]), Ruleset(data["ruleset"]), note
+        )
         replay.verify()
         return replay
 
