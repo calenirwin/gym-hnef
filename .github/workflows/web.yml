@@ -1,0 +1,26 @@
+name: Playable web app
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check web/app.mjs && node --check web/worker.js && node --check web/inference.mjs
+      - run: python tools/fetch_browser_runtime.py
+      - run: python tools/build_demo.py --output web-dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hnef-static-web
+          path: web-dist/
+          retention-days: 14

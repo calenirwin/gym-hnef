@@ -1,5 +1,7 @@
 # Hnef
 
+[Play Hnef · local two-player or AI](https://hnef-mini-lab.nelac.chatgpt.site).
+
 Modernizing the Hnefatafl reinforcement-learning project built by Tindur
 Sigurdason and Calen Irwin for CISC-856 at Queen's University, Winter 2021.
 
@@ -8,9 +10,28 @@ engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. The v2 prof
 recognizes provably permanent exit forts and records external draw judgments;
 automatic adjudication remains conservative. An optional PettingZoo adapter
 supports training experiments. Seeded random, heuristic, and MCTS opponents are
-available; network training and the web game are next.
+available. A CPU actor–critic baseline and a static browser game are now available;
+see [training and model artifacts](docs/rl-baseline.md) and [demo hosting](docs/hosting.md).
 See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
+For the latest local verification and prioritized next work, see the
+[October 18 assessment](docs/status-2026-10-18.md).
+
+## Play in your browser
+
+Use [the live game](https://hnef-mini-lab.nelac.chatgpt.site), or rebuild the same
+static app without installing training dependencies:
+
+```sh
+python3 tools/fetch_browser_runtime.py
+python3 tools/build_demo.py --output web-dist
+python3 -m http.server 8768 --directory web-dist
+```
+
+Open http://localhost:8768. Choose **Two players · Pass & play** for a shared
+board, or play either side against the computer. Undo and verified replay export
+are available. This is the **5×5 mini variant**; refresh starts a new game.
+See [the deployment stack and GPU extension path](docs/deployment-stack.md).
 
 ## Quick start
 
@@ -51,6 +72,20 @@ assert successor.ply == 1
 ```
 
 ## Development
+
+For the first learning experiment, install `--extra train` and use `hnef-rl`:
+
+```sh
+uv sync --locked --extra rl --extra train --python 3.12
+uv run --no-sync hnef-rl train --run runs/my-first-baseline --updates 100
+uv run --no-sync hnef-rl evaluate runs/my-first-baseline/checkpoint-000100.pt \
+  --output runs/my-first-baseline/evaluations/heldout --games 50
+uv run --no-sync hnef-rl list
+```
+
+The first measured model is still weak on the attacking side; the heuristic remains
+the default demo opponent. Read [the results and limitations](docs/rl-baseline.md)
+before interpreting defender win rates as learned strength.
 
 ```sh
 uv sync --locked --extra rl

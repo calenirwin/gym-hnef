@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A small board. An ancient escape. Play Hnef with a friend on one device, or against a simple AI.">
+  <meta name="theme-color" content="#172620"><title>Hnef · Mini Lab</title>
+  <link rel="stylesheet" href="style.css"><script type="module" src="app.mjs"></script>
+</head>
+<body>
+<div class="shell">
+  <header><a class="wordmark" href="./" aria-label="Hnef home"><span class="rune" aria-hidden="true">ᚼ</span> HNEF</a><span class="edition">MINI LAB <i></i> 02</span></header>
+  <main>
+    <div class="intro"><div class="eyebrow">A VIKING GAME · AN RL EXPERIMENT</div><h1>Find a way out.</h1><p>Eight attackers. Four defenders. One king.<br>A small board with nowhere to hide.</p></div>
+    <div class="game-layout">
+      <section class="play-area" aria-label="Game">
+        <div class="board-top"><span id="turn-label">Preparing the board</span><span id="ply">PLY 00</span></div>
+        <div class="board-frame"><div id="board" class="board" aria-label="Five by five Hnef board"></div></div>
+        <div class="board-bottom"><span><i class="legend-piece attacker"></i> Attackers <b id="attackers-count">8</b></span><span><i class="legend-piece defender"></i> Defenders <b id="defenders-count">4</b></span><span><i class="legend-piece king"></i> King</span></div>
+        <p id="status" role="status" aria-live="polite">Loading the game engine. The first visit takes a moment.</p>
+        <div id="error" role="alert" hidden><span id="error-message"></span> <button id="retry" class="secondary">Reload game</button></div>
+      </section>
+      <aside>
+        <div class="control-panel"><div class="eyebrow">TAKE A SIDE</div>
+          <label for="mode">Play mode</label><select id="mode" disabled><option value="ai">Play against the computer</option><option value="local">Two players · Pass &amp; play</option></select>
+          <div id="ai-settings"><label for="side">You play</label><select id="side" disabled><option value="attackers">Attackers · Capture the king</option><option value="defenders">Defenders · Escape to an edge</option></select>
+          <label for="opponent">Your opponent</label><select id="opponent" disabled><option value="heuristic">Heuristic · Reference opponent</option><option value="neural">RL baseline · Experimental</option><option value="random">Random · Learn the rules</option></select></div>
+          <p id="opponent-note" class="muted">A one-move look ahead, guided by material and the king’s escape routes.</p>
+          <div class="button-row"><button id="new-game" class="primary" disabled>New game <span aria-hidden="true">↗</span></button><button id="undo" class="secondary" disabled aria-label="Undo last turn">↶ Undo</button><button id="export" class="secondary" disabled aria-label="Download game replay">↓ Replay</button></div>
+          <p class="session-note">Changing mode, side, or opponent starts a new game. Refresh also starts fresh.</p>
+        </div>
+        <details open class="rules"><summary>The escape plan <span aria-hidden="true">↗</span></summary><ol><li>Slide a piece any distance in a straight line. Pieces cannot jump.</li><li>Sandwich an enemy between two allies to capture it. The throne also affects captures.</li><li>Defenders win when the king reaches any edge. Attackers must surround the king.</li></ol><p class="muted">The king needs four attackers on the throne, three beside it, and a sandwich elsewhere. Only the king can land on the throne. Threefold repetition is a draw; a side with no move loses.</p><a href="mini-rules.md" target="_blank" rel="noopener">Read the exact mini rules ↗</a></details>
+        <div class="lab-note"><span class="small-rune" aria-hidden="true">ᛟ</span><div><strong>An experiment you can play.</strong><p>This 5×5 development variant is the first step toward a larger Hnefatafl game. The learned opponent is an early baseline, not an expert.</p><p id="model-info">Model details loading…</p><a href="model-card.json" target="_blank" rel="noopener">Model card & evaluation ↗</a></div></div>
+      </aside>
+    </div>
+  </main>
+  <footer><span>HNEF · A RESEARCH PLAYGROUND</span><a href="https://github.com/calenirwin/gym-hnef" target="_blank" rel="noopener">Explore the project ↗</a><span>Play stays on your device.</span></footer>
+</div>
+</body></html>
