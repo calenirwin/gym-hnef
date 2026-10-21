@@ -1,0 +1,269 @@
+{
+  "initial": {
+    "schema": 1,
+    "created_at": "2026-10-18T15:47:30.445601+00:00",
+    "checkpoint_sha256": "9ff8179eba67a42b799420126caf120f3568296445b333a19c001ec01f890708",
+    "checkpoint_update": 0,
+    "ruleset": "mini-v1",
+    "training_source": {
+      "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+      "git_dirty": true,
+      "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+    },
+    "evaluation_source": {
+      "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+      "git_dirty": true,
+      "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+    },
+    "config": {
+      "games_per_matchup": 50,
+      "seed": 100000,
+      "max_plies": 128,
+      "iterations": 64,
+      "rollout_plies": 48,
+      "selection": "sampled"
+    },
+    "matchups": [
+      {
+        "opponent": "random",
+        "candidate_side": "attackers",
+        "games": 50,
+        "results": {
+          "win": 0,
+          "loss": 50,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 50
+        },
+        "plies": 1086,
+        "verified_replays": 50,
+        "candidate_decisions": 543,
+        "mean_decision_ms": 1.31192039408999
+      },
+      {
+        "opponent": "random",
+        "candidate_side": "defenders",
+        "games": 50,
+        "results": {
+          "win": 47,
+          "loss": 3,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 47,
+          "king_captured": 3
+        },
+        "plies": 1059,
+        "verified_replays": 50,
+        "candidate_decisions": 528,
+        "mean_decision_ms": 1.350120412863279
+      },
+      {
+        "opponent": "heuristic",
+        "candidate_side": "attackers",
+        "games": 50,
+        "results": {
+          "win": 0,
+          "loss": 50,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 50
+        },
+        "plies": 212,
+        "verified_replays": 50,
+        "candidate_decisions": 106,
+        "mean_decision_ms": 0.9351644905349668
+      },
+      {
+        "opponent": "heuristic",
+        "candidate_side": "defenders",
+        "games": 50,
+        "results": {
+          "win": 7,
+          "loss": 43,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_captured": 43,
+          "king_escaped": 7
+        },
+        "plies": 581,
+        "verified_replays": 50,
+        "candidate_decisions": 269,
+        "mean_decision_ms": 1.0323785725050216
+      }
+    ]
+  },
+  "final": {
+    "schema": 1,
+    "created_at": "2026-10-18T15:48:49.737385+00:00",
+    "checkpoint_sha256": "e6fb5c378486d01c81512fd20c11e88bf2321967bc7f3f7ef6de5ed514b4a172",
+    "checkpoint_update": 200,
+    "ruleset": "mini-v1",
+    "training_source": {
+      "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+      "git_dirty": true,
+      "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+    },
+    "evaluation_source": {
+      "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+      "git_dirty": true,
+      "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+    },
+    "config": {
+      "games_per_matchup": 50,
+      "seed": 100000,
+      "max_plies": 128,
+      "iterations": 64,
+      "rollout_plies": 48,
+      "selection": "sampled"
+    },
+    "matchups": [
+      {
+        "opponent": "random",
+        "candidate_side": "attackers",
+        "games": 50,
+        "results": {
+          "win": 1,
+          "loss": 49,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 49,
+          "king_captured": 1
+        },
+        "plies": 1147,
+        "verified_replays": 50,
+        "candidate_decisions": 574,
+        "mean_decision_ms": 1.407271961660807
+      },
+      {
+        "opponent": "random",
+        "candidate_side": "defenders",
+        "games": 50,
+        "results": {
+          "win": 48,
+          "loss": 2,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 48,
+          "king_captured": 2
+        },
+        "plies": 814,
+        "verified_replays": 50,
+        "candidate_decisions": 406,
+        "mean_decision_ms": 1.3196313251091627
+      },
+      {
+        "opponent": "heuristic",
+        "candidate_side": "attackers",
+        "games": 50,
+        "results": {
+          "win": 0,
+          "loss": 50,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 50
+        },
+        "plies": 212,
+        "verified_replays": 50,
+        "candidate_decisions": 106,
+        "mean_decision_ms": 1.0227411509542848
+      },
+      {
+        "opponent": "heuristic",
+        "candidate_side": "defenders",
+        "games": 50,
+        "results": {
+          "win": 5,
+          "loss": 45,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_captured": 45,
+          "king_escaped": 5
+        },
+        "plies": 603,
+        "verified_replays": 50,
+        "candidate_decisions": 279,
+        "mean_decision_ms": 1.1806986810523503
+      }
+    ]
+  },
+  "mcts": {
+    "schema": 1,
+    "created_at": "2026-10-18T15:48:58.592606+00:00",
+    "checkpoint_sha256": "e6fb5c378486d01c81512fd20c11e88bf2321967bc7f3f7ef6de5ed514b4a172",
+    "checkpoint_update": 200,
+    "ruleset": "mini-v1",
+    "training_source": {
+      "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+      "git_dirty": true,
+      "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+    },
+    "evaluation_source": {
+      "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+      "git_dirty": true,
+      "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+    },
+    "config": {
+      "games_per_matchup": 10,
+      "seed": 100000,
+      "max_plies": 128,
+      "iterations": 64,
+      "rollout_plies": 48,
+      "selection": "sampled"
+    },
+    "matchups": [
+      {
+        "opponent": "mcts",
+        "candidate_side": "attackers",
+        "games": 10,
+        "results": {
+          "win": 0,
+          "loss": 10,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_escaped": 10
+        },
+        "plies": 50,
+        "verified_replays": 10,
+        "candidate_decisions": 25,
+        "mean_decision_ms": 1.2938537199806888
+      },
+      {
+        "opponent": "mcts",
+        "candidate_side": "defenders",
+        "games": 10,
+        "results": {
+          "win": 8,
+          "loss": 2,
+          "draw": 0,
+          "truncated": 0
+        },
+        "outcomes": {
+          "king_captured": 2,
+          "king_escaped": 8
+        },
+        "plies": 188,
+        "verified_replays": 10,
+        "candidate_decisions": 93,
+        "mean_decision_ms": 1.6760983011193675
+      }
+    ]
+  }
+}

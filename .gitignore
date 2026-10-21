@@ -130,3 +130,11 @@ dmypy.json
 
 # Modern development tooling
 .ruff_cache/
+
+# Local experiments and exported model bundles (cataloged by manifest).
+runs/
+models/
+.demo-build/
+
+# Reproducible static web build
+web-dist/

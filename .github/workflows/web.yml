@@ -1,0 +1,69 @@
+name: Playable web app
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --check web/app.mjs && node --check web/worker.js && node --check web/inference.mjs
+      - run: python tools/fetch_browser_runtime.py
+      - run: python tools/build_demo.py --output web-dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hnef-static-web
+          path: web-dist/
+          retention-days: 14
+
+      # Publication is limited to an explicit dispatch on main below.
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: web-dist/
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t hnef-web .
+      - name: Check serving on a custom PORT
+        shell: bash
+        run: |
+          docker run -d --name hnef-smoke -e PORT=9090 -p 127.0.0.1:8768:9090 hnef-web
+          trap 'docker logs hnef-smoke; docker rm -f hnef-smoke' EXIT
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:8768/index.html -o /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8768/index.html -o /dev/null
+          curl -fsSI http://127.0.0.1:8768/runtime/pyodide.asm.wasm | grep -qi 'content-type: application/wasm'
+          curl -fsS http://127.0.0.1:8768/runtime/LICENSE-PYODIDE.txt -o /dev/null
+          curl -fsS http://127.0.0.1:8768/runtime/LICENSE-PYTHON.txt -o /dev/null
+          docker exec hnef-smoke sh -c 'wget -Y off -q -O /dev/null "http://127.0.0.1:${PORT}/index.html"'
+
+  deploy-pages:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: [build, container]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

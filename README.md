@@ -9,7 +9,7 @@ recognizes provably permanent exit forts and records external draw judgments;
 automatic adjudication remains conservative. An optional PettingZoo adapter
 supports training experiments. Seeded random, heuristic, and MCTS opponents are
 available. A local browser game connects those opponents to the real engine;
-network training is next.
+optional CPU actor–critic training is available separately.
 See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
 
@@ -95,6 +95,30 @@ Tests and lint target the modern package. The wheel includes only `hnef`, with
 no mandatory Gym, NumPy, TensorFlow, or rendering dependency. The generated action codec
 supports 200 actions for mini and 2,420 for Copenhagen. Mini remains the default;
 each replay identifies its ruleset, and old mini replays remain compatible.
+
+## Integration and separate static demo
+
+The selected product baseline is the raven/hart/king playing table in
+`src/hnef/web/`, including its Copenhagen selector and Learn pages. Its artwork,
+UI, autosave, replay import and engine contracts are preserved.
+
+The separate `web/` directory retains the previously deployed 5×5 Pyodide Mini
+Lab for compatibility. `tools/build_demo.py`, the Pages workflow and the Caddy
+container build that static mini artifact only; they do not publish the playing
+table. The local playing table requires its Python HTTP API and is not directly
+compatible with GitHub Pages. See [integration scope and release gates](docs/integration-baseline.md).
+
+CPU training and evaluated model exports from `main` are retained without adding
+an experimental learned opponent to the selected playing table:
+
+```sh
+uv sync --locked --extra rl --extra train
+uv run --no-sync hnef-rl --help
+```
+
+See [the learning guide](docs/rl-baseline.md). Existing static-demo deployment
+instructions remain in [Pages](docs/PAGES.md) and [Railway](docs/DEPLOYMENT.md).
+No public release of the selected playing table is part of this integration.
 
 ## Original school project
 
