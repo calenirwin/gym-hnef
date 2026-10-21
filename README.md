@@ -1,7 +1,5 @@
 # Hnef
 
-[Play Hnef · local two-player or AI](https://hnef-mini-lab.nelac.chatgpt.site).
-
 Modernizing the Hnefatafl reinforcement-learning project built by Tindur
 Sigurdason and Calen Irwin for CISC-856 at Queen's University, Winter 2021.
 
@@ -10,32 +8,39 @@ engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. The v2 prof
 recognizes provably permanent exit forts and records external draw judgments;
 automatic adjudication remains conservative. An optional PettingZoo adapter
 supports training experiments. Seeded random, heuristic, and MCTS opponents are
-available. A CPU actor–critic baseline and a static browser game are now available;
-see [training and model artifacts](docs/rl-baseline.md) and [demo hosting](docs/hosting.md).
+available. A local browser game connects those opponents to the real engine;
+optional CPU actor–critic training is available separately.
 See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
-For the latest local verification and prioritized next work, see the
-[October 18 assessment](docs/status-2026-10-18.md).
-
-## Play in your browser
-
-Use [the live game](https://hnef-mini-lab.nelac.chatgpt.site), or rebuild the same
-static app without installing training dependencies:
-
-```sh
-python3 tools/fetch_browser_runtime.py
-python3 tools/build_demo.py --output web-dist
-python3 -m http.server 8768 --directory web-dist
-```
-
-Open http://localhost:8768. Choose **Two players · Pass & play** for a shared
-board, or play either side against the computer. Undo and verified replay export
-are available. This is the **5×5 mini variant**; refresh starts a new game.
-See [the deployment stack and GPU extension path](docs/deployment-stack.md) and
-[free GitHub Pages preparation](docs/PAGES.md).
-[Railway container setup](docs/DEPLOYMENT.md) remains an optional fallback.
 
 ## Quick start
+
+### Play in your browser
+
+```sh
+uv sync --locked
+uv run hnef web
+```
+
+Open http://127.0.0.1:8000. Play either side against random, heuristic, or MCTS
+bots; share the board with a second player; or watch a bot match. The UI includes
+legal-move highlights, a move journal, position review, takebacks, board rotation,
+browser-local autosave, and engine-compatible replay downloads. Mini is the
+default; experimental Copenhagen v2 is available in the battlefield selector.
+Use **+** to open setup, then press **Play** to start. The minimal playing table
+uses [Albion colours, typography, and original engraved pieces](docs/albion-ui.md).
+
+Open **Learn** to study search, DQN/Rainbow, PPO, AlphaZero, MuZero, Dreamer,
+and population training, with dated research references and interactive examples.
+The **Experiments** topic compares the three implemented bots on the same position
+with adjustable search budgets and downloadable diagnostics. Other methods are
+study material, with proposed Hnef experiments.
+
+No web dependencies or frontend build are required. Use `--port 8001` to choose
+another port, or `PYTHONPATH=src python3 -m hnef web` without installation.
+See [the browser game guide](docs/web-game.md) for controls and current limits.
+
+### Run simulations
 
 With Python 3.11+ and [uv](https://docs.astral.sh/uv/getting-started/installation/):
 
@@ -75,20 +80,6 @@ assert successor.ply == 1
 
 ## Development
 
-For the first learning experiment, install `--extra train` and use `hnef-rl`:
-
-```sh
-uv sync --locked --extra rl --extra train --python 3.12
-uv run --no-sync hnef-rl train --run runs/my-first-baseline --updates 100
-uv run --no-sync hnef-rl evaluate runs/my-first-baseline/checkpoint-000100.pt \
-  --output runs/my-first-baseline/evaluations/heldout --games 50
-uv run --no-sync hnef-rl list
-```
-
-The first measured model is still weak on the attacking side; the heuristic remains
-the default demo opponent. Read [the results and limitations](docs/rl-baseline.md)
-before interpreting defender win rates as learned strength.
-
 ```sh
 uv sync --locked --extra rl
 uv run --no-sync pytest
@@ -104,6 +95,30 @@ Tests and lint target the modern package. The wheel includes only `hnef`, with
 no mandatory Gym, NumPy, TensorFlow, or rendering dependency. The generated action codec
 supports 200 actions for mini and 2,420 for Copenhagen. Mini remains the default;
 each replay identifies its ruleset, and old mini replays remain compatible.
+
+## Integration and separate static demo
+
+The selected product baseline is the raven/hart/king playing table in
+`src/hnef/web/`, including its Copenhagen selector and Learn pages. Its artwork,
+UI, autosave, replay import and engine contracts are preserved.
+
+The separate `web/` directory retains the previously deployed 5×5 Pyodide Mini
+Lab for compatibility. `tools/build_demo.py`, the Pages workflow and the Caddy
+container build that static mini artifact only; they do not publish the playing
+table. The local playing table requires its Python HTTP API and is not directly
+compatible with GitHub Pages. See [integration scope and release gates](docs/integration-baseline.md).
+
+CPU training and evaluated model exports from `main` are retained without adding
+an experimental learned opponent to the selected playing table:
+
+```sh
+uv sync --locked --extra rl --extra train
+uv run --no-sync hnef-rl --help
+```
+
+See [the learning guide](docs/rl-baseline.md). Existing static-demo deployment
+instructions remain in [Pages](docs/PAGES.md) and [Railway](docs/DEPLOYMENT.md).
+No public release of the selected playing table is part of this integration.
 
 ## Original school project
 

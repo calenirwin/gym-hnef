@@ -1,5 +1,9 @@
 # Free GitHub Pages preparation
 
+> Scope: this guide serves the separate `web/` 5×5 Mini Lab. It does not deploy
+> the selected raven/hart/king playing table in `src/hnef/web/`. See
+> [integration scope](integration-baseline.md) before any release.
+
 The public `calenirwin/gym-hnef` repository is eligible for GitHub Pages on GitHub
 Free. The app is entirely static: rules and opponents run in the browser's Python
 worker. No server, database, GPU, secrets, paid plan or new domain is needed.

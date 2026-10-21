@@ -1,5 +1,9 @@
 # Deployment preparation
 
+> Scope: this guide serves the separate `web/` 5×5 Mini Lab. It does not deploy
+> the selected raven/hart/king playing table in `src/hnef/web/`. See
+> [integration scope](integration-baseline.md) before any release.
+
 GitHub Pages is the preferred free host within the total CAD 20–30/month budget.
 See [Pages preparation and publication steps](PAGES.md). Railway below remains an
 optional paid fallback; no Railway service is needed for Pages.

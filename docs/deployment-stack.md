@@ -1,5 +1,9 @@
 # Hnef MVP deployment
 
+> Scope: this guide serves the separate `web/` 5×5 Mini Lab. It does not deploy
+> the selected raven/hart/king playing table in `src/hnef/web/`. See
+> [integration scope](integration-baseline.md) before any release.
+
 The public game is https://hnef-mini-lab.nelac.chatgpt.site. The MVP is the
 versioned **5×5 mini-v1 variant**, not the full 11×11 Copenhagen game.
 
