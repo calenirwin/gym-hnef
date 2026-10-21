@@ -24,3 +24,23 @@ jobs:
           name: hnef-static-web
           path: web-dist/
           retention-days: 14
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t hnef-web .
+      - name: Check serving on a custom PORT
+        shell: bash
+        run: |
+          docker run -d --name hnef-smoke -e PORT=9090 -p 127.0.0.1:8768:9090 hnef-web
+          trap 'docker logs hnef-smoke; docker rm -f hnef-smoke' EXIT
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:8768/index.html -o /dev/null; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8768/index.html -o /dev/null
+          curl -fsSI http://127.0.0.1:8768/runtime/pyodide.asm.wasm | grep -qi 'content-type: application/wasm'
+          curl -fsS http://127.0.0.1:8768/runtime/LICENSE-PYODIDE.txt -o /dev/null
+          curl -fsS http://127.0.0.1:8768/runtime/LICENSE-PYTHON.txt -o /dev/null
+          docker exec hnef-smoke sh -c 'wget -Y off -q -O /dev/null "http://127.0.0.1:${PORT}/index.html"'

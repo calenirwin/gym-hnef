@@ -31,7 +31,8 @@ python3 -m http.server 8768 --directory web-dist
 Open http://localhost:8768. Choose **Two players · Pass & play** for a shared
 board, or play either side against the computer. Undo and verified replay export
 are available. This is the **5×5 mini variant**; refresh starts a new game.
-See [the deployment stack and GPU extension path](docs/deployment-stack.md).
+See [the deployment stack and GPU extension path](docs/deployment-stack.md) and
+[Railway container setup](docs/DEPLOYMENT.md).
 
 ## Quick start
 
