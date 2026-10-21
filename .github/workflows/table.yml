@@ -27,10 +27,12 @@ jobs:
         with:
           name: original-playing-table
           path: .demo-build/original-table/
+          include-hidden-files: true
           retention-days: 14
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: original-table-browser-evidence
           path: .demo-build/table-qa-artifacts/
+          include-hidden-files: true
           retention-days: 14

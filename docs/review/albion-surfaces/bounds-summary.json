@@ -1,0 +1,112 @@
+[
+  {
+    "case": "bounds-copenhagen-experimental-v2-1280",
+    "frames": 1032,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 380,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    }
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-1440",
+    "frames": 1074,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 460,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    }
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-320",
+    "frames": 1232,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 32,
+      "y": 133,
+      "width": 256,
+      "height": 256
+    }
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-390",
+    "frames": 1105,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 32,
+      "y": 133,
+      "width": 326,
+      "height": 326
+    }
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-768",
+    "frames": 1111,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 89,
+      "y": 133,
+      "width": 590,
+      "height": 590
+    }
+  },
+  {
+    "case": "bounds-mini-v1-1280",
+    "frames": 1180,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 380,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    }
+  },
+  {
+    "case": "bounds-mini-v1-1440",
+    "frames": 1257,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 460,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    }
+  },
+  {
+    "case": "bounds-mini-v1-320",
+    "frames": 1062,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 32,
+      "y": 133,
+      "width": 256,
+      "height": 256
+    }
+  },
+  {
+    "case": "bounds-mini-v1-390",
+    "frames": 1109,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 32,
+      "y": 133,
+      "width": 326,
+      "height": 326
+    }
+  },
+  {
+    "case": "bounds-mini-v1-768",
+    "frames": 1064,
+    "maxDeviationPx": 0,
+    "baseline": {
+      "x": 89,
+      "y": 133,
+      "width": 590,
+      "height": 590
+    }
+  }
+]

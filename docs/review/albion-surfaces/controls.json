@@ -1,0 +1,177 @@
+[
+  {
+    "viewport": [
+      1440,
+      900
+    ],
+    "ruleset": "mini-v1",
+    "board": {
+      "x": 460,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      1280,
+      900
+    ],
+    "ruleset": "mini-v1",
+    "board": {
+      "x": 380,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      768,
+      1024
+    ],
+    "ruleset": "mini-v1",
+    "board": {
+      "x": 89,
+      "y": 133,
+      "width": 590,
+      "height": 590
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      390,
+      844
+    ],
+    "ruleset": "mini-v1",
+    "board": {
+      "x": 32,
+      "y": 133,
+      "width": 326,
+      "height": 326
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      320,
+      568
+    ],
+    "ruleset": "mini-v1",
+    "board": {
+      "x": 32,
+      "y": 133,
+      "width": 256,
+      "height": 256
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      1440,
+      900
+    ],
+    "ruleset": "copenhagen-experimental-v2",
+    "board": {
+      "x": 460,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      1280,
+      900
+    ],
+    "ruleset": "copenhagen-experimental-v2",
+    "board": {
+      "x": 380,
+      "y": 133,
+      "width": 520,
+      "height": 520
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      768,
+      1024
+    ],
+    "ruleset": "copenhagen-experimental-v2",
+    "board": {
+      "x": 89,
+      "y": 133,
+      "width": 590,
+      "height": 590
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      390,
+      844
+    ],
+    "ruleset": "copenhagen-experimental-v2",
+    "board": {
+      "x": 32,
+      "y": 133,
+      "width": 326,
+      "height": 326
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "viewport": [
+      320,
+      568
+    ],
+    "ruleset": "copenhagen-experimental-v2",
+    "board": {
+      "x": 32,
+      "y": 133,
+      "width": 256,
+      "height": 256
+    },
+    "checks": "cancel/retry, review, rules focus, reset, setup dismissal, reduced motion"
+  },
+  {
+    "learn_viewport": [
+      1440,
+      900
+    ],
+    "page_errors": []
+  },
+  {
+    "learn_viewport": [
+      1280,
+      900
+    ],
+    "page_errors": []
+  },
+  {
+    "learn_viewport": [
+      768,
+      1024
+    ],
+    "page_errors": []
+  },
+  {
+    "learn_viewport": [
+      390,
+      844
+    ],
+    "page_errors": []
+  },
+  {
+    "learn_viewport": [
+      320,
+      568
+    ],
+    "page_errors": []
+  }
+]

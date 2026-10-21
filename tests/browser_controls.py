@@ -51,7 +51,7 @@ try:
         for width, height, profile in [
             (w, h, ruleset)
             for ruleset in ["mini-v1", "copenhagen-experimental-v2"]
-            for w, h in [(1280, 900), (390, 844), (320, 568)]
+            for w, h in [(1440, 900), (1280, 900), (768, 1024), (390, 844), (320, 568)]
         ]:
             page = browser.new_page(viewport={"width": width, "height": height})
             page.add_init_script(
@@ -199,7 +199,7 @@ try:
             )
             print(f"PASS: {profile} at {width}×{height}", flush=True)
             page.close()
-        for width, height in [(1280, 900), (390, 844), (320, 568)]:
+        for width, height in [(1440, 900), (1280, 900), (768, 1024), (390, 844), (320, 568)]:
             page = browser.new_page(viewport={"width": width, "height": height})
             errors = []
             page.on("pageerror", lambda error, errors=errors: errors.append(str(error)))

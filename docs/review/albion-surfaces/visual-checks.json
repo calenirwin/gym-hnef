@@ -1,0 +1,54 @@
+[
+  {
+    "width": 320,
+    "learnTopics": [
+      "history",
+      "playing",
+      "tactics",
+      "resources",
+      "experiments"
+    ],
+    "overflow": false,
+    "pageErrors": [],
+    "reducedMotion": true
+  },
+  {
+    "width": 390,
+    "learnTopics": [
+      "history",
+      "playing",
+      "tactics",
+      "resources",
+      "experiments"
+    ],
+    "overflow": false,
+    "pageErrors": [],
+    "reducedMotion": true
+  },
+  {
+    "width": 768,
+    "learnTopics": [
+      "history",
+      "playing",
+      "tactics",
+      "resources",
+      "experiments"
+    ],
+    "overflow": false,
+    "pageErrors": [],
+    "reducedMotion": true
+  },
+  {
+    "width": 1440,
+    "learnTopics": [
+      "history",
+      "playing",
+      "tactics",
+      "resources",
+      "experiments"
+    ],
+    "overflow": false,
+    "pageErrors": [],
+    "reducedMotion": true
+  }
+]

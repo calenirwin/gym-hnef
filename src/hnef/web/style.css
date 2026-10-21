@@ -180,3 +180,52 @@ details input { margin-top: 10px; }
 .new-game-button { margin-top: 8px; }
 .rules-sheet { scrollbar-gutter: stable; }
 .rules-sheet h1 { padding-right: 20px; }
+
+/* Albion surfaces: neutral surroundings, sand at the playing surface. */
+:root {
+  --paper: #F7F6F2;
+  --surface: #FFFFFF;
+  --muted: #465962;
+  --shadow: 0 24px 80px #052d4618;
+  --ease: 180ms ease;
+}
+body { background: var(--paper); }
+.arena { background: var(--sand); box-shadow: 0 0 0 8px var(--sand), 0 14px 42px #052d4614; }
+.square { background: #ffffff20; }
+.square.checker { background: #052d461c; }
+.board::before { opacity: .035; }
+.flourish { opacity: .2; }
+.square.selected { box-shadow: inset 0 0 0 2px var(--ink); }
+.square.selected::after { background: #a4d9e599; }
+.square.legal::before { opacity: 1; }
+.seat { opacity: 1; color: var(--muted); }
+.seat.active { color: var(--ink); }
+.seat.active .side-mark { filter: none; }
+.versus { opacity: 1; color: var(--muted); }
+#status, #review-position, #ply { opacity: 1; color: var(--muted); font-size: 12px; }
+.tools .icon-button { opacity: 1; }
+.tools { padding: 4px 12px; border-radius: 28px; background: var(--surface); box-shadow: 0 4px 20px #052d4608; }
+.icon-button:hover:enabled { transform: none; background: #052d4610; }
+.experimental { font-size: 11px; opacity: 1; color: var(--muted); }
+.sheet { background: var(--paper); box-shadow: var(--shadow); }
+.sheet::backdrop { background: #052d4680; backdrop-filter: none; }
+label { font-size: 12px; }
+select, input:not([type="range"]) { min-height: 44px; background: #052d460a; }
+.field-help, .rules-sheet .rule-note, .result-sheet p { opacity: 1; color: var(--muted); font-size: 12px; }
+summary { opacity: 1; }
+.rules-sheet li, .rules-sheet p { font-size: 13px; }
+.play-button { color: var(--paper); }
+.new-game-button { text-decoration: none; background: var(--ink); color: var(--paper); border-radius: 2px; padding-inline: 24px; }
+.new-game-button:hover { color: var(--mist); }
+.new-game-button:focus-visible { outline-color: var(--ink); }
+.wonder-footer::after { background: linear-gradient(var(--paper), transparent 45%); }
+.is-busy #status { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+.experimental { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+.experimental button { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; }
+.experimental svg { width: 17px; height: 17px; }
+@media (min-width: 650px) and (min-height: 651px) {
+  .arena { width: min(calc(100svh - 380px), 590px, calc(100vw - 64px)); }
+}

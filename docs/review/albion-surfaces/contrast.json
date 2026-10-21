@@ -1,0 +1,32 @@
+[
+  {
+    "role": "Primary text",
+    "foreground": "#052D46",
+    "background": "#F7F6F2",
+    "contrast": 13.21
+  },
+  {
+    "role": "Secondary text",
+    "foreground": "#465962",
+    "background": "#F7F6F2",
+    "contrast": 6.78
+  },
+  {
+    "role": "Primary control",
+    "foreground": "#F7F6F2",
+    "background": "#052D46",
+    "contrast": 13.21
+  },
+  {
+    "role": "Original sand",
+    "foreground": "#052D46",
+    "background": "#D8CDAA",
+    "contrast": 9.0
+  },
+  {
+    "role": "Mist on deep blue",
+    "foreground": "#A4D9E5",
+    "background": "#052D46",
+    "contrast": 9.27
+  }
+]
