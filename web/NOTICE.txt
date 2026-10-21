@@ -1,0 +1,14 @@
+Hnef Mini Lab bundles the unmodified official Pyodide 314.0.7 runtime.
+Pyodide contributors and Mozilla; Mozilla Public License 2.0.
+License: runtime/LICENSE-PYODIDE.txt
+Corresponding source: https://github.com/pyodide/pyodide/tree/314.0.7
+Official release files: https://cdn.jsdelivr.net/pyodide/v314.0.7/full/
+
+The runtime includes Python 3.14.2 and its standard library.
+Python Software Foundation and contributors.
+License and third-party notices: runtime/LICENSE-PYTHON.txt
+Corresponding source: https://github.com/python/cpython/tree/v3.14.2
+
+The UI uses the DM Sans and Instrument Serif fonts through Google Fonts.
+https://fonts.google.com/specimen/DM+Sans
+https://fonts.google.com/specimen/Instrument+Serif

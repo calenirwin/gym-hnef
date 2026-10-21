@@ -1,0 +1,102 @@
+{
+  "schema": 1,
+  "created_at": "2026-10-18T15:48:49.737385+00:00",
+  "checkpoint_sha256": "e6fb5c378486d01c81512fd20c11e88bf2321967bc7f3f7ef6de5ed514b4a172",
+  "checkpoint_update": 200,
+  "ruleset": "mini-v1",
+  "training_source": {
+    "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+    "git_dirty": true,
+    "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+  },
+  "evaluation_source": {
+    "git_commit": "9348d34cb9bffc3cf33205e4e9212f1c92fab428",
+    "git_dirty": true,
+    "source_sha256": "2a2c61ab565c519281a1d4f77c41e5700ecf963d9cd89621e162a658fddba684"
+  },
+  "config": {
+    "games_per_matchup": 50,
+    "seed": 100000,
+    "max_plies": 128,
+    "iterations": 64,
+    "rollout_plies": 48,
+    "selection": "sampled"
+  },
+  "matchups": [
+    {
+      "opponent": "random",
+      "candidate_side": "attackers",
+      "games": 50,
+      "results": {
+        "win": 1,
+        "loss": 49,
+        "draw": 0,
+        "truncated": 0
+      },
+      "outcomes": {
+        "king_escaped": 49,
+        "king_captured": 1
+      },
+      "plies": 1147,
+      "verified_replays": 50,
+      "candidate_decisions": 574,
+      "mean_decision_ms": 1.407271961660807
+    },
+    {
+      "opponent": "random",
+      "candidate_side": "defenders",
+      "games": 50,
+      "results": {
+        "win": 48,
+        "loss": 2,
+        "draw": 0,
+        "truncated": 0
+      },
+      "outcomes": {
+        "king_escaped": 48,
+        "king_captured": 2
+      },
+      "plies": 814,
+      "verified_replays": 50,
+      "candidate_decisions": 406,
+      "mean_decision_ms": 1.3196313251091627
+    },
+    {
+      "opponent": "heuristic",
+      "candidate_side": "attackers",
+      "games": 50,
+      "results": {
+        "win": 0,
+        "loss": 50,
+        "draw": 0,
+        "truncated": 0
+      },
+      "outcomes": {
+        "king_escaped": 50
+      },
+      "plies": 212,
+      "verified_replays": 50,
+      "candidate_decisions": 106,
+      "mean_decision_ms": 1.0227411509542848
+    },
+    {
+      "opponent": "heuristic",
+      "candidate_side": "defenders",
+      "games": 50,
+      "results": {
+        "win": 5,
+        "loss": 45,
+        "draw": 0,
+        "truncated": 0
+      },
+      "outcomes": {
+        "king_captured": 45,
+        "king_escaped": 5
+      },
+      "plies": 603,
+      "verified_replays": 50,
+      "candidate_decisions": 279,
+      "mean_decision_ms": 1.1806986810523503
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+[
+  {
+    "name": "published four-defender exit fort",
+    "source": "https://aagenielsen.dk/copenhagenregler/edgefort.png",
+    "board": [
+      "...........", "...........", "...........", "...........",
+      "...........", "...........", "...........", "...........",
+      "...........", "....DD.....", "...DK.D...."
+    ],
+    "room": [[10, 4], [10, 5]],
+    "closing_move": [[7, 5], [9, 5]]
+  },
+  {
+    "name": "published six-defender exit fort",
+    "source": "https://aagenielsen.dk/copenhagenregler/taget10.png",
+    "board": [
+      "...........", "...........", "...........", "...........",
+      "...........", "...........", "...........", "...........",
+      "....DD.....", "....D.D....", "....DKD...."
+    ],
+    "room": [[9, 5], [10, 5]],
+    "closing_move": [[7, 6], [9, 6]]
+  }
+]

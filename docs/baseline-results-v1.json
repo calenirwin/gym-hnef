@@ -1,0 +1,89 @@
+{
+  "date": "2026-10-14",
+  "python": "3.12.3",
+  "ruleset": "mini-v1",
+  "policy_version": 1,
+  "seed_start": 0,
+  "games_per_matchup": 50,
+  "max_plies": 200,
+  "reports": {
+    "random-reference": {
+      "games": 50,
+      "plies": 1205,
+      "results": {
+        "defenders": 43,
+        "attackers": 7
+      }
+    },
+    "heuristic-attackers": {
+      "games": 50,
+      "plies": 594,
+      "results": {
+        "attackers": 46,
+        "defenders": 4
+      },
+      "config": {
+        "policy_version": 1,
+        "ruleset": "mini-v1",
+        "attackers": "heuristic",
+        "defenders": "random",
+        "seed": 0,
+        "max_plies": 200,
+        "iterations": 64,
+        "rollout_plies": 48
+      }
+    },
+    "heuristic-defenders": {
+      "games": 50,
+      "plies": 218,
+      "results": {
+        "defenders": 50
+      },
+      "config": {
+        "policy_version": 1,
+        "ruleset": "mini-v1",
+        "attackers": "random",
+        "defenders": "heuristic",
+        "seed": 0,
+        "max_plies": 200,
+        "iterations": 64,
+        "rollout_plies": 48
+      }
+    },
+    "mcts-attackers": {
+      "games": 50,
+      "plies": 955,
+      "results": {
+        "defenders": 23,
+        "attackers": 27
+      },
+      "config": {
+        "policy_version": 1,
+        "ruleset": "mini-v1",
+        "attackers": "mcts",
+        "defenders": "random",
+        "seed": 0,
+        "max_plies": 200,
+        "iterations": 64,
+        "rollout_plies": 48
+      }
+    },
+    "mcts-defenders": {
+      "games": 50,
+      "plies": 308,
+      "results": {
+        "defenders": 50
+      },
+      "config": {
+        "policy_version": 1,
+        "ruleset": "mini-v1",
+        "attackers": "random",
+        "defenders": "mcts",
+        "seed": 0,
+        "max_plies": 200,
+        "iterations": 64,
+        "rollout_plies": 48
+      }
+    }
+  }
+}
