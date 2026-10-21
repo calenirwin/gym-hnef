@@ -1,0 +1,34 @@
+name: Original playing table
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python -m pip install playwright==1.62.0
+      - run: python -m playwright install --with-deps chromium
+      - run: node --check src/hnef/web/app.js && node --check src/hnef/web/learn.js && node --check src/hnef/web/table-worker.mjs
+      - run: node --test tests/web-transport.test.cjs tests/web-learning.test.cjs
+      - run: python tools/fetch_browser_runtime.py
+      - run: python tests/browser_table.py
+      - run: python tools/build_table.py --output .demo-build/original-table
+      - uses: actions/upload-artifact@v4
+        with:
+          name: original-playing-table
+          path: .demo-build/original-table/
+          retention-days: 14
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-table-browser-evidence
+          path: .demo-build/table-qa-artifacts/
+          retention-days: 14

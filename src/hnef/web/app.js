@@ -1,5 +1,6 @@
 'use strict';
 const $ = id => document.getElementById(id);
+const transport = window.hnefTransport;
 const STORAGE = 'hnef-table-v1';
 const defaults = {ruleset: 'mini-v1', mode: 'attackers', policy: 'heuristic', seed: 42};
 let config = {...defaults}, live = null, view = null, selected = null;
@@ -26,7 +27,7 @@ function fillForm() {
   formHelp();
 }
 function formHelp() {
-  $('policy-learn').href = `/learn#${$('policy').value}`;
+  $('policy-learn').href = transport.url(`learn/#${$('policy').value}`);
   $('policy-learn').hidden = $('mode').value === 'local';
   $('policy-help').textContent = {
     random: 'Unpredictable moves. A gentle place to start.',
@@ -64,16 +65,13 @@ function announce(message) {
 async function request(operation = 'state', actions = live?.actions || [], extra = {}, replace = true) {
   clearTimeout(timer);
   const id = ++requestId;
+  const wasPaused = paused;
   busy = true;
   retryAction = null; lastFailure = null;
   showError('');
   render();
   try {
-    const response = await fetch('/api/game', {
-      signal: AbortSignal.timeout(30000),
-      method: 'POST', headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({...config, operation, actions, ...extra})
-    });
+    const response = await transport.request('game', {...config, operation, actions, ...extra}, {remember: replace});
     const data = await response.json();
     if (!response.ok) {
       const error = new Error(data.error || 'The move could not be completed.');
@@ -91,8 +89,8 @@ async function request(operation = 'state', actions = live?.actions || [], extra
       paused = true;
       skipNextMotion = false;
       lastFailure = error.invalid ? 'invalid' : 'connection';
-      retryAction = () => request(operation, actions, extra, replace);
-      showError(error.invalid ? error.message : 'The table is offline. Your saved game is safe.');
+      retryAction = () => { paused = wasPaused; return request(operation, actions, extra, replace); };
+      showError(error.invalid || transport.mode === 'worker' ? error.message : 'The table is offline. Your saved game is safe.');
     }
     return false;
   } finally {
@@ -105,11 +103,12 @@ function scheduleBot() {
   timer = setTimeout(() => request('ai'), 650);
 }
 function render() {
+  $('cancel-request').hidden = !busy || transport.mode !== 'worker';
   document.body.classList.toggle('is-busy', busy);
   for (const element of $('setup-form').elements) element.disabled = busy;
   formHelp();
   if (!view) {
-    $('status').textContent = busy ? '…' : 'Ready';
+    $('status').textContent = busy ? transport.status || '…' : 'Ready';
     for (const id of ['back', 'forward', 'play-pause', 'live', 'undo', 'download']) $(id).disabled = true;
     return;
   }
@@ -141,7 +140,7 @@ function render() {
   } else {
     $('status').title = '';
     $('status').textContent = view.truncated ? 'Session limit · unfinished'
-      : isReview ? 'Review' : busy ? '…'
+      : isReview ? 'Review' : busy ? transport.status || '…'
       : humanTurn() ? (config.mode === 'local' ? `${name(view.player)} to move` : 'Your move')
       : paused ? 'Paused' : 'Thinking';
   }
@@ -227,7 +226,7 @@ function renderBoard() {
           disc.className = `piece ${piece === 'A' ? 'attacker' : 'defender'}${piece === 'K' ? ' king' : ''}`;
           disc.setAttribute('aria-hidden', 'true');
           const art = document.createElement('img');
-          art.src = `/assets/${{A: 'attacker', D: 'defender', K: 'king'}[piece]}.png`;
+          art.src = transport.url(`assets/${{A: 'attacker', D: 'defender', K: 'king'}[piece]}.png`);
           art.alt = ''; art.draggable = false;
           disc.append(art); button.append(disc);
         }
@@ -479,7 +478,7 @@ $('result-button').addEventListener('click', () => {
   $('result-title').textContent = outcome ? outcome.winner ? `${name(outcome.winner)} win` : 'A drawn game' : 'Unfinished';
   $('result-reason').textContent = outcome ? outcomeReasons[outcome.reason]
     : 'The 500-ply session limit was reached. This is not a draw.';
-  $('result-art').src = outcome?.winner === 'attackers' ? '/assets/attacker.png' : '/assets/king.png';
+  $('result-art').src = transport.url(outcome?.winner === 'attackers' ? 'assets/attacker.png' : 'assets/king.png');
   $('swap-sides').hidden = !['attackers', 'defenders'].includes(config.mode);
   openSheet('result-dialog');
 });
@@ -540,6 +539,8 @@ async function init() {
     openSheet('setup-dialog');
   }
 }
+transport.onStatus = () => { if (busy) render(); };
+$('cancel-request').addEventListener('click', () => transport.cancel());
 $('retry').addEventListener('click', () => retryAction?.());
 document.addEventListener('visibilitychange', () => {
   clearTimeout(timer);

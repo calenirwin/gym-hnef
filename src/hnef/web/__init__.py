@@ -160,6 +160,7 @@ class GameHandler(BaseHTTPRequestHandler):
             "/learn-math.js": ("learn-math.js", "text/javascript; charset=utf-8"),
             "/learn.js": ("learn.js", "text/javascript; charset=utf-8"),
             "/learn.css": ("learn.css", "text/css; charset=utf-8"),
+            "/transport.js": ("transport.js", "text/javascript; charset=utf-8"),
             "/app.js": ("app.js", "text/javascript; charset=utf-8"),
             "/motion.js": ("motion.js", "text/javascript; charset=utf-8"),
             "/style.css": ("style.css", "text/css; charset=utf-8"),
