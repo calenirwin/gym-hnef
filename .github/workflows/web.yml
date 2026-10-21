@@ -25,7 +25,7 @@ jobs:
           path: web-dist/
           retention-days: 14
 
-      # Package only: publication and write permissions require a later approved change.
+      # Publication is limited to an explicit dispatch on main below.
       - uses: actions/upload-pages-artifact@v4
         with:
           path: web-dist/
@@ -49,3 +49,21 @@ jobs:
           curl -fsS http://127.0.0.1:8768/runtime/LICENSE-PYODIDE.txt -o /dev/null
           curl -fsS http://127.0.0.1:8768/runtime/LICENSE-PYTHON.txt -o /dev/null
           docker exec hnef-smoke sh -c 'wget -Y off -q -O /dev/null "http://127.0.0.1:${PORT}/index.html"'
+
+  deploy-pages:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    needs: [build, container]
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy Pages artifact
+        id: deployment
+        uses: actions/deploy-pages@v4

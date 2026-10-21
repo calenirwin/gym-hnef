@@ -6,14 +6,14 @@ worker. No server, database, GPU, secrets, paid plan or new domain is needed.
 Prefer Pages within the overall CAD 20–30/month budget; retain
 [Railway](DEPLOYMENT.md) only as an optional paid fallback.
 
-## Prepared, not published
+## Controlled publication
 
-The existing `Playable web app` workflow builds and uploads a `github-pages`
-artifact using `actions/upload-pages-artifact@v4`. It has only `contents: read`
-permissions and no deploy job. Pushes and PRs cannot publish this artifact.
-The read-only Pages API check returned 404 on October 21, 2026; no site settings
-were changed. That response does not establish whether account access is sufficient
-to activate Pages later.
+PRs #1–#3 are merged into `main`. The owner approved Pages activation and the
+required deployment permissions on October 21, 2026. The `Playable web app`
+workflow packages a `github-pages` artifact on pushes and PRs, but publishes only
+when manually dispatched on `main`. Build jobs retain `contents: read`; only the
+`deploy-pages` job has `pages: write` and `id-token: write`. It waits for both the
+static build and container checks. No personal token or stored secret is needed.
 
 All UI, worker, engine, model and runtime URLs are relative. Serve the build at
 `/gym-hnef/` including its trailing slash; no hardcoded root or base-path rewrite
@@ -40,48 +40,25 @@ and phone-width layout. All first-party requests must stay under `/gym-hnef/`;
 `/gym-hnef/runtime/pyodide.asm.wasm` must return `application/wasm`.
 This local check does not substitute for checking the eventual public URL.
 
-## Merge and publication order (after notifying Cale)
+## Publish a reviewed main revision
 
-1. Merge PR #1, the modern app, into `main`.
-2. Retarget PR #2 (Railway preparation) from `codex/playable-web-mvp` to `main`,
-   resolve/rebase if the first merge was squashed, check CI, then merge it.
-3. Retarget this Pages preparation PR from `codex/railway-readiness-20261021`
-   to `main`, check its diff contains only Pages changes and CI passes, then merge.
-   These merges alone do not deploy Pages.
-4. Obtain approval for the publication step and the required deployment-job token
-   permissions. In Settings > Pages, select GitHub Actions. Do not change DNS.
-   Check the `github-pages` environment restricts deployment to `main`.
-5. In a separately reviewed activation change, add the following job to
-   `.github/workflows/web.yml`. The existing `workflow_dispatch` trigger permits
-   deliberate publication; branch pushes and PRs remain build-only. Merge that
-   activation change after review, then manually run `Playable web app` on `main`.
+Pages must use GitHub Actions as its publishing source (Settings > Pages).
+The `github-pages` environment should restrict deployments to `main`. No DNS or
+repository-visibility change is required. Once setup is complete:
 
-```yaml
-  deploy-pages:
-    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    concurrency:
-      group: github-pages
-      cancel-in-progress: false
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy Pages artifact
-        id: deployment
-        uses: actions/deploy-pages@v4
-```
+1. Check the intended `main` SHA and its engine/web CI results.
+2. Manually run `Playable web app` on `main` (Actions > Run workflow), or use:
+   `gh workflow run web.yml --ref main --repo calenirwin/gym-hnef`.
+3. Watch the run through `deploy-pages`, record its SHA and deployment URL, and
+   perform the public browser checks below. Dispatching another branch or pushing
+   a commit does not publish. Failed build/container checks prevent deployment.
 
 Use the deployment output URL as authoritative. The standard project URL is
 `https://calenirwin.github.io/gym-hnef/`, but an existing account-level custom
 domain can affect it. Verify public startup, play, undo, replay export, subpath
-assets and WASM MIME before updating the README's live-game link. Keep the current
-Sites link until this succeeds. For rollback, manually dispatch a reviewed revert
-on `main`; do not enable automatic deployment as part of this preparation.
+assets and WASM MIME before updating the README's live-game link. Keep the existing
+Sites URL as a fallback. For rollback, manually dispatch a reviewed revert
+on `main`; automatic deployment on push remains disabled.
 
 Official references, checked October 21, 2026:
 [Pages availability and project URLs](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages),

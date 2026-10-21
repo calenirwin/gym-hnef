@@ -4,9 +4,8 @@ GitHub Pages is the preferred free host within the total CAD 20–30/month budge
 See [Pages preparation and publication steps](PAGES.md). Railway below remains an
 optional paid fallback; no Railway service is needed for Pages.
 
-This configuration serves the modern 5×5 app from PR #1. It is stacked on
-`codex/playable-web-mvp`, whose verified base is
-`3e24bbf81dffcb7347a0d5abfce0a18bb5cd1e04`; `main` still contains the legacy notebook.
+The modern 5×5 app and deployment preparation from PRs #1–#3 are merged
+into `main`. Use `main` for new builds.
 No Railway service has been provisioned or deployed by this change.
 
 ## Stack and local run
@@ -43,7 +42,7 @@ repository root. `railway.json` selects the Dockerfile and `/index.html`
 healthcheck. Keep the image's start command; no install/build overrides or
 pre-deploy commands are necessary. Begin with one replica and a Railway-generated
 domain. Leave automatic PR environments off until their extra cost is wanted.
-Do not select legacy `main` until the dependent work has been merged there.
+Use the reviewed `main` revision selected for that release.
 
 The healthcheck confirms HTTP serving, not Python-worker startup. After a deploy,
 verify a human move/AI reply, pass-and-play and undo in a browser. Check
