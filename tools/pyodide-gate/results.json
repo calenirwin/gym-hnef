@@ -1,0 +1,355 @@
+{
+  "native_python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.41",
+  "runtime": "314.0.7",
+  "engine_files": 12,
+  "engine_bytes": 47698,
+  "source_sha256": {
+    "hnef/engine/forts.py": "26c357ce7c3db36f6bb4622016900bef82c67c93ab68bf7050e62f3145698767",
+    "hnef/engine/state.py": "ac71b5059d009b88851b2200f91d43efdd3029b1243b297e5071ffab060f3711",
+    "hnef/engine/variants.py": "6bff407d2e6b3a5de4cb5454e7dd87a2c836fd3827e91de187ff56e10d8b69df",
+    "hnef/engine/__init__.py": "430d454eea367d7e8206fbe968d62bf890b202aa7c1584afd7d3efdceda44e42",
+    "hnef/engine/copenhagen.py": "0c4307f589edbc9818b95cbd9e30175c02e7aaf907c82dc1373228d422816ac2",
+    "hnef/engine/rules.py": "a8de157a36297b224f493a61b46fabfe760b7ff6529ca7c82609e3e69dbc79eb",
+    "hnef/__init__.py": "c3dc56c9007d3f268cb39b3a9566a19fd728a67ee62f55dbac931b5ecfe57f4c",
+    "hnef/actions.py": "1b3d42a5273695b8d1ac1280346747a2235c3e730c9c42f6391ae45595093246",
+    "hnef/policies.py": "c9adf1155cb9f4f8ca8b0deea8174711cb65c778eed4707c04ad819d9183d072",
+    "hnef/replay.py": "6594a3a45f15db08025a6697cc7d632c211aed176d1ed5a6e88345bf8743e44a",
+    "hnef/web/__init__.py": "730292a17243b9922520ab345ffa950ef773550c7b0452a041aa18bcba486216",
+    "hnef/web/analysis.py": "3546dd8bafc256aed7522db0ab360b59c74b1f1afca5eb85e3a7d496bd38405c"
+  },
+  "parity": [
+    {
+      "name": "mini-v1:opening",
+      "native_ms": 0.32600100166746415,
+      "worker_ms": 5.699999999254942
+    },
+    {
+      "name": "mini-v1:move",
+      "native_ms": 0.8132160000968724,
+      "worker_ms": 2.199999999254942
+    },
+    {
+      "name": "mini-v1:import",
+      "native_ms": 3.7786459979542997,
+      "worker_ms": 6.100000001490116
+    },
+    {
+      "name": "mini-v1:restore",
+      "native_ms": 1.7992220018641092,
+      "worker_ms": 4.5
+    },
+    {
+      "name": "mini-v1:random",
+      "native_ms": 0.7258340010594111,
+      "worker_ms": 1.4000000022351742
+    },
+    {
+      "name": "mini-v1:heuristic",
+      "native_ms": 4.595727998093935,
+      "worker_ms": 25.600000001490116
+    },
+    {
+      "name": "mini-v1:mcts",
+      "native_ms": 110.99832000036258,
+      "worker_ms": 371.19999999925494
+    },
+    {
+      "name": "mini-v1:analyze",
+      "native_ms": 6.874184000480454,
+      "worker_ms": 14.799999997019768
+    },
+    {
+      "name": "copenhagen-experimental-v1:opening",
+      "native_ms": 0.7966110024426598,
+      "worker_ms": 11.199999999254942
+    },
+    {
+      "name": "copenhagen-experimental-v1:move",
+      "native_ms": 7.352173997787759,
+      "worker_ms": 15.899999998509884
+    },
+    {
+      "name": "copenhagen-experimental-v1:import",
+      "native_ms": 96.34477299914579,
+      "worker_ms": 44.19999999925494
+    },
+    {
+      "name": "copenhagen-experimental-v1:restore",
+      "native_ms": 106.72294899995904,
+      "worker_ms": 22.599999997764826
+    },
+    {
+      "name": "copenhagen-experimental-v1:random",
+      "native_ms": 2.771158000541618,
+      "worker_ms": 4.800000000745058
+    },
+    {
+      "name": "copenhagen-experimental-v1:heuristic",
+      "native_ms": 97.03087299931212,
+      "worker_ms": 172.90000000223517
+    },
+    {
+      "name": "copenhagen-experimental-v1:mcts",
+      "native_ms": 827.831184000388,
+      "worker_ms": 1614.800000000745
+    },
+    {
+      "name": "copenhagen-experimental-v1:analyze",
+      "native_ms": 85.0648830019054,
+      "worker_ms": 192.30000000074506
+    },
+    {
+      "name": "copenhagen-experimental-v2:opening",
+      "native_ms": 0.5685670003003906,
+      "worker_ms": 12.199999999254942
+    },
+    {
+      "name": "copenhagen-experimental-v2:move",
+      "native_ms": 5.6801829996402375,
+      "worker_ms": 12.300000000745058
+    },
+    {
+      "name": "copenhagen-experimental-v2:import",
+      "native_ms": 11.74085100137745,
+      "worker_ms": 46.69999999925494
+    },
+    {
+      "name": "copenhagen-experimental-v2:restore",
+      "native_ms": 6.33340800050064,
+      "worker_ms": 32.600000001490116
+    },
+    {
+      "name": "copenhagen-experimental-v2:random",
+      "native_ms": 0.9883499988063704,
+      "worker_ms": 3.900000002235174
+    },
+    {
+      "name": "copenhagen-experimental-v2:heuristic",
+      "native_ms": 49.66178900212981,
+      "worker_ms": 189
+    },
+    {
+      "name": "copenhagen-experimental-v2:mcts",
+      "native_ms": 853.6663710001449,
+      "worker_ms": 1858
+    },
+    {
+      "name": "copenhagen-experimental-v2:analyze",
+      "native_ms": 174.99212799884845,
+      "worker_ms": 199.90000000223517
+    },
+    {
+      "name": "adjudicated draw",
+      "native_ms": 6.029939999280032,
+      "worker_ms": 10.5
+    },
+    {
+      "name": "tampered replay",
+      "native_ms": 0.3275839990237728,
+      "worker_ms": 0.5
+    },
+    {
+      "name": "invalid ruleset",
+      "native_ms": 0.020780997147085145,
+      "worker_ms": 0.19999999925494194
+    },
+    {
+      "name": "invalid action",
+      "native_ms": 0.02905400106101297,
+      "worker_ms": 0.29999999701976776
+    },
+    {
+      "name": "too many plies",
+      "native_ms": 0.1550029992358759,
+      "worker_ms": 0.3999999985098839
+    },
+    {
+      "name": "invalid seed",
+      "native_ms": 0.026419998903293163,
+      "worker_ms": 0.4000000022351742
+    },
+    {
+      "name": "malformed replay",
+      "native_ms": 0.007370999810518697,
+      "worker_ms": 0.10000000149011612
+    },
+    {
+      "name": "invalid analyze budget",
+      "native_ms": 0.00812299913377501,
+      "worker_ms": 0.09999999776482582
+    },
+    {
+      "name": "non-object request",
+      "native_ms": 0.006719998054904863,
+      "worker_ms": 0.09999999776482582
+    }
+  ],
+  "benchmarks": [
+    {
+      "workload": "opening",
+      "cpu_throttle": 1,
+      "worker_ms": [
+        1.5,
+        1.9000000022351742,
+        1.5999999977648258
+      ],
+      "native_ms": [
+        0.5576010007644072,
+        0.5696890002582222,
+        0.5492380005307496
+      ],
+      "frame_gap_max_ms": 16.700000000000728,
+      "frame_gap_p95_ms": 16.700000000000728
+    },
+    {
+      "workload": "move",
+      "cpu_throttle": 1,
+      "worker_ms": [
+        5.699999999254942,
+        3.300000000745058,
+        3.199999999254942
+      ],
+      "native_ms": [
+        1.6260709999187384,
+        1.176803998532705,
+        1.1912149966519792
+      ],
+      "frame_gap_max_ms": null,
+      "frame_gap_p95_ms": null
+    },
+    {
+      "workload": "mcts",
+      "cpu_throttle": 1,
+      "worker_ms": [
+        1988,
+        1864,
+        1933.3999999985099
+      ],
+      "native_ms": [
+        772.0881120003469,
+        746.8614860008529,
+        748.8390079997771
+      ],
+      "frame_gap_max_ms": 33.29999999999927,
+      "frame_gap_p95_ms": 16.700000000000728
+    },
+    {
+      "workload": "learn-max",
+      "cpu_throttle": 1,
+      "worker_ms": [
+        8099.39999999851,
+        8829.89999999851,
+        8309.699999999255
+      ],
+      "native_ms": [
+        3566.518465999252,
+        3911.8381759981276,
+        3330.000737998489
+      ],
+      "frame_gap_max_ms": 33.400000000001455,
+      "frame_gap_p95_ms": 16.799999999995634
+    },
+    {
+      "workload": "opening",
+      "cpu_throttle": 4,
+      "worker_ms": [
+        3.199999999254942,
+        4.699999999254942,
+        2.199999999254942
+      ],
+      "native_ms": [
+        0.798482997197425,
+        1.632786003028741,
+        0.753065000026254
+      ],
+      "frame_gap_max_ms": 66.69999999999709,
+      "frame_gap_p95_ms": 66.69999999999709
+    },
+    {
+      "workload": "move",
+      "cpu_throttle": 4,
+      "worker_ms": [
+        4.199999999254942,
+        4.400000002235174,
+        4.5
+      ],
+      "native_ms": [
+        1.603206001163926,
+        1.2664290006796364,
+        1.3389380001171958
+      ],
+      "frame_gap_max_ms": 16.80000000000291,
+      "frame_gap_p95_ms": 16.80000000000291
+    },
+    {
+      "workload": "mcts",
+      "cpu_throttle": 4,
+      "worker_ms": [
+        1929.199999999255,
+        2400.10000000149,
+        2008
+      ],
+      "native_ms": [
+        819.3114550012979,
+        820.2376729968819,
+        831.2434219988063
+      ],
+      "frame_gap_max_ms": 16.80000000000291,
+      "frame_gap_p95_ms": 16.700000000004366
+    },
+    {
+      "workload": "learn-max",
+      "cpu_throttle": 4,
+      "worker_ms": [
+        9059.699999999255,
+        8326.800000000745,
+        8369.199999999255
+      ],
+      "native_ms": [
+        3441.006057000777,
+        4058.6542909986747,
+        3494.2248719999043
+      ],
+      "frame_gap_max_ms": 50.0,
+      "frame_gap_p95_ms": 16.79999999998836
+    }
+  ],
+  "browser": "154.0.8037.57",
+  "init": {
+    "id": 1,
+    "result": {
+      "python": "3.14.2 (main, Sep 14 2026, 03:03:51) [Clang 23.0.0git (https:/github.com/llvm/llvm-project e5927fecf8a6ce89e1a4eac5b8"
+    },
+    "elapsed": 3122.60000000149
+  },
+  "deadline": {
+    "error": "Probe deadline exceeded",
+    "late_reply_observed": true
+  },
+  "restart": {
+    "cancelled": "Worker restarted",
+    "identical": true,
+    "saved_plies": 1
+  },
+  "init_failure": "TypeError: Failed to fetch\n    at http://127.0.0.1:33271/worker.mjs:11:37",
+  "request_paths": [
+    "/",
+    "/engine.json",
+    "/runtime/pyodide-lock.json",
+    "/runtime/pyodide.asm.mjs",
+    "/runtime/pyodide.asm.wasm",
+    "/runtime/pyodide.mjs",
+    "/runtime/python_stdlib.zip",
+    "/worker.mjs"
+  ],
+  "external_requests": [],
+  "baseline_commit": "09a94d4bcab93e2e0c30c870929b1c2f99210b63",
+  "measurement_date": "2026-10-21",
+  "cpu_model": "AMD EPYC 9V74 80-Core Processor (shared environment)",
+  "viewport": {
+    "width": 390,
+    "height": 844
+  },
+  "playwright": "1.62.0"
+}

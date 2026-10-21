@@ -1,0 +1,32 @@
+<!doctype html><meta charset="utf-8"><title>Original table runtime feasibility probe</title>
+<p>Runtime probe only. No product UI.</p>
+<script>
+let worker, nextId = 0, pending = new Map();
+window.responses = [];
+window.restart = () => {
+  if (worker) worker.terminate();
+  for (const {reject, timer} of pending.values()) {clearTimeout(timer); reject(new Error('Worker restarted'));}
+  pending.clear();
+  worker = new Worker('./worker.mjs', {type: 'module'});
+  worker.onmessage = ({data}) => {
+    responses.push(data);
+    const call = pending.get(data.id);
+    if (!call) return;
+    clearTimeout(call.timer); pending.delete(data.id);
+    data.failure ? call.reject(new Error(data.failure)) : call.resolve(data);
+  };
+  worker.onerror = error => {
+    for (const {reject,timer} of pending.values()) {clearTimeout(timer);reject(new Error(error.message));}
+    pending.clear();
+  };
+};
+window.rpc = (kind, payload, timeout=60000) => new Promise((resolve,reject) => {
+  const id = ++nextId;
+  const timer = setTimeout(() => {pending.delete(id);reject(new Error('Probe deadline exceeded'));}, timeout);
+  pending.set(id,{resolve,reject,timer}); worker.postMessage({id,kind,payload});
+});
+window.frames = [];
+function tick(now) {frames.push(now); requestAnimationFrame(tick);}
+requestAnimationFrame(tick);
+restart();
+</script>
