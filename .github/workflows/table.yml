@@ -20,6 +20,7 @@ jobs:
       - run: node --test tests/web-transport.test.cjs tests/web-learning.test.cjs
       - run: python tools/fetch_browser_runtime.py
       - run: python tests/browser_table.py
+      - run: python tests/browser_resilience.py
       - run: python tools/build_table.py --output .demo-build/original-table
       - uses: actions/upload-artifact@v4
         with:

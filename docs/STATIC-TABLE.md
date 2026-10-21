@@ -80,8 +80,28 @@ is copied into the QA site; it is never included in the distributable artifact.
 Artwork and font bytes are verified against the source, and subpath requests are
 checked to remain beneath `/gym-hnef/`.
 
+The CI browser job also runs `python tests/browser_resilience.py`. Its loopback
+HTTP server uses fresh browser contexts and `Cache-Control: no-store`. It adds
+150 ms response latency and streams each runtime response at 512 KiB/s in 32 KiB
+chunks; this is per-response throttling, not a measured cellular link. Separate
+attempts truncate the WASM body after 64 KiB with its original Content-Length.
+Two failed attempts, a deliberately shortened 200 ms startup deadline, and a
+successful retry must preserve the exact saved replay and add no stale AI move.
+The normal product startup deadline stays 60 seconds.
+
+The resilience test allocates and touches a bounded 64 MiB browser buffer, sends
+Chromium's synthetic critical-memory-pressure notification when supported, and
+compares the next MCTS result with CPython. Separately, `Page.crash` forces a
+renderer failure during an AI request. A new page must restore the last confirmed
+save and a subsequent AI request must add exactly one move. This is **not an
+out-of-memory test**: it neither exhausts RAM nor establishes OS/browser behavior
+on an actual low-memory phone. Supported/unsupported protocol status, browser
+version, timings and runtime transfer counts are recorded in `resilience.json`
+within the CI evidence artifact. No memory limit or application code is changed.
+
 A 390px Chromium viewport is not physical-phone validation. Real mobile Safari
-and Chrome, cold-network startup and memory pressure still need release review.
+and Chrome, actual cellular-network conditions and genuine memory exhaustion
+still need release review; synthetic tests cover only their stated conditions.
 The feasibility probe found roughly 2-second Copenhagen MCTS and 8-second maximum
 Learn analysis on a shared desktop-class runner; slower devices may hit deadlines.
 No search budget is reduced to conceal latency. Copenhagen remains experimental,
