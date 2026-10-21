@@ -18,17 +18,20 @@ jobs:
           node-version: '22'
       - run: node --check web/app.mjs && node --check web/worker.js && node --check web/inference.mjs
       - run: python tools/fetch_browser_runtime.py
-      - run: python tools/build_demo.py --output web-dist
+      - run: python -m pip install playwright==1.62.0
+      - run: python -m playwright install --with-deps chromium
+      - run: python tests/browser_release.py
+      - run: python tools/build_release.py --output .demo-build/release
       - uses: actions/upload-artifact@v4
         with:
           name: hnef-static-web
-          path: web-dist/
+          path: .demo-build/release/
           retention-days: 14
 
       # Publication is limited to an explicit dispatch on main below.
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: web-dist/
+          path: .demo-build/release/
 
   container:
     runs-on: ubuntu-latest
