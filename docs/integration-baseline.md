@@ -10,8 +10,9 @@ The integration branch starts there and merges existing `main`
 
 `src/hnef/web/` is the selected playing table, including the original raven
 (`assets/attacker.png`), hart (`assets/defender.png`), king (`assets/king.png`),
-board decorations, local fonts and licences. Its source and the rules engine are
-unchanged from the selected branch. The default remains Mini; the existing
+board decorations, local fonts and licences. The integration commit preserved its source and the rules engine unchanged.
+The stacked [static transport candidate](STATIC-TABLE.md) adds worker/HTTP transport
+and subpath-safe packaging while preserving engine, artwork and layout. The default remains Mini; the existing
 Copenhagen selector opens the 11×11 experimental v2 game. Existing local saves,
 canonical replays, keyboard controls, rotation, bots and learning pages remain.
 
@@ -58,7 +59,8 @@ behavior, then obtain release confirmation before merging. The integration
 already contains both parent histories; do not cherry-pick the old Mini UI over
 the playing table. A later hosting change must explicitly choose between a
 browser-only API adapter for free static hosting and a hardened Python service
-with a reviewed cost limit. Neither is implemented here. Preserve the overall
+with a reviewed cost limit. The stacked [static candidate](STATIC-TABLE.md) implements the browser adapter
+without changing the existing deployment workflow; publication remains gated. Preserve the overall
 CAD 20–30 monthly ceiling and prefer free hosting.
 
 The separate Mini opponent-error recovery issue remains outside this integration;

@@ -2,7 +2,8 @@
 
 > Scope: this guide serves the separate `web/` 5×5 Mini Lab. It does not deploy
 > the selected raven/hart/king playing table in `src/hnef/web/`. See
-> [integration scope](integration-baseline.md) before any release.
+> [integration scope](integration-baseline.md) before any release. The separate
+> [original-table static candidate](STATIC-TABLE.md) has build/test CI only.
 
 The public `calenirwin/gym-hnef` repository is eligible for GitHub Pages on GitHub
 Free. The app is entirely static: rules and opponents run in the browser's Python

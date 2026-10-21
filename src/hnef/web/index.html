@@ -5,7 +5,7 @@
   <meta name="theme-color" content="#D8CDAA">
   <title>Hnef</title>
   <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="/style.css"><script src="/motion.js" defer></script><script src="/app.js" defer></script>
+  <link rel="stylesheet" href="/style.css"><script src="/transport.js" data-mode="http" defer></script><script src="/motion.js" defer></script><script src="/app.js" defer></script>
 </head>
 <body>
 <header class="masthead">
@@ -34,6 +34,7 @@
   </section>
   <div class="state-line"><span id="status" role="status" aria-live="polite">…</span><span id="review-position" hidden></span><button id="result-button" class="icon-button compact" data-tip="Game result" aria-label="Game result" hidden><svg viewBox="0 0 24 24"><path d="m4 7 4 4 4-7 4 7 4-4-2 11H6ZM7 21h10"/></svg></button><button id="live" class="icon-button compact" data-tip="Return to game" aria-label="Return to game" hidden><svg viewBox="0 0 24 24"><path d="m7 5 10 7-10 7ZM20 5v14"/></svg></button></div>
   <div id="error" role="alert" hidden></div><button id="retry" class="retry-button" hidden>Retry ↻</button>
+  <button id="cancel-request" class="retry-button" hidden>Cancel calculation</button>
   <span id="announcement" class="sr-only" role="status" aria-live="polite"></span>
   <nav id="review-controls" class="review-controls" aria-label="Replay controls" hidden>
     <button id="review-start" class="icon-button" aria-label="First position" data-tip="First position"><svg viewBox="0 0 24 24"><path d="M5 5v14m13-13-7 6 7 6"/></svg></button>

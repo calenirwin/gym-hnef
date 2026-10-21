@@ -106,7 +106,10 @@ The separate `web/` directory retains the previously deployed 5×5 Pyodide Mini
 Lab for compatibility. `tools/build_demo.py`, the Pages workflow and the Caddy
 container build that static mini artifact only; they do not publish the playing
 table. The local playing table requires its Python HTTP API and is not directly
-compatible with GitHub Pages. See [integration scope and release gates](docs/integration-baseline.md).
+compatible with GitHub Pages without an adapter. A separate
+[static original-table candidate](docs/STATIC-TABLE.md) now runs the same Python
+functions in a dedicated Pyodide worker. Its build and CI do not publish. See
+[integration scope and release gates](docs/integration-baseline.md).
 
 CPU training and evaluated model exports from `main` are retained without adding
 an experimental learned opponent to the selected playing table:

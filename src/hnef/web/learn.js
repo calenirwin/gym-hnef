@@ -1,4 +1,5 @@
 'use strict';
+const transport = window.hnefTransport;
 
 const lessons = [...document.querySelectorAll('.lesson')];
 const links = [...document.querySelectorAll('.lesson-nav a')];
@@ -16,9 +17,9 @@ function showLesson(focus = false) {
   });
   const previous = byId('previous-lesson'), next = byId('next-lesson');
   previous.hidden = index === 0;
-  previous.href = `#${lessons[Math.max(0, index - 1)].id}`;
+  previous.href = transport.url(`learn/#${lessons[Math.max(0, index - 1)].id}`);
   previous.textContent = `← ${lessonNames[Math.max(0, index - 1)]}`;
-  next.href = index === lessons.length - 1 ? '/' : `#${lessons[index + 1].id}`;
+  next.href = index === lessons.length - 1 ? transport.url('') : transport.url(`learn/#${lessons[index + 1].id}`);
   next.textContent = index === lessons.length - 1 ? 'Back to the table ↗' : `Next: ${lessonNames[index + 1]} →`;
   byId('lesson-position').textContent = `${index + 1} of ${lessons.length}`;
   byId('topic-select').value = lessons[index].id;
@@ -194,7 +195,7 @@ function drawExperiment(result) {
       square.className = `experiment-square${(r + c) % 2 ? ' shaded' : ''}`;
       if (pieces[piece]) {
         const [asset, label] = pieces[piece];
-        const img = document.createElement('img'); img.src = `/assets/${asset}.png`; img.alt = '';
+        const img = document.createElement('img'); img.src = transport.url(`assets/${asset}.png`); img.alt = '';
         square.append(img);
         squareNames.push(`${label} ${String.fromCharCode(97 + c)}${size - r}`);
       }
@@ -220,6 +221,7 @@ byId('experiment-form').addEventListener('submit', async event => {
   event.preventDefault();
   if (experimentRunning) return;
   experimentRunning = true;
+  byId('experiment-cancel').hidden = transport.mode !== 'worker';
   for (const field of byId('experiment-form').elements) field.disabled = true;
   byId('experiment-results').hidden = true;
   byId('experiment-error').hidden = true;
@@ -237,7 +239,7 @@ byId('experiment-form').addEventListener('submit', async event => {
       else if (stored.config?.ruleset && Array.isArray(stored.actions)) { payload.ruleset = stored.config.ruleset; payload.actions = stored.actions; }
       else throw new Error('The browser save is invalid. Choose an opening.');
     } else payload.ruleset = selection;
-    const response = await fetch('/api/analyze', {method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload), signal: AbortSignal.timeout(60000)});
+    const response = await transport.request('analyze', payload, {timeout: 60000});
     const result = await response.json();
     if (!response.ok) throw new Error(result.error || 'Analysis failed.');
     drawExperiment(result);
@@ -248,6 +250,7 @@ byId('experiment-form').addEventListener('submit', async event => {
     byId('experiment-error').hidden = false;
   } finally {
     experimentRunning = false;
+    byId('experiment-cancel').hidden = true;
     for (const field of byId('experiment-form').elements) field.disabled = false;
   }
 });
@@ -258,3 +261,6 @@ byId('experiment-form').addEventListener('input', () => {
   byId('experiment-error').hidden = true;
   byId('experiment-status').textContent = 'Settings changed. Analyze to update results.';
 });
+
+transport.onStatus = text => { if (experimentRunning && text) byId('experiment-status').textContent = text; };
+byId('experiment-cancel').addEventListener('click', () => transport.cancel());

@@ -7,7 +7,7 @@
   <title>Learn · Hnef</title>
   <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/learn.css">
-  <script src="/learn-math.js" defer></script><script src="/learn.js" defer></script>
+  <script src="/transport.js" data-mode="http" defer></script><script src="/learn-math.js" defer></script><script src="/learn.js" defer></script>
 </head>
 <body class="learning-page">
 <a class="skip-link" href="#lesson-content">Skip to lesson</a>
@@ -295,6 +295,7 @@
 <div><label for="experiment-budget">MCTS simulations</label><select id="experiment-budget"><option>8</option><option selected>32</option><option>64</option></select></div>
 <div><label for="experiment-rollout">Rollout plies</label><select id="experiment-rollout"><option>0</option><option>12</option><option selected>24</option><option>48</option></select></div></div>
 <button id="experiment-run" class="action-button" type="submit">Analyze</button></form>
+<button id="experiment-cancel" type="button" hidden>Cancel analysis</button>
 <p id="experiment-status" role="status">Choose a position and budget.</p><p id="experiment-error" role="alert" hidden></p>
 <section id="experiment-results" hidden aria-label="Analysis results">
 <p id="experiment-description"></p>
