@@ -33,8 +33,10 @@
     <div id="board" class="board" role="grid" aria-label="Tafl board"></div>
   </section>
   <div class="state-line"><span id="status" role="status" aria-live="polite">…</span><span id="review-position" hidden></span><button id="result-button" class="icon-button compact" data-tip="Game result" aria-label="Game result" hidden><svg viewBox="0 0 24 24"><path d="m4 7 4 4 4-7 4 7 4-4-2 11H6ZM7 21h10"/></svg></button><button id="live" class="icon-button compact" data-tip="Return to game" aria-label="Return to game" hidden><svg viewBox="0 0 24 24"><path d="m7 5 10 7-10 7ZM20 5v14"/></svg></button></div>
+  <div class="calculation-controls">
   <div id="error" role="alert" hidden></div><button id="retry" class="retry-button" hidden>Retry ↻</button>
   <button id="cancel-request" class="retry-button" hidden>Cancel calculation</button>
+  </div>
   <span id="announcement" class="sr-only" role="status" aria-live="polite"></span>
   <nav id="review-controls" class="review-controls" aria-label="Replay controls" hidden>
     <button id="review-start" class="icon-button" aria-label="First position" data-tip="First position"><svg viewBox="0 0 24 24"><path d="M5 5v14m13-13-7 6 7 6"/></svg></button>
@@ -50,6 +52,7 @@
     <button id="download" class="icon-button" data-tip="Save replay" aria-label="Save replay"><svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/></svg></button>
   </nav>
   <p id="experimental" class="experimental" hidden>Experimental Copenhagen <button id="experimental-info" aria-label="Copenhagen limitations">↗</button></p>
+  <button id="bottom-new-game" class="new-game-button">New game</button>
   <p id="save-note" class="save-note" role="status" hidden></p>
 </main>
 <footer class="wonder-footer" aria-label="Albion landscape">
@@ -91,8 +94,9 @@
 <dialog id="rules-dialog" class="sheet rules-sheet" aria-labelledby="rules-title">
   <button id="close-rules" class="icon-button close-dialog" aria-label="Close rules"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18 18 6"/></svg></button>
   <h1 id="rules-title">How to play</h1><div id="rules-content"></div>
-  <p class="rule-note">Drag a piece or select it and a marked square. Arrow keys navigate; Enter selects; Escape cancels. During review, Left and Right step through the game; Home and End jump to either end.</p>
-  <button id="rules-done" class="play-button">Play <svg viewBox="0 0 24 24"><path d="m8 5 10 7-10 7Z"/></svg></button>
+  <button id="expand-rules" class="rules-toggle" aria-expanded="false" aria-controls="rules-details">More rules</button>
+  <div id="rules-details" hidden></div>
+  <button id="rules-done" class="play-button">Close <svg viewBox="0 0 24 24"><path d="m8 5 10 7-10 7Z"/></svg></button>
 </dialog>
 </body>
 </html>
