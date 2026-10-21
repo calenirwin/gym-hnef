@@ -264,3 +264,47 @@ byId('experiment-form').addEventListener('input', () => {
 
 transport.onStatus = text => { if (experimentRunning && text) byId('experiment-status').textContent = text; };
 byId('experiment-cancel').addEventListener('click', () => transport.cancel());
+
+// These small, fixed illustrations are regression-checked against the Python engine.
+for (const demo of document.querySelectorAll('.tactic-demo')) {
+  const board = demo.querySelector('.tactic-board');
+  const button = demo.querySelector('.tactic-toggle');
+  const initial = Object.fromEntries(demo.dataset.pieces.split(' ').map(piece => piece.split(':')));
+  const [source, destination] = demo.dataset.move.split(' ');
+  const names = {A: 'attacker', D: 'defender', K: 'king'};
+  const description = board.getAttribute('aria-label');
+  let after = false;
+  function draw() {
+    const pieces = {...initial};
+    if (after) {
+      pieces[destination] = pieces[source]; delete pieces[source];
+      for (const square of demo.dataset.captured.split(' ')) delete pieces[square];
+    }
+    const cells = document.createDocumentFragment();
+    for (let rank = 11; rank >= 0; rank--) {
+      for (const file of ['', ...'abcdefghijk']) {
+        const cell = document.createElement('span');
+        if (!file || !rank) {
+          cell.className = 'tactic-coordinate'; cell.textContent = file || rank || '';
+        } else {
+          const coordinate = `${file}${rank}`;
+          cell.className = `tactic-square ${(rank + file.charCodeAt(0)) % 2 ? 'shaded' : ''}`;
+          if (['a1', 'a11', 'k1', 'k11', 'f6'].includes(coordinate)) cell.classList.add('restricted');
+          if (coordinate === (after ? destination : source)) cell.classList.add('tactic-mark');
+          if (pieces[coordinate]) {
+            const img = document.createElement('img');
+            img.src = transport.url(`assets/${names[pieces[coordinate]]}.png`); img.alt = '';
+            cell.append(img);
+          }
+        }
+        cells.append(cell);
+      }
+    }
+    board.replaceChildren(cells);
+    board.setAttribute('aria-label', after ? `${source} to ${destination}. Captured: ${demo.dataset.captured}.` : description);
+    button.setAttribute('aria-pressed', String(after));
+    button.textContent = after ? 'Reset position' : `Show ${source} → ${destination}`;
+  }
+  button.addEventListener('click', () => {after = !after; draw();});
+  board.hidden = false; button.hidden = false; draw();
+}
