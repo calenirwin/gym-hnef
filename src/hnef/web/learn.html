@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#D8CDAA">
-  <meta name="description" content="Study and compare game-playing algorithms in Hnef: search, value learning, policy gradients, world models, and multi-agent training.">
+  <meta name="description" content="Learn Hnefatafl history, Copenhagen strategy and tactics, and game-playing algorithms.">
   <title>Learn · Hnef</title>
   <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/learn.css">
@@ -20,6 +20,12 @@
   <div class="topic-picker" hidden><label for="topic-select">Topic</label><select id="topic-select"></select></div>
   <div class="course-layout">
     <nav class="lesson-nav" aria-label="Topics">
+<div class="topic-group"><h2>Hnefatafl</h2><ol>
+<li><a href="#history">History and name</a></li>
+<li><a href="#playing">Playing each side</a></li>
+<li><a href="#tactics">Tactics</a></li>
+<li><a href="#resources">Rules and resources</a></li>
+</ol></div>
 <div class="topic-group"><h2>Study</h2><ol>
 <li><a href="#overview">Overview</a></li>
 </ol></div>
@@ -47,6 +53,73 @@
 </nav>
     <div id="lesson-content" tabindex="-1">
       <noscript><p class="lesson-note">All topics are below. Enable JavaScript to use the interactive examples.</p></noscript>
+      <article id="history" class="lesson" aria-labelledby="history-title">
+<h2 id="history-title" tabindex="-1">History and name</h2>
+<p class="lesson-lead">Hnefatafl belongs to the tafl family: games with unequal sides, a central king and an attempt to escape a surrounding force.</p>
+<h3>What does the name mean?</h3>
+<p><em>Hnefi</em> literally means “fist” and names the king piece; <em>tafl</em> means board or game. “King’s table” is a common interpretation, rather than a literal translation.</p>
+<h3>What survives?</h3>
+<p>Archaeological finds and medieval literature place tafl games across northern Europe. No complete Viking-age rulebook survives. Linnaeus’s 1732 account of Sámi tablut is an important later source; modern reconstructions differ.</p>
+<p class="reference"><a href="https://tafl.lyckans-talisman.se/">Sten Helmfrid’s historical survey</a> brings together literary evidence, finds and references.</p>
+<details><summary>A board is evidence, not a rulebook</summary><p>National Museums Scotland describes an <a href="https://www.nms.ac.uk/discover-catalogue/the-story-of-the-lewis-chess-pieces">Inchmarnock stone with a hnefatafl grid</a>, among 35 gaming boards found there. Objects tell us about play, but do not preserve a complete set of rules.</p></details>
+<h3>The game on this table</h3>
+<p>Copenhagen is a modern ruleset, outlined in 2012 by Aage Nielsen, Adam Bartley and Tim Millar. This app’s Copenhagen v2 is experimental: exit-fort detection is conservative, and dead positions are not automatically declared draws. Mini is a separate 5×5 game with different escape and capture rules.</p>
+<p class="reference"><a href="https://aagenielsen.dk/copenhagen_rules.php">Published Copenhagen rules</a> · <a href="https://aagenielsen.dk/site_history.php">Modern community and rules development</a></p>
+      </article>
+      <article id="playing" class="lesson" aria-labelledby="playing-title">
+<h2 id="playing-title" tabindex="-1">Playing each side</h2>
+<p class="lesson-lead">In Copenhagen, attackers try to capture the king. Defenders try to reach a corner or secure an exit fort. These are practical heuristics, not solved strategies.</p>
+<h3>Attackers: close escape routes</h3>
+<ul class="playing-advice"><li>Coordinate groups so that one piece covers the gap another leaves.</li><li>Keep guards near the corners. Before taking a defender, check whether the king gains an open route.</li><li>Reduce the king’s space before chasing isolated captures. Inspect every gap after the opponent moves.</li></ul>
+<h3>Defenders: make room for the king</h3>
+<ul class="playing-advice"><li>Clear a lane, then consider the attacker’s reply before sending the king down it.</li><li>Look for two separate escape threats. One open path is easier to block.</li><li>Trade defenders only when it creates useful space. A threatened piece does not oblige the opponent to capture it.</li></ul>
+<details><summary>Is one side favoured?</summary><p><a href="https://aagenielsen.dk/tafl_balances.php">Observed community results</a> for standard Copenhagen lean towards defenders overall and are much closer among the strongest players. Balance depends on the variant and players; this does not predict results against this app’s bots.</p><p>The source uses score ratios from complete pairs of games with colours swapped, counting a draw as half a point. These are not win percentages or proof of perfect play. Source checked 21 October 2026.</p></details>
+<h3>Before you move</h3>
+<p>Check the king’s escape squares, captures available to either side, and the space your move leaves behind. Play both sides, then use the table’s move history to inspect the first gap you missed.</p>
+<a class="practice-link" href="/">Return to the playing table ↗</a>
+      </article>
+      <article id="tactics" class="lesson" aria-labelledby="tactics-title">
+<h2 id="tactics-title" tabindex="-1">Tactics</h2>
+<p class="lesson-lead">Three constructed Copenhagen positions, checked against this app’s engine. They illustrate local captures, not historical games or forced winning plans.</p>
+<p>Files a–k run left to right; ranks 1–11 run bottom to top. The throne is f6. Ravens attack; harts defend the crowned king. Unlisted squares are empty.</p>
+<section class="tactic" aria-labelledby="sandwich-title"><h3 id="sandwich-title">Close a sandwich</h3>
+<p>Attackers: c4, e7. Defender: d4. King: f6. Attackers to move.</p>
+<div class="tactic-demo" data-pieces="c4:A e7:A d4:D f6:K" data-move="e7 e4" data-captured="d4">
+<div class="tactic-board" role="img" aria-label="Attackers: c4, e7. Defender: d4. King: f6." hidden></div>
+<button class="action-button tactic-toggle" type="button" aria-pressed="false" hidden>Show e7 → e4</button>
+</div>
+<details><summary>Move and explanation</summary><p>e7 → e4 captures d4 between c4 and e4. Ordinary pieces are captured when an opponent closes a trap. Moving between two enemies does not itself capture your piece.</p></details>
+</section><section class="tactic" aria-labelledby="corner-title"><h3 id="corner-title">Use a hostile corner</h3>
+<p>Attacker: c3. Defender: b1. King: f6. Attackers to move.</p>
+<div class="tactic-demo" data-pieces="c3:A b1:D f6:K" data-move="c3 c1" data-captured="b1">
+<div class="tactic-board" role="img" aria-label="Attacker: c3. Defender: b1. King: f6." hidden></div>
+<button class="action-button tactic-toggle" type="button" aria-pressed="false" hidden>Show c3 → c1</button>
+</div>
+<details><summary>Move and explanation</summary><p>c3 → c1 captures b1 against the empty corner a1. The corner can complete a capture. An ordinary board edge cannot. In Copenhagen the king must reach a corner to escape; an ordinary edge square is not enough.</p></details>
+</section><section class="tactic" aria-labelledby="king-title"><h3 id="king-title">Capture beside the throne</h3>
+<p>Attackers: e5, g5, h4. Defender: d8. King: f5. Attackers to move.</p>
+<div class="tactic-demo" data-pieces="f5:K e5:A g5:A h4:A d8:D" data-move="h4 f4" data-captured="f5">
+<div class="tactic-board" role="img" aria-label="Attackers: e5, g5, h4. Defender: d8. King: f5." hidden></div>
+<button class="action-button tactic-toggle" type="button" aria-pressed="false" hidden>Show h4 → f4</button>
+</div>
+<details><summary>Move and explanation</summary><p>h4 → f4 captures the king on f5. Attackers win. The empty throne f6 supplies the fourth side here. Away from the throne, the Copenhagen king needs attackers on all four adjacent squares; the ordinary two-sided capture is not enough.</p></details>
+</section><details><summary>Watch for shieldwalls too</summary><p>On the edge, a row of two or more ordinary pieces can be captured together when it is bracketed at both ends and every piece has an enemy directly inward. A corner can bracket one end. The king is not captured by a shieldwall. See the diagrams in the <a href="https://aagenielsen.dk/copenhagen_rules.php">published rules</a>.</p></details>
+      </article>
+      <article id="resources" class="lesson" aria-labelledby="resources-title">
+<h2 id="resources-title" tabindex="-1">Rules and resources</h2>
+<p class="lesson-lead">Start with the rules for the variant you are playing. Modern tafl variants differ.</p>
+<dl class="method-map">
+<dt><a href="https://aagenielsen.dk/copenhagen_rules.php">Published Copenhagen rules</a></dt><dd>The modern 11×11 rules, with capture and shieldwall diagrams. Not a universal historical rulebook. This app has conservative exit-fort detection and no automatic dead-position draws.</dd>
+<dt><a href="https://tafl.lyckans-talisman.se/">Historical survey — Sten Helmfrid</a></dt><dd>Literary sources, archaeology, tablut and the limits of reconstruction.</dd>
+<dt><a href="https://www.nms.ac.uk/discover-catalogue/the-story-of-the-lewis-chess-pieces">Medieval gaming — National Museums Scotland</a></dt><dd>Objects and context, including the Inchmarnock tafl board.</dd>
+<dt><a href="https://aagenielsen.dk/separate_ratings.php">Community player ratings by variant</a></dt><dd>Ratings on Aage Nielsen’s site, not universal world rankings. Follow the live list for current standings.</dd>
+<dt><a href="https://aagenielsen.dk/wtfturnering2026.php">2026 World Tafl Federation Championship</a></dt><dd>The organiser’s tournament page, rules and games.</dd>
+<dt><a href="https://aagenielsen.dk/tafl_balances.php">Measured game balances</a></dt><dd>Observed results and methodology across variants and player groups.</dd>
+<dt><a href="https://aagenielsen.dk/site_history.php">Modern community history</a></dt><dd>How online play and rules developed on Aage Nielsen’s site.</dd>
+</dl>
+<p class="reference">Links checked 21 October 2026. For this app’s selected rules, open How to play on the playing table.</p>
+<a class="practice-link" href="#overview">Study game-playing algorithms ↗</a>
+      </article>
       <article id="overview" class="lesson" aria-labelledby="overview-title">
         <div class="lesson-kicker">Overview</div>
         <h2 id="overview-title" tabindex="-1">Game-playing algorithms</h2>

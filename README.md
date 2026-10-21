@@ -30,8 +30,10 @@ default; experimental Copenhagen v2 is available in the battlefield selector.
 Use **+** to open setup, then press **Play** to start. The minimal playing table
 uses [Albion colours, typography, and original engraved pieces](docs/albion-ui.md).
 
-Open **Learn** to study search, DQN/Rainbow, PPO, AlphaZero, MuZero, Dreamer,
-and population training, with dated research references and interactive examples.
+Open **Learn** for Hnefatafl history, the meaning of its name, Copenhagen playing
+guidance, engine-checked tactical illustrations, and linked rules and community
+resources. The existing algorithm playground covers search, DQN/Rainbow, PPO,
+AlphaZero, MuZero, Dreamer, and population training, with dated research references and interactive examples.
 The **Experiments** topic compares the three implemented bots on the same position
 with adjustable search budgets and downloadable diagnostics. Other methods are
 study material, with proposed Hnef experiments.

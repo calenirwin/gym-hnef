@@ -174,7 +174,8 @@ details input { margin-top: 10px; }
 .calculation-controls #error { margin: 0; overflow-wrap: anywhere; }
 .state-line { flex-shrink: 0; width: min(420px, 100%); }
 #status { text-align: center; }
-.arena { flex-shrink: 0; }
+/* Eleven fractional grid rows must not enlarge the aspect-ratio box. */
+.arena { flex-shrink: 0; min-height: 0; }
 .new-game-button, .rules-toggle { min-height: 44px; padding: 10px 16px; font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
 .new-game-button { margin-top: 8px; }
 .rules-sheet { scrollbar-gutter: stable; }
