@@ -1,0 +1,12 @@
+{
+	admin off
+	auto_https off
+}
+
+:{$PORT:8080} {
+	root * /srv
+	encode zstd gzip
+	@wasm path *.wasm
+	header @wasm Content-Type application/wasm
+	file_server
+}

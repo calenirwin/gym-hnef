@@ -1,0 +1,15 @@
+**
+!Dockerfile
+!Caddyfile
+!tools/
+!tools/build_demo.py
+!tools/fetch_browser_runtime.py
+!web/
+!web/**
+!src/
+!src/hnef/
+!src/hnef/**
+!docs/
+!docs/mini-rules.md
+**/__pycache__/
+**/*.pyc
