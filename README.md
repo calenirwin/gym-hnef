@@ -96,20 +96,23 @@ no mandatory Gym, NumPy, TensorFlow, or rendering dependency. The generated acti
 supports 200 actions for mini and 2,420 for Copenhagen. Mini remains the default;
 each replay identifies its ruleset, and old mini replays remain compatible.
 
-## Integration and separate static demo
+## Static publication and retained tooling
 
 The selected product baseline is the raven/hart/king playing table in
 `src/hnef/web/`, including its Copenhagen selector and Learn pages. Its artwork,
 UI, autosave, replay import and engine contracts are preserved.
 
-The separate `web/` directory retains the previously deployed 5×5 Pyodide Mini
-Lab for compatibility. `tools/build_demo.py`, the Pages workflow and the Caddy
-container build that static mini artifact only; they do not publish the playing
-table. The local playing table requires its Python HTTP API and is not directly
-compatible with GitHub Pages without an adapter. A separate
-[static original-table candidate](docs/STATIC-TABLE.md) now runs the same Python
-functions in a dedicated Pyodide worker. Its build and CI do not publish. See
-[integration scope and release gates](docs/integration-baseline.md).
+The Pages release uses `tools/build_release.py` to package only the original
+playing table at `/gym-hnef/`, including Learn and the same canonical Python
+functions in a dedicated Pyodide worker. There is no separate `/mini/` route.
+The table's existing Mini and experimental Copenhagen ruleset choices remain.
+See [static build and recovery checks](docs/STATIC-TABLE.md) and
+[Pages publication and rollback](docs/PAGES.md).
+
+The separate `web/` Mini Lab source, `tools/build_demo.py` and Caddy/container
+configuration remain available for historical compatibility and rollback; they
+are excluded from the Pages release artifact. Publication requires an explicit
+manual dispatch of the existing Pages workflow on `main`.
 
 CPU training and evaluated model exports from `main` are retained without adding
 an experimental learned opponent to the selected playing table:
@@ -119,9 +122,8 @@ uv sync --locked --extra rl --extra train
 uv run --no-sync hnef-rl --help
 ```
 
-See [the learning guide](docs/rl-baseline.md). Existing static-demo deployment
-instructions remain in [Pages](docs/PAGES.md) and [Railway](docs/DEPLOYMENT.md).
-No public release of the selected playing table is part of this integration.
+See [the learning guide](docs/rl-baseline.md). The retained Mini container
+instructions remain in [Railway](docs/DEPLOYMENT.md).
 
 ## Original school project
 
