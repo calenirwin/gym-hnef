@@ -67,6 +67,8 @@ def _warn_experimental(ruleset: Ruleset) -> None:
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description="Hnef mini and experimental Copenhagen engine")
     commands = parser.add_subparsers(dest="command", required=True)
+    web = commands.add_parser("web", help="open the local browser game")
+    web.add_argument("--port", type=_positive, default=8000)
     play = commands.add_parser("play", help="run a seeded game between reference policies")
     play.add_argument("--seed", type=int, default=0)
     play.add_argument("--max-plies", type=_positive, default=500)
@@ -98,7 +100,11 @@ def main(argv: list[str] | None = None) -> None:
         )
     args = parser.parse_args(argv)
     try:
-        if args.command == "replay":
+        if args.command == "web":
+            from .web import serve
+
+            serve(args.port)
+        elif args.command == "replay":
             _show(Replay.from_json(args.path.read_text()).verify())
         elif args.command == "adjudicate-draw":
             record = Replay.from_json(args.path.read_text()).adjudicate_draw(args.note)

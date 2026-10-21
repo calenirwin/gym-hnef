@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#D8CDAA">
+  <meta name="description" content="Study and compare game-playing algorithms in Hnef: search, value learning, policy gradients, world models, and multi-agent training.">
+  <title>Learn · Hnef</title>
+  <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/learn.css">
+  <script src="/learn-math.js" defer></script><script src="/learn.js" defer></script>
+</head>
+<body class="learning-page">
+<a class="skip-link" href="#lesson-content">Skip to lesson</a>
+<header class="masthead">
+  <a class="wordmark" href="/" aria-label="Hnef home">HNEF</a>
+  <nav aria-label="Main menu"><a class="menu-link" href="/">Playing table</a><a class="menu-link" href="/learn" aria-current="page">Learn</a></nav>
+</header>
+<main class="academy">
+  <header class="course-intro"><h1>Learn</h1></header>
+  <div class="topic-picker" hidden><label for="topic-select">Topic</label><select id="topic-select"></select></div>
+  <div class="course-layout">
+    <nav class="lesson-nav" aria-label="Topics">
+<div class="topic-group"><h2>Study</h2><ol>
+<li><a href="#overview">Overview</a></li>
+</ol></div>
+<div class="topic-group"><h2>Search and baselines</h2><ol>
+<li><a href="#random">Random</a></li>
+<li><a href="#heuristic">Heuristic</a></li>
+<li><a href="#minimax">Minimax</a></li>
+<li><a href="#mcts">MCTS</a></li>
+</ol></div>
+<div class="topic-group"><h2>Learning</h2><ol>
+<li><a href="#neural">Networks</a></li>
+<li><a href="#dqn">DQN / Rainbow</a></li>
+<li><a href="#ppo">PPO</a></li>
+</ol></div>
+<div class="topic-group"><h2>Models and self-play</h2><ol>
+<li><a href="#self-play">AlphaZero / Gumbel</a></li>
+<li><a href="#muzero">MuZero / EfficientZero</a></li>
+<li><a href="#dreamer">Dreamer</a></li>
+<li><a href="#populations">Populations</a></li>
+</ol></div>
+<div class="topic-group"><h2>Research and experiments</h2><ol>
+<li><a href="#research">Current research</a></li>
+<li><a href="#experiments">Experiments</a></li>
+</ol></div>
+</nav>
+    <div id="lesson-content" tabindex="-1">
+      <noscript><p class="lesson-note">All topics are below. Enable JavaScript to use the interactive examples.</p></noscript>
+      <article id="overview" class="lesson" aria-labelledby="overview-title">
+        <div class="lesson-kicker">Overview</div>
+        <h2 id="overview-title" tabindex="-1">Game-playing algorithms</h2>
+
+<p class="lesson-lead">Use tafl to study how algorithms choose moves, learn from games, and respond to other players.</p>
+<p>Search, learning, and opponent selection are separate choices. A policy can act directly or guide search. Self-play can train a value learner, a policy-gradient agent, or a search-based system.</p>
+<dl class="method-map">
+  <dt><a href="#minimax">Search</a></dt><dd>Minimax and MCTS examine possible continuations.</dd>
+  <dt><a href="#dqn">Model-free learning</a></dt><dd>DQN learns action values; PPO updates a policy. Neither needs a learned transition model.</dd>
+  <dt><a href="#muzero">Model-based learning</a></dt><dd>MuZero searches a learned model. Dreamer trains behaviour inside one.</dd>
+  <dt><a href="#populations">Multi-agent training</a></dt><dd>Self-play and populations determine which opponents supply experience.</dd>
+</dl>
+<h3>Tafl as an environment</h3>
+<p>The sides have different objectives and piece counts. Rewards are sparse; repetition depends on history. Legal-move masks and an exact simulator let us isolate learning errors from rule errors.</p>
+<p>Mini provides a smaller test case. Copenhagen changes both scale and rules, and remains experimental. Results on one do not establish performance on the other.</p>
+<details><summary>Scope</summary><p>Random, heuristic, and MCTS are playable. Other methods are study material and candidate experiments, not installed opponents. No method has established state-of-the-art performance on Hnef.</p></details>
+<a class="practice-link" href="#experiments">Compare implemented opponents ↗</a>
+
+      </article>
+      <article id="random" class="lesson" aria-labelledby="random-title">
+        <div class="lesson-kicker"><span class="status-badge">Playable now</span></div>
+        <h2 id="random-title" tabindex="-1">Random</h2>
+        <p class="lesson-lead">Selects a legal move with equal probability.</p>
+        <p>A <strong>policy</strong> determines how an opponent chooses a move. With 20 legal moves, the random policy gives each a 1-in-20 chance, including an immediate win.</p>
+        <section class="lab" aria-labelledby="random-lab-title">
+          <h3 id="random-lab-title">Uniform sampling</h3>
+          <p>Three illustrative moves, each with probability ⅓. Sample counts will vary.</p>
+          <div class="sample-cards">
+            <div><span>A</span><strong>Capture a piece</strong><small>⅓ chance</small><output id="sample-a">0 selected</output></div>
+            <div><span>B</span><strong>Open an escape lane</strong><small>⅓ chance</small><output id="sample-b">0 selected</output></div>
+            <div><span>C</span><strong>Move away</strong><small>⅓ chance</small><output id="sample-c">0 selected</output></div>
+          </div>
+          <div class="lab-actions"><button id="sample-one" class="action-button" type="button">Sample once</button><button id="sample-many" class="text-button" type="button">Sample 100</button><button id="sample-reset" class="text-button" type="button">Reset</button></div>
+          <p id="sample-result" class="lab-result" role="status">0 samples.</p>
+        </section>
+        <h3>Baseline</h3>
+        <p>Random play is a baseline for comparison. It neither evaluates positions nor learns from results.</p>
+        <p class="lesson-note">The playing-table bot is seeded: the same seed and position reproduce its move. This example uses browser randomness.</p>
+        <details class="knowledge-check"><summary>Winning moves</summary><p>A winning move has the same probability as any other legal move. The policy does not recognize its result.</p></details>
+        <a class="practice-link" href="/?opponent=random">Play against Random <span aria-hidden="true">↗</span></a>
+      </article>
+      <article id="heuristic" class="lesson" aria-labelledby="heuristic-title">
+        <div class="lesson-kicker"><span class="status-badge">Playable now</span></div>
+        <h2 id="heuristic-title" tabindex="-1">Heuristic</h2>
+        <p class="lesson-lead">Scores the position after each legal move and selects the highest score.</p>
+        <p>This is <strong>one-ply lookahead</strong>: one move by one player. The score uses fixed weights for material, king progress, escape lanes, and adjacent attackers. Ties are broken randomly.</p>
+        <section class="lab" aria-labelledby="heuristic-lab-title">
+          <h3 id="heuristic-lab-title">Evaluation</h3>
+          <p>Adjust the features to calculate a defender score. Some combinations may not correspond to a legal position.</p>
+          <div class="score-lab">
+            <div class="feature-controls">
+              <label for="material">Material balance <output id="material-value" for="material">0.00</output></label><input id="material" type="range" min="-1" max="1" step="0.125" value="0">
+              <label for="progress">King’s progress toward escape <output id="progress-value" for="progress">0.50</output></label><input id="progress" type="range" min="0" max="1" step="0.25" value="0.5">
+              <label for="lanes">Clear escape directions <output id="lanes-value" for="lanes">1 / 4</output></label><input id="lanes" type="range" min="0" max="4" step="1" value="1">
+              <label for="pressure">Adjacent attackers <output id="pressure-value" for="pressure">1 / 4</output></label><input id="pressure" type="range" min="0" max="4" step="1" value="1">
+            </div>
+            <div class="score-display"><span>Defender score</span><output id="heuristic-score" aria-live="polite">+0.175</output><small>Higher favours defenders.<br>Attackers use the negative.</small></div>
+          </div>
+          <p class="formula">0.35 × material + 0.25 × progress + 0.30 × lanes / 4 − 0.10 × attackers / 4</p>
+          <p class="lab-caption">Material = defenders remaining / starting defenders − attackers remaining / starting attackers; the king is excluded. Escape means an edge in Mini and a corner in Copenhagen. Scores are clamped to −0.9…+0.9.</p>
+        </section>
+        <h3>Limits</h3>
+        <p>The policy does not search the opponent’s reply. A high-scoring move may expose the king to capture. The score is <strong>not a win probability</strong>.</p>
+        <p class="lesson-note">Terminal positions use the result: +1 for a win, −1 for a loss, and 0 for a draw, from the mover’s perspective. The weights are untuned and do not change through play.</p>
+        <details class="knowledge-check"><summary>Interpreting the score</summary><p>A score of +0.6 expresses a preference, not a 60% win rate. Its relationship to outcomes would need to be measured.</p></details>
+        <a class="practice-link" href="/?opponent=heuristic">Play against Heuristic <span aria-hidden="true">↗</span></a>
+      </article>
+      <article id="minimax" class="lesson" aria-labelledby="minimax-title">
+        <div class="lesson-kicker">Search · not implemented</div>
+        <h2 id="minimax-title" tabindex="-1">Minimax and alpha–beta</h2>
+
+<p class="lesson-lead">Choose a move assuming the opponent chooses their best reply.</p>
+<p>Minimax alternates maximum and minimum values through a game tree. At a depth limit it uses an evaluation function. Alpha–beta pruning skips branches that cannot change the result; it preserves the minimax choice at the same depth and evaluation.</p>
+<section class="lab" aria-labelledby="minimax-lab-title"><h3 id="minimax-lab-title">Opponent replies</h3>
+<p>Illustrative scores from your perspective. The opponent chooses the lower score in each row.</p>
+<table class="data-table"><thead><tr><th>Move</th><th>Reply 1</th><th>Reply 2</th><th>Worst reply</th></tr></thead><tbody><tr><th>A</th><td>+0.6</td><td><label class="sr-only" for="minimax-reply">Move A, reply 2</label><input id="minimax-reply" type="range" min="-1" max="1" step="0.1" value="-0.4"><output id="minimax-value">−0.4</output></td><td id="minimax-worst">−0.4</td></tr><tr><th>B</th><td>+0.2</td><td>+0.1</td><td>+0.1</td></tr></tbody></table>
+<p id="minimax-result" role="status">Choose B: its worst reply is better.</p></section>
+<details><summary>Hnef experiment</summary><p>Compare one-ply evaluation with deeper search on the same tactical positions. Order captures first to test pruning efficiency. Keep repetition history in each node. Depth limits can still hide traps beyond the evaluated horizon.</p></details>
+<p class="reference">Reference: <a href="https://www.sciencedirect.com/science/article/pii/0004370275900193">Knuth &amp; Moore · An analysis of alpha-beta pruning (1975)</a></p>
+
+      </article>
+      <article id="mcts" class="lesson" aria-labelledby="mcts-title">
+        <div class="lesson-kicker"><span class="status-badge">Playable now</span></div>
+        <h2 id="mcts-title" tabindex="-1">Monte Carlo tree search</h2>
+        <p class="lesson-lead">Estimates move values through simulated continuations.</p>
+        <p><strong>MCTS</strong> builds a tree of positions. Hnef uses UCT to balance branches with good average results (<strong>exploitation</strong>) against less-visited branches (<strong>exploration</strong>).</p>
+        <section class="lab" aria-labelledby="search-lab-title">
+          <h3 id="search-lab-title">Search iteration</h3>
+          <p>The four stages of one simulation. This diagram does not run a search.</p>
+          <ol class="cycle" id="search-cycle">
+            <li><strong>Select</strong><span>Apply UCT</span></li>
+            <li><strong>Expand</strong><span>Add an untried move</span></li>
+            <li><strong>Roll out</strong><span>Play a random continuation</span></li>
+            <li><strong>Back up</strong><span>Update visits and results</span></li>
+          </ol>
+          <p id="search-explanation" class="lab-result" role="status">Select: follow branches using UCT. Opponent turns favour lower values for the root player.</p>
+          <button id="search-next" class="action-button" type="button">Next: expand →</button>
+        </section>
+        <h3>Move selection</h3>
+        <p>Hnef selects the most-visited root move, breaking ties by average result, then seeded randomness. A discovered immediate win takes priority.</p>
+        <p class="lesson-note">The playing table uses 32 simulations per move and up to 24 rollout moves after expansion. Each decision starts a fresh tree. An unfinished rollout contributes 0 as an unknown-value estimate, <strong>not a draw</strong>.</p>
+        <p>Limited search and random rollouts can miss strong replies. This MCTS uses no heuristic or network and retains no learning between games.</p>
+        <details class="knowledge-check"><summary>Rollout cutoffs</summary><p>A cutoff ends the simulation before the position is resolved. It does not change the game’s outcome.</p></details>
+        <details class="deeper-reading"><summary>Minimax comparison</summary><p>Minimax searches for each player’s best replies, often to a fixed depth. MCTS allocates simulations selectively. Neither requires training. Minimax is not currently implemented in Hnef.</p><p><a href="https://sites.ualberta.ca/~szepesva/papers/ecml06.pdf">UCT paper by Kocsis and Szepesvári</a>.</p></details>
+        <a class="practice-link" href="/?opponent=mcts">Play against MCTS <span aria-hidden="true">↗</span></a>
+      </article>
+      <article id="neural" class="lesson" aria-labelledby="neural-title">
+        <div class="lesson-kicker"><span class="status-badge planned">Representation · not implemented</span></div>
+        <h2 id="neural-title" tabindex="-1">Policy/value networks</h2>
+        <p class="lesson-lead">Predicts move preferences and position values using learned weights.</p>
+        <p>Training adjusts a <strong>neural network’s</strong> weights from examples. A policy/value architecture has two outputs: a policy over moves and a value for the position.</p>
+        <div class="network-diagram" aria-label="Position and history feed a network with policy and value outputs"><div>Position + history<small>Pieces, turn, rules, legal moves</small></div><span aria-hidden="true">↓</span><div class="network-core">Learned network<small>Weights adjusted during training</small></div><span aria-hidden="true">↓</span><div class="network-heads"><div><strong>Policy</strong><small>Move preferences</small></div><div><strong>Value</strong><small>Expected outcome</small></div></div></div>
+        <section class="lab" aria-labelledby="network-lab-title">
+          <h3 id="network-lab-title">Policy output</h3>
+          <p>Illustrative values; no trained model is running.</p>
+          <div class="prediction"><label>Move A <meter min="0" max="1" value="0.6">60%</meter><span>60% policy weight</span></label><label>Move B <meter min="0" max="1" value="0.3">30%</meter><span>30% policy weight</span></label><label>Move C <meter min="0" max="1" value="0.1">10%</meter><span>10% policy weight</span></label></div>
+          <fieldset class="quiz"><legend>Does Move A’s 60% policy weight mean it wins 60% of games?</legend><button type="button" class="answer-button" data-answer="yes" aria-pressed="false">Yes</button><button type="button" class="answer-button" data-answer="no" aria-pressed="false">No</button></fieldset>
+          <p id="network-answer" class="lab-result" role="status"></p>
+          <p>The value output estimates expected outcome for a specified player, on a −1 to +1 reward scale. It is not necessarily a calibrated win probability.</p>
+        </section>
+        <h3>Training and inference</h3>
+        <p><strong>Inference</strong> uses a trained network with fixed weights. Reinforcement learning is a training method that uses actions and rewards; a neural network alone does not imply RL.</p>
+        <p class="lesson-note">Hnef’s environment provides board features, legal-action masks, and action history. Models must account for repetition history and exclude illegal moves.</p>
+        <details class="knowledge-check"><summary>Position history</summary><p>The board alone does not record earlier repetitions. The model or its search must use history to distinguish these states.</p></details>
+        <p class="future-note">No trained network is available in the playing table. Historical TensorFlow weights are not integrated.</p>
+      </article>
+      <article id="dqn" class="lesson" aria-labelledby="dqn-title">
+        <div class="lesson-kicker">Value learning · not implemented</div>
+        <h2 id="dqn-title" tabindex="-1">DQN and Rainbow</h2>
+
+<p class="lesson-lead">Learn the expected return of taking each action, Q(s, a).</p>
+<p>DQN fits action values using stored transitions and a lagged target network. Acting can mix the best legal action with random exploration. Replay reuses past experience; changing opponents can make that experience stale.</p>
+<section class="lab" aria-labelledby="q-lab-title"><h3 id="q-lab-title">One value update</h3>
+<p>Scalar example, not a network training run. Current Q = +0.2; discount γ = 0.95. Values use the player-to-move perspective.</p>
+<label for="q-ending">Transition</label><select id="q-ending"><option value="continue">Opponent to move · reward 0</option><option value="win">Terminal win · reward +1</option><option value="loss">Terminal loss · reward −1</option><option value="draw">Terminal draw · reward 0</option></select>
+<label for="q-next">Opponent’s best legal Q <output id="q-next-value">+0.60</output></label><input id="q-next" type="range" min="-1" max="1" step="0.1" value="0.6">
+<label for="q-rate">Learning rate α <output id="q-rate-value">0.20</output></label><input id="q-rate" type="range" min="0" max="1" step="0.05" value="0.2">
+<p class="formula">Q ← Q + α(target − Q)</p><p id="q-result" role="status"></p>
+<p class="lab-caption">For this alternating zero-sum example, target = −γ max Q(opponent). Terminal targets use the reward only. A collection cutoff is not a terminal draw.</p></section>
+<details><summary>Rainbow</summary><p>Rainbow combines double Q-learning, prioritized replay, dueling networks, multi-step targets, distributional returns, and noisy exploration. These address different sources of error; they are not six levels of strength. <a href="https://arxiv.org/abs/1710.02298">Hessel et al. (2017)</a>.</p></details>
+<details><summary>Hnef experiment</summary><p>Start with masked DQN against a fixed opponent. Compare replay sizes and multi-step returns before changing the opponent pool. Apply masks to target selection as well as played moves. Retain history for repetition.</p></details>
+<p class="reference"><a href="https://deepmind-media.storage.googleapis.com/dqn/DQNNaturePaper.pdf">Mnih et al. · DQN (2015)</a></p>
+
+      </article>
+      <article id="ppo" class="lesson" aria-labelledby="ppo-title">
+        <div class="lesson-kicker">Policy gradients · not implemented</div>
+        <h2 id="ppo-title" tabindex="-1">PPO</h2>
+
+<p class="lesson-lead">Update action probabilities using recent experience and an estimated advantage.</p>
+<p>An actor chooses moves; a critic estimates return. Advantage measures whether an action did better than the baseline. PPO reuses a recent batch for several updates, with a clipped objective to limit incentives for large changes.</p>
+<section class="lab" aria-labelledby="ppo-lab-title"><h3 id="ppo-lab-title">Clipped objective</h3>
+<p>One illustrative training sample. Ratio r = new probability / old probability; clipping ε = 0.2.</p>
+<label for="ppo-ratio">Probability ratio <output id="ppo-ratio-value">1.00</output></label><input id="ppo-ratio" type="range" min="0.2" max="2" step="0.05" value="1">
+<label for="ppo-advantage">Advantage A <output id="ppo-advantage-value">+0.50</output></label><input id="ppo-advantage" type="range" min="-1" max="1" step="0.1" value="0.5">
+<p class="formula">min(r × A, clip(r, 0.8, 1.2) × A)</p><p id="ppo-result" role="status"></p>
+<p class="lab-caption">Try both signs of advantage. Clipping changes the objective; it does not impose a hard bound on every probability update.</p></section>
+<details><summary>Hnef experiment</summary><p>Compare masked PPO with DQN under equal environment-step budgets, then report training compute separately. Test fixed opponents before self-play. Use side-aware rewards and history-aware observations; an unconditioned board image omits repetition.</p></details>
+<p class="reference"><a href="https://arxiv.org/abs/1707.06347">Schulman et al. · PPO (2017)</a>. An established baseline, not a claim of current best performance.</p>
+
+      </article>
+      <article id="self-play" class="lesson" aria-labelledby="self-play-title">
+        <div class="lesson-kicker"><span class="status-badge planned">Search-guided learning · not implemented</span></div>
+        <h2 id="self-play-title" tabindex="-1">AlphaZero and Gumbel search</h2>
+        <p class="lesson-lead">Train a network from self-play search, using the exact game rules.</p>
+        <p><strong>Reinforcement learning (RL)</strong> learns from actions and rewards. In self-play, the agent plays both sides, sometimes against earlier versions. Search can provide training targets for the policy.</p>
+        <section class="lab" aria-labelledby="training-lab-title">
+          <h3 id="training-lab-title">Training cycle</h3>
+          <p>AlphaZero-style cycle. Other RL methods can also use self-play.</p>
+          <ol class="cycle" id="training-cycle"><li><strong>Play</strong><span>Network guides search</span></li><li><strong>Collect</strong><span>Positions, visits, outcomes</span></li><li><strong>Train</strong><span>Update policy and value</span></li><li><strong>Evaluate</strong><span>Compare checkpoints</span></li></ol>
+          <p id="training-explanation" class="lab-result" role="status">Play: guide search with policy predictions and evaluate leaf positions with the value network.</p>
+          <button id="training-next" class="action-button" type="button">Next: collect →</button>
+        </section>
+        <h3>Rewards</h3>
+        <p>Hnef gives 0 during play, +1 for a win, −1 for a loss, and 0 for a draw. A game stopped at the collection limit remains unfinished.</p>
+        <p>The policy would learn from search visit distributions; the value would learn from completed outcomes, from the appropriate player’s perspective.</p>
+        <details><summary>Gumbel AlphaZero</summary><p>Gumbel search samples candidate actions without replacement and uses sequential halving at the root. It targets policy improvement when simulations are scarce; guarantees depend on correctly estimated action values. Test it against standard search at matched budgets. <a href="https://openreview.net/forum?id=bERaNdoegnO">Danihelka et al. (2022)</a>.</p></details><h3>Evaluation</h3>
+        <p>Compare checkpoints against the baselines and earlier models as <strong>both attackers and defenders</strong>. Tafl is asymmetric. Training time and model size alone do not establish strength.</p>
+        <p class="lesson-note">Future model notes will record the training setup, ruleset, rewards, history handling, search budget, and measured results.</p>
+        <details class="knowledge-check"><summary>Training limits</summary><p>Training can be unstable or overfit to its opponents. Fixed baselines and earlier checkpoints help detect regressions.</p></details>
+        <details class="deeper-reading"><summary>Reference</summary><p><a href="https://arxiv.org/abs/1712.01815">AlphaZero</a> describes the combination of self-play, neural networks, and tree search that informs this planned approach.</p></details>
+        <a class="practice-link" href="/">Return to the playing table <span aria-hidden="true">↗</span></a>
+      </article>
+      <article id="muzero" class="lesson" aria-labelledby="muzero-title">
+        <div class="lesson-kicker">Model-based search · not implemented</div>
+        <h2 id="muzero-title" tabindex="-1">MuZero and EfficientZero</h2>
+
+<p class="lesson-lead">Search with a learned transition model rather than an exact simulator.</p>
+<p>MuZero encodes a position into a latent state. Its dynamics model predicts the next latent state and reward; a prediction network supplies policy and value. Search uses these predictions. The model need not reconstruct the board image.</p>
+<dl class="method-map"><dt>AlphaZero</dt><dd>Exact transitions; learned policy and value.</dd><dt>MuZero</dt><dd>Learned transitions, rewards, policy, and value.</dd></dl>
+<details><summary>EfficientZero V2</summary><p>This 2024 method studies data-efficient model-based search across discrete and continuous control. Its reported results use limited-data benchmarks, not tafl. The relevant question here is whether model learning improves results per collected game. <a href="https://arxiv.org/abs/2403.00564">Wang et al. (2024)</a>.</p></details>
+<details><summary>Hnef experiment</summary><p>Hnef already has inexpensive exact transitions. A learned model adds approximation error, so compare it with exact-model search at matched compute. Measure reward, capture, and repetition errors over increasing rollout lengths. Real moves must still pass the engine’s legality checks.</p></details>
+<p class="reference"><a href="https://arxiv.org/abs/1911.08265">Schrittwieser et al. · MuZero (2019; Nature 2020)</a></p>
+
+      </article>
+      <article id="dreamer" class="lesson" aria-labelledby="dreamer-title">
+        <div class="lesson-kicker">World-model learning · not implemented</div>
+        <h2 id="dreamer-title" tabindex="-1">Dreamer</h2>
+
+<p class="lesson-lead">Train an actor and critic on trajectories imagined by a learned world model.</p>
+<p>DreamerV3 learns representations, dynamics, rewards, and continuation predictions from replay. The actor and critic train on imagined trajectories. Unlike MuZero, the deployed actor need not run tree search for each move.</p>
+<details><summary>DreamerV3</summary><p>The 2025 Nature paper reports a single configuration across more than 150 control tasks, including Minecraft. Those results concern its tested environments; they do not establish competitive strength in tafl. <a href="https://www.nature.com/articles/s41586-025-08744-2">Hafner et al. (2025)</a>.</p></details>
+<details><summary>Dreamer 4</summary><p>The September 2025 preprint studies a scalable video world model and behaviour learned inside it, including Minecraft from offline data. This differs from training solely through fresh environment interaction. <a href="https://arxiv.org/abs/2509.24527">Hafner, Yan &amp; Lillicrap (2025)</a>.</p></details>
+<details><summary>Hnef experiment</summary><p>Compare a compact board-state model with exact-engine trajectories before considering pixels. Hold the opponent fixed first: an imagined opponent must be modelled or supplied explicitly. Longer imagined sequences may amplify model errors that the policy learns to exploit.</p></details>
+<p class="lesson-note">Candidate study: vary imagination horizon and measure held-out transition error alongside playing strength. No world model is currently trained in Hnef.</p>
+
+      </article>
+      <article id="populations" class="lesson" aria-labelledby="populations-title">
+        <div class="lesson-kicker">Opponent selection · not implemented</div>
+        <h2 id="populations-title" tabindex="-1">Self-play and populations</h2>
+
+<p class="lesson-lead">The training opponent is part of the learning problem.</p>
+<p>Playing only the latest checkpoint can forget earlier strategies or cycle between weaknesses. A league retains diverse opponents. Policy-space response oracles (PSRO) train approximate best responses to opponent mixtures and update the mixture using measured payoffs.</p>
+<section class="lab" aria-labelledby="pool-lab-title"><h3 id="pool-lab-title">Opponent mixture</h3>
+<p>Synthetic attacker win rates, with no draws. These are not Hnef measurements.</p>
+<table class="data-table"><thead><tr><th>Attacker</th><th>Defender X</th><th>Defender Y</th><th>Defender Z</th></tr></thead><tbody><tr><th>A</th><td>80%</td><td>20%</td><td>50%</td></tr><tr><th>B</th><td>50%</td><td>80%</td><td>20%</td></tr><tr><th>C</th><td>20%</td><td>50%</td><td>80%</td></tr></tbody></table>
+<label for="pool-mixture">Defender mixture</label><select id="pool-mixture"><option value="uniform">Equal · X/Y/Z each ⅓</option><option value="x">Mostly X · 80/10/10%</option><option value="y">Mostly Y · 10/80/10%</option><option value="z">Mostly Z · 10/10/80%</option></select><p id="pool-result" role="status"></p></section>
+<details><summary>Hnef experiment</summary><p>Maintain separate attacker and defender pools. Evaluate the cross-play matrix, not only the latest head-to-head score. A scalar rating can obscure match-up weaknesses; finite-pool success is not a proof of low exploitability against every possible opponent.</p></details>
+<p class="reference"><a href="https://arxiv.org/abs/1711.00832">Lanctot et al. · PSRO (2017)</a></p>
+
+      </article>
+      <article id="research" class="lesson" aria-labelledby="research-title">
+        <div class="lesson-kicker">Selected primary sources · checked 16 October 2026</div>
+        <h2 id="research-title" tabindex="-1">Current research</h2>
+
+<p class="lesson-lead">State of the art depends on the environment, data allowance, and compute budget.</p>
+<p>PPO and Rainbow are foundations. Newer work studies data efficiency, learned simulators, stable multi-agent updates, and the discovery of learning rules. These are different research questions, not a single ranking.</p>
+<h3>Regularized policy optimization · 2026</h3>
+<p>Ota et al. study reverse-KL and entropy regularization in two-player zero-sum games, with experiments on five board games. The revised paper is marked accepted at ICML 2026. Its stability and efficiency claims apply to the stated theory and experiments. <a href="https://arxiv.org/abs/2602.10894v2">Paper, version 2</a>.</p>
+<details><summary>Hnef question</summary><p>Can regularization reduce cycling between attacker and defender strategies? Compare cross-play and training variability with PPO under the same sampling budget.</p></details>
+<h3>DiscoRL · 2025</h3>
+<p>DiscoRL meta-learns how to update policies and predictions from populations of agents across environments. The learned object is an update rule, not just one game’s policy. Its reported Atari and transfer results do not establish performance on Hnef. <a href="https://www.nature.com/articles/s41586-025-09761-x">Oh et al., Nature</a>.</p>
+<details><summary>Hnef question</summary><p>Evaluate transfer of a learned update rule on held-out tafl tasks. Discovering a rule across many environments and training one Hnef agent have different compute requirements.</p></details>
+<h3>World models · 2024–2025</h3>
+<p><a href="#muzero">EfficientZero V2</a> examines limited-data search; <a href="#dreamer">DreamerV3 and Dreamer 4</a> examine learning through imagined trajectories. Exact Hnef transitions provide a reference for measuring model error.</p>
+<details><summary>Reading results</summary><p>Record the ruleset, observations, opponent pool, collected transitions, training hardware, inference search budget, seeds, and uncertainty. A new paper’s benchmark lead is not evidence that its method is best for this game. This is a selected reading list, not an exhaustive leaderboard.</p></details>
+
+      </article>
+      <article id="experiments" class="lesson" aria-labelledby="experiments-title">
+        <div class="lesson-kicker">Live engine · reference policies</div>
+        <h2 id="experiments-title" tabindex="-1">Experiments</h2>
+
+<p class="lesson-lead">Compare decisions on one position without changing your game.</p>
+<form id="experiment-form">
+<div class="experiment-fields"><div><label for="experiment-position">Position</label><select id="experiment-position"><option value="mini-v1">Mini opening</option><option value="copenhagen-experimental-v2">Copenhagen opening · experimental</option><option value="saved">Saved game</option></select></div>
+<div><label for="experiment-seed">Seed</label><input id="experiment-seed" type="number" min="0" max="4294967295" step="1" value="42" required></div>
+<div><label for="experiment-budget">MCTS simulations</label><select id="experiment-budget"><option>8</option><option selected>32</option><option>64</option></select></div>
+<div><label for="experiment-rollout">Rollout plies</label><select id="experiment-rollout"><option>0</option><option>12</option><option selected>24</option><option>48</option></select></div></div>
+<button id="experiment-run" class="action-button" type="submit">Analyze</button></form>
+<p id="experiment-status" role="status">Choose a position and budget.</p><p id="experiment-error" role="alert" hidden></p>
+<section id="experiment-results" hidden aria-label="Analysis results">
+<p id="experiment-description"></p>
+<div id="experiment-board" class="experiment-board" role="img" aria-label="Analyzed board"></div>
+<div class="comparison-scroll"><table class="data-table"><caption>Decisions</caption><thead><tr><th>Policy</th><th>Move</th><th>Successor heuristic</th></tr></thead><tbody id="experiment-decisions"></tbody></table></div>
+<p class="lab-caption">The last column applies the same handwritten score to each chosen successor. It is not a win probability or MCTS’s selection criterion.</p>
+<p id="experiment-search-summary"></p>
+<details><summary>MCTS root statistics</summary><div class="comparison-scroll"><table class="data-table"><caption>Explored moves · values for the player to move</caption><thead><tr><th>Move</th><th>Visits</th><th>Mean utility</th></tr></thead><tbody id="experiment-children"></tbody></table></div></details>
+<a id="experiment-download" class="text-button" download>Download analysis</a>
+<details><summary>Analysis JSON</summary><label for="experiment-json">Complete report</label><textarea id="experiment-json" readonly spellcheck="false"></textarea></details></section>
+<details><summary>Interpretation</summary><p>Compare 8, 32, and 64 simulations with the same position and seed. Record explored moves and rollout cutoffs. A larger budget may select a different move; this single-position comparison cannot establish which policy is stronger.</p></details>
+<details><summary>Future training experiments</summary><p>Compare DQN with PPO under equal collected-transition budgets; compare exact and learned-model search under matched inference budgets; compare latest-checkpoint self-play with opponent pools. Each needs trained checkpoints and repeated evaluation games. The controls above run only the three implemented policies.</p></details>
+<details><summary>Evaluation protocol</summary><p>Report both seats separately, with multiple seeds and uncertainty. Separate genuine draws from unfinished games. Record rules, model version, history handling, training data, and search budget. Use held-out opponents and positions to reduce selection bias.</p></details>
+
+      </article>
+      <nav id="lesson-pagination" class="lesson-pagination" aria-label="Lesson navigation" hidden><a id="previous-lesson" href="#random">← Previous lesson</a><span id="lesson-position" aria-live="polite">1 of 14</span><a id="next-lesson" href="#random">Next: Random →</a></nav>
+    </div>
+  </div>
+  <details class="course-comparison">
+    <summary>Method comparison</summary>
+    <div class="comparison-scroll" tabindex="0" role="region" aria-label="Opponent comparison; scroll horizontally on small screens"><table><caption>Opponent comparison</caption><thead><tr><th scope="col">Approach</th><th scope="col">Evaluation</th><th scope="col">Looks ahead?</th><th scope="col">Learns from games?</th><th scope="col">In Hnef</th></tr></thead><tbody>
+      <tr><th scope="row">Random</th><td>Equal chance</td><td>No</td><td>No</td><td>Playable</td></tr>
+      <tr><th scope="row">Heuristic</th><td>Handwritten score</td><td>One move</td><td>No</td><td>Playable</td></tr>
+      <tr><th scope="row">MCTS</th><td>Simulated outcomes</td><td>Multiple moves</td><td>No persistent learning</td><td>Playable</td></tr>
+      <tr><th scope="row">Minimax</th><td>Leaf evaluation</td><td>Fixed depth</td><td>No</td><td>Study only</td></tr>
+      <tr><th scope="row">DQN / Rainbow</th><td>Action values</td><td>Not at inference</td><td>From replay</td><td>Study only</td></tr>
+      <tr><th scope="row">PPO</th><td>Actor and critic</td><td>Not at inference</td><td>Recent batches</td><td>Study only</td></tr>
+      <tr><th scope="row">MuZero</th><td>Learned model + search</td><td>Latent search</td><td>During training</td><td>Study only</td></tr>
+      <tr><th scope="row">Dreamer</th><td>Actor and critic</td><td>Imagined training</td><td>World-model rollouts</td><td>Study only</td></tr>
+      <tr><th scope="row">Policy/value network</th><td>Trained predictions</td><td>Not on its own</td><td>During training</td><td>Study only</td></tr>
+      <tr><th scope="row">Search + self-play RL</th><td>Network + search</td><td>Multiple moves</td><td>During training</td><td>Study only</td></tr>
+    </tbody></table></div>
+  </details>
+</main>
+</body>
+</html>

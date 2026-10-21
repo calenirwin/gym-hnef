@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#D8CDAA">
+  <title>Hnef</title>
+  <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/style.css"><script src="/motion.js" defer></script><script src="/app.js" defer></script>
+</head>
+<body>
+<header class="masthead">
+  <a class="wordmark" href="/" aria-label="Hnef home">HNEF</a>
+  <nav aria-label="Game menu">
+    <a class="menu-link" href="/learn">Learn</a>
+    <button id="new-game" class="icon-button" data-tip="New game" aria-label="New game"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+    <button id="rules-button" class="icon-button" data-tip="How to play" aria-label="How to play"><svg viewBox="0 0 24 24"><path d="M9 8a3 3 0 0 1 6 0c0 3-3 2-3 5M12 17v.2"/><circle cx="12" cy="12" r="9"/></svg></button>
+  </nav>
+</header>
+<main class="table">
+  <div class="players" aria-label="Pieces remaining">
+    <div id="attacker-seat" class="seat" title="Attackers"><span class="side-mark raven-mark" aria-hidden="true">◆</span><span id="attacker-count">8</span><span class="sr-only">attackers</span></div>
+    <span class="versus" aria-hidden="true">·</span>
+    <div id="defender-seat" class="seat" title="Defenders and king"><span class="side-mark hart-mark" aria-hidden="true">◇</span><span id="defender-count">5</span><span class="sr-only">defenders including the king</span></div>
+  </div>
+  <section class="arena" aria-label="Playing table">
+    <div class="board-aura" aria-hidden="true"></div>
+    <div class="board-flourishes" aria-hidden="true">
+      <img class="flourish northwest" src="/assets/board-flourish.png" alt="" draggable="false">
+      <img class="flourish northeast" src="/assets/board-flourish.png" alt="" draggable="false">
+      <img class="flourish southeast" src="/assets/board-flourish.png" alt="" draggable="false">
+      <img class="flourish southwest" src="/assets/board-flourish.png" alt="" draggable="false">
+    </div>
+    <div id="board" class="board" role="grid" aria-label="Tafl board"></div>
+  </section>
+  <div class="state-line"><span id="status" role="status" aria-live="polite">…</span><span id="review-position" hidden></span><button id="result-button" class="icon-button compact" data-tip="Game result" aria-label="Game result" hidden><svg viewBox="0 0 24 24"><path d="m4 7 4 4 4-7 4 7 4-4-2 11H6ZM7 21h10"/></svg></button><button id="live" class="icon-button compact" data-tip="Return to game" aria-label="Return to game" hidden><svg viewBox="0 0 24 24"><path d="m7 5 10 7-10 7ZM20 5v14"/></svg></button></div>
+  <div id="error" role="alert" hidden></div><button id="retry" class="retry-button" hidden>Retry ↻</button>
+  <span id="announcement" class="sr-only" role="status" aria-live="polite"></span>
+  <nav id="review-controls" class="review-controls" aria-label="Replay controls" hidden>
+    <button id="review-start" class="icon-button" aria-label="First position" data-tip="First position"><svg viewBox="0 0 24 24"><path d="M5 5v14m13-13-7 6 7 6"/></svg></button>
+    <button id="review-back" class="icon-button" aria-label="Previous replay position" data-tip="Previous position"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></button>
+    <input id="review-slider" type="range" min="0" max="0" value="0" aria-label="Replay position">
+    <button id="review-forward" class="icon-button" aria-label="Next replay position" data-tip="Next position"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button>
+  </nav>
+  <nav class="tools" aria-label="Board controls">
+    <button id="undo" class="icon-button" data-tip="Undo turn" aria-label="Undo turn"><svg viewBox="0 0 24 24"><path d="m8 5-5 5 5 5M3 10h10a6 6 0 0 1 0 12" transform="translate(0 -2)"/></svg></button>
+    <button id="flip" class="icon-button" data-tip="Rotate board" aria-label="Rotate board"><svg viewBox="0 0 24 24"><path d="M5 9a8 8 0 0 1 14-3l2 2M21 3v5h-5M19 15a8 8 0 0 1-14 3l-2-2M3 21v-5h5"/></svg></button>
+    <button id="play-pause" class="icon-button" data-tip="Pause" aria-label="Pause bots"><svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button>
+    <button id="history-button" class="icon-button" data-tip="Move history" aria-label="Move history"><svg viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 1 7M3 4v6h6M12 7v5l3 2"/></svg></button>
+    <button id="download" class="icon-button" data-tip="Save replay" aria-label="Save replay"><svg viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 17v4h14v-4"/></svg></button>
+  </nav>
+  <p id="experimental" class="experimental" hidden>Experimental Copenhagen <button id="experimental-info" aria-label="Copenhagen limitations">↗</button></p>
+  <p id="save-note" class="save-note" role="status" hidden></p>
+</main>
+<footer class="wonder-footer" aria-label="Albion landscape">
+  <img src="/assets/albion-footer.png" alt="" aria-hidden="true" draggable="false">
+  <svg class="footer-star" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 2.5 10.5L29 16l-10.5 2.5L16 29l-2.5-10.5L3 16l10.5-2.5Z"/><circle cx="16" cy="16" r="3"/></svg>
+</footer>
+<dialog id="setup-dialog" class="sheet" aria-labelledby="setup-title">
+  <button class="icon-button close-dialog" data-close="setup-dialog" aria-label="Close game setup"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18 18 6"/></svg></button>
+  <h1 id="setup-title">New game</h1>
+  <form id="setup-form">
+    <label for="ruleset">Board</label><select id="ruleset"><option value="mini-v1">Mini · 5 × 5</option><option id="legacy-ruleset" value="copenhagen-experimental-v1" hidden>Copenhagen · legacy v1</option><option value="copenhagen-experimental-v2">Copenhagen · 11 × 11 · experimental</option></select>
+    <label for="mode">Your side</label><select id="mode"><option value="attackers">Ravens · attackers</option><option value="defenders">Harts · defenders</option><option value="local">Two players</option><option value="watch">Watch</option></select>
+    <label for="policy">Opponent</label><select id="policy"><option value="heuristic">Heuristic</option><option value="random">Random</option><option value="mcts">MCTS</option></select>
+    <p id="policy-help" class="field-help"></p>
+    <a id="policy-learn" class="field-link" href="/learn#heuristic">About this opponent ↗</a>
+    <details><summary>Seed <span id="seed-summary">42</span></summary><label class="sr-only" for="seed">Game seed</label><input id="seed" type="number" min="0" max="4294967295" value="42" required></details>
+    <button class="play-button" type="submit">Play <svg viewBox="0 0 24 24"><path d="m8 5 10 7-10 7Z"/></svg></button>
+  <p class="dialog-error" data-request-error role="alert" hidden></p>
+  </form>
+</dialog>
+<dialog id="history-dialog" class="sheet history-sheet" aria-labelledby="history-title">
+  <button class="icon-button close-dialog" data-close="history-dialog" aria-label="Close move history"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18 18 6"/></svg></button>
+  <h1 id="history-title">Moves</h1>
+  <div class="playback"><button id="back" class="icon-button" aria-label="Previous position" data-tip="Previous position"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></button><span id="ply">0</span><button id="forward" class="icon-button" aria-label="Next position or bot move" data-tip="Next position"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button></div>
+  <div id="move-list" class="move-list"></div>
+  <div class="history-actions"><button id="load-replay" class="icon-button" aria-label="Open replay" data-tip="Open replay"><svg viewBox="0 0 24 24"><path d="M3 7V4h7l2 3h9v13H3Zm9 10V9m-3 3 3-3 3 3"/></svg></button></div>
+  <input id="replay-file" type="file" accept=".json,application/json" hidden>
+  <details class="paste-replay"><summary>Paste replay</summary><form id="paste-form"><label class="sr-only" for="replay-text">Replay JSON</label><textarea id="replay-text" placeholder="Replay JSON" maxlength="120000" required></textarea><button class="play-button" type="submit">Open replay</button></form></details>
+  <p id="import-error" class="dialog-error" role="alert" hidden></p>
+</dialog>
+<dialog id="result-dialog" class="sheet result-sheet" aria-labelledby="result-title">
+  <button class="icon-button close-dialog" data-close="result-dialog" aria-label="Close game result"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18 18 6"/></svg></button>
+  <img id="result-art" class="result-art" src="/assets/king.png" alt="">
+  <h1 id="result-title"></h1><p id="result-reason"></p>
+  <button id="rematch" class="play-button">Play again <svg viewBox="0 0 24 24"><path d="M4 10a8 8 0 1 1 2 8M4 4v6h6"/></svg></button>
+  <p class="dialog-error" data-request-error role="alert" hidden></p>
+  <div class="result-actions"><button id="swap-sides">Switch sides</button><button id="review-game">Review</button></div>
+</dialog>
+<dialog id="rules-dialog" class="sheet rules-sheet" aria-labelledby="rules-title">
+  <button id="close-rules" class="icon-button close-dialog" aria-label="Close rules"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18 18 6"/></svg></button>
+  <h1 id="rules-title">How to play</h1><div id="rules-content"></div>
+  <p class="rule-note">Drag a piece or select it and a marked square. Arrow keys navigate; Enter selects; Escape cancels. During review, Left and Right step through the game; Home and End jump to either end.</p>
+  <button id="rules-done" class="play-button">Play <svg viewBox="0 0 24 24"><path d="m8 5 10 7-10 7Z"/></svg></button>
+</dialog>
+</body>
+</html>

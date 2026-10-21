@@ -8,11 +8,39 @@ engine**, with an opt-in **experimental Copenhagen 11×11** ruleset. The v2 prof
 recognizes provably permanent exit forts and records external draw judgments;
 automatic adjudication remains conservative. An optional PettingZoo adapter
 supports training experiments. Seeded random, heuristic, and MCTS opponents are
-available; network training and the web game are next.
+available. A local browser game connects those opponents to the real engine;
+network training is next.
 See [the modernization checkpoint](docs/modernization.md),
 [the exact mini rules](docs/mini-rules.md), and [Copenhagen coverage](docs/copenhagen-rules.md).
 
 ## Quick start
+
+### Play in your browser
+
+```sh
+uv sync --locked
+uv run hnef web
+```
+
+Open http://127.0.0.1:8000. Play either side against random, heuristic, or MCTS
+bots; share the board with a second player; or watch a bot match. The UI includes
+legal-move highlights, a move journal, position review, takebacks, board rotation,
+browser-local autosave, and engine-compatible replay downloads. Mini is the
+default; experimental Copenhagen v2 is available in the battlefield selector.
+Use **+** to open setup, then press **Play** to start. The minimal playing table
+uses [Albion colours, typography, and original engraved pieces](docs/albion-ui.md).
+
+Open **Learn** to study search, DQN/Rainbow, PPO, AlphaZero, MuZero, Dreamer,
+and population training, with dated research references and interactive examples.
+The **Experiments** topic compares the three implemented bots on the same position
+with adjustable search budgets and downloadable diagnostics. Other methods are
+study material, with proposed Hnef experiments.
+
+No web dependencies or frontend build are required. Use `--port 8001` to choose
+another port, or `PYTHONPATH=src python3 -m hnef web` without installation.
+See [the browser game guide](docs/web-game.md) for controls and current limits.
+
+### Run simulations
 
 With Python 3.11+ and [uv](https://docs.astral.sh/uv/getting-started/installation/):
 

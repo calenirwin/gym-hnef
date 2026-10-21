@@ -32,6 +32,8 @@ agreed design. It is a new implementation, not a recovered copy of those commits
   player-specific rewards, seeded sampling, and API compliance tests for all profiles.
 - Dependency-free heuristic and UCT/MCTS policies, seeded policy matchups,
   replay-verified benchmarks, and search diagnostics.
+- Local browser playing table with human/bot and bot/bot play, both board sizes,
+  legal moves, history review, takebacks, autosave, and canonical replay downloads.
 
 ## Current milestone: Copenhagen rules
 
@@ -53,7 +55,8 @@ The [PettingZoo AEC adapter](rl-environment.md) now uses mini-v1 as the stable
 baseline while preserving the experimental status of Copenhagen profiles.
 The [reference opponents](baselines.md) now include heuristic and pure MCTS baselines.
 Next: a small PyTorch policy/value network and self-play, evaluated against those baselines.
-GPU training and the Albion-inspired human/AI web game follow those milestones.
+The first local human/AI web game is now available via `hnef web`; see
+[the browser game guide](web-game.md). GPU training remains a later milestone.
 
 ## Validation of this increment
 
