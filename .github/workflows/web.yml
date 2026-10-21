@@ -25,6 +25,11 @@ jobs:
           path: web-dist/
           retention-days: 14
 
+      # Package only: publication and write permissions require a later approved change.
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: web-dist/
+
   container:
     runs-on: ubuntu-latest
     steps:

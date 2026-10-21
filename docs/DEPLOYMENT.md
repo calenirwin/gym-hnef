@@ -1,4 +1,8 @@
-# Railway deployment preparation
+# Deployment preparation
+
+GitHub Pages is the preferred free host within the total CAD 20–30/month budget.
+See [Pages preparation and publication steps](PAGES.md). Railway below remains an
+optional paid fallback; no Railway service is needed for Pages.
 
 This configuration serves the modern 5×5 app from PR #1. It is stacked on
 `codex/playable-web-mvp`, whose verified base is

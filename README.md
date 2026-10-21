@@ -32,7 +32,8 @@ Open http://localhost:8768. Choose **Two players · Pass & play** for a shared
 board, or play either side against the computer. Undo and verified replay export
 are available. This is the **5×5 mini variant**; refresh starts a new game.
 See [the deployment stack and GPU extension path](docs/deployment-stack.md) and
-[Railway container setup](docs/DEPLOYMENT.md).
+[free GitHub Pages preparation](docs/PAGES.md).
+[Railway container setup](docs/DEPLOYMENT.md) remains an optional fallback.
 
 ## Quick start
 
