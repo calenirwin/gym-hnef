@@ -1,7 +1,7 @@
 # Free GitHub Pages preparation
 
 > Publication candidate: the recovered raven/hart/king playing table is served at
-> `/gym-hnef/`, with the separate Mini Lab retained at `/gym-hnef/mini/`.
+> `/gym-hnef/`, with no separate Mini Lab route in the deployed artifact.
 > This branch does not itself publish. The currently verified live revision is
 > Mini at `d5cca019a168bdefd663c689f3ec170f68d658f2`.
 > See [original-table tests and limitations](STATIC-TABLE.md).
@@ -24,8 +24,8 @@ static build and container checks. No personal token or stored secret is needed.
 All UI, worker, engine, model and runtime URLs are relative. Serve the build at
 `/gym-hnef/` including its trailing slash; no hardcoded root or base-path rewrite
 is needed. Links and runtime imports continue to work at `/` for Railway/Sites.
-The build retains Pyodide hash checks, licences and model identity checks. The combined artifact duplicates the pinned runtime to keep both apps independent
-and remains below Pages' 1 GB published-site limit. Pages has a 100 GB/month soft
+The build retains Pyodide hash checks and licences. Only the original table and
+its pinned runtime are packaged, remaining below Pages' 1 GB published-site limit. Pages has a 100 GB/month soft
 bandwidth limit; first-time runtime downloads are the main bandwidth consideration.
 This hosting is suitable for the current public research game, not a future paid
 SaaS or authoritative multiplayer service.
@@ -42,8 +42,9 @@ python -m http.server 8768 --bind 127.0.0.1 --directory .demo-build/pages
 
 Open http://localhost:8768/gym-hnef/. Check original artwork, Copenhagen selection,
 human move and AI reply, undo, replay import/export, autosave/reload, Learn analysis
-and phone-width layout. Check separate Mini gameplay at `/gym-hnef/mini/`.
-`python tests/browser_release.py` tests this combined artifact with Playwright. All first-party requests must stay under `/gym-hnef/`;
+and phone-width layout. Confirm `/gym-hnef/mini/` returns 404.
+`python tests/browser_release.py` tests this original-only artifact with Playwright.
+All first-party requests must stay under `/gym-hnef/`;
 `/gym-hnef/runtime/pyodide.asm.wasm` must return `application/wasm`.
 This local check does not substitute for checking the eventual public URL.
 
@@ -56,7 +57,7 @@ repository-visibility change is required. Once setup is complete:
 1. Merge reviewed PR #5, then retarget/recheck PR #6 onto main and merge it,
    then retarget/recheck the stacked publication PR and merge it. Confirm explicit
    approval for those merges and publication. Check the intended `main` SHA and
-   its engine, original-table (including resilience), and combined web CI results.
+   its engine, original-table (including resilience), and release web CI results.
 2. Manually run `Playable web app` on `main` (Actions > Run workflow), or use:
    `gh workflow run web.yml --ref main --repo calenirwin/gym-hnef`.
 3. Watch the run through `deploy-pages`, record its SHA and deployment URL, and
@@ -68,7 +69,7 @@ Use the deployment output URL as authoritative. The standard project URL is
 domain can affect it. Verify public startup, play, undo, replay export, subpath
 assets and WASM MIME before updating the README's live-game link. Keep the existing
 Sites URL as a fallback. Verify `deployment.json` reports the dispatched main SHA;
-check both apps' WASM MIME and the original art, Learn, replay and autosave routes.
+check the original table's WASM MIME and the original art, Learn, replay and autosave routes.
 
 For rollback, revert only the publication workflow selection in a reviewed main
 commit to run `python tools/build_demo.py --output web-dist` and upload `web-dist/`

@@ -115,7 +115,7 @@ with conservative fort recognition and no automatic dead-position draws.
    diff and CI, and obtain the scoped release confirmation before merging.
 3. Separately review a publication change that selects the **original-table**
    artifact. The stacked publication candidate changes `web.yml` to build the
-   original table at the root and preserve Mini under `/mini/`; see [Pages](PAGES.md).
+   original table alone at the root, with no separate Mini route; see [Pages](PAGES.md).
    Caddy/Docker and Railway configuration still build only the separate Mini.
 4. Only after release approval, publish a reviewed exact SHA and verify the actual
    public URL, original artwork, gameplay, saved games and Learn links.

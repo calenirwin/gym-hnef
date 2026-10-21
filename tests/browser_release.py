@@ -1,4 +1,4 @@
-"""Smoke-test the exact combined publication artifact under a project subpath."""
+"""Smoke-test the original-only publication artifact under a project subpath."""
 
 import functools
 import os
@@ -48,29 +48,22 @@ try:
         assert page.locator('#board img[src$="attacker.png"]').count() == 24
         page.goto(base + "learn/#mcts")
         assert "Learn" in page.title()
-        # Mini stays a separate, functional app with all of its own relative assets.
-        page.goto(base + "mini/")
-        page.locator("#mode").wait_for()
-        page.wait_for_function("() => !document.getElementById('mode').disabled", timeout=60000)
-        page.select_option("#mode", "local")
-        page.wait_for_function("() => !document.getElementById('new-game').disabled")
-        page.locator('#board [aria-label$=", attacker"]').first.click()
-        page.locator("#board .destination").first.click()
-        page.wait_for_function("() => document.getElementById('ply').textContent==='PLY 01'")
-        for prefix in ("", "mini/"):
-            response = page.request.get(base + prefix + "runtime/pyodide.asm.wasm")
-            assert response.status == 200
-            assert "application/wasm" in response.headers["content-type"]
-            assert page.request.get(base + prefix + "runtime/LICENSE-PYODIDE.txt").status == 200
+        # The release must not include the separate Mini app or its model.
+        assert not (SITE / "gym-hnef/mini").exists()
+        assert not (SITE / "gym-hnef/model.json").exists()
+        assert page.request.get(base + "mini/").status == 404
+        response = page.request.get(base + "runtime/pyodide.asm.wasm")
+        assert response.status == 200
+        assert "application/wasm" in response.headers["content-type"]
+        assert page.request.get(base + "runtime/LICENSE-PYODIDE.txt").status == 200
         metadata = page.request.get(base + "deployment.json").json()
         assert (
             metadata["source_sha"]
             == subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
         )
+        assert "mini" not in metadata
         assert not errors, errors
         browser.close()
 finally:
     server.shutdown()
-print(
-    "PASS: original root/Copenhagen/Learn, Mini gameplay, both WASM paths/licences, deployment SHA"
-)
+print("PASS: original root/Copenhagen/Learn, no separate Mini route, WASM/licence, deployment SHA")
