@@ -20,7 +20,7 @@ svg { display: block; width: 22px; height: 22px; fill: none; stroke: currentColo
 .icon-button[data-tip]::after { content: attr(data-tip); position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%) translateY(3px); font-size: 10px; white-space: nowrap; padding: 5px 8px; color: var(--sand); background: var(--ink); border-radius: 3px; opacity: 0; pointer-events: none; transition: opacity 150ms, transform 150ms; }
 .icon-button:hover:enabled::after, .icon-button:focus-visible::after { opacity: 1; transform: translateX(-50%) translateY(0); }
 .masthead .icon-button::after { top: calc(100% + 8px); bottom: auto; }
-.table { min-height: 100svh; padding: 88px 24px 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.table { min-height: 100svh; padding: 88px 24px 22px; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; }
 .players { display: flex; align-items: center; justify-content: center; gap: 23px; margin-bottom: 24px; font-size: 12px; }
 .seat { display: flex; gap: 10px; align-items: center; opacity: .38; transition: opacity 250ms; }
 .seat.active { opacity: 1; }
@@ -166,3 +166,16 @@ details input { margin-top: 10px; }
 .paste-replay { margin-bottom: 0; }
 .paste-replay textarea { width: 100%; min-height: 100px; resize: vertical; margin-top: 12px; border: 0; padding: 12px; border-radius: 2px; background: #052d4608; color: var(--ink); font: 11px/1.5 monospace; }
 .paste-replay .play-button { margin-top: 10px; }
+
+/* Anchor the board independently of status, errors and replay controls below it.
+   Only the short calculation action row reserves space; longer errors flow normally. */
+.calculation-controls { width: min(360px, 100%); min-height: 44px; display: flex; flex-direction: column; align-items: center; }
+.calculation-controls .retry-button { min-height: 44px; margin: 0; }
+.calculation-controls #error { margin: 0; overflow-wrap: anywhere; }
+.state-line { flex-shrink: 0; width: min(420px, 100%); }
+#status { text-align: center; }
+.arena { flex-shrink: 0; }
+.new-game-button, .rules-toggle { min-height: 44px; padding: 10px 16px; font-size: 12px; text-decoration: underline; text-underline-offset: 4px; }
+.new-game-button { margin-top: 8px; }
+.rules-sheet { scrollbar-gutter: stable; }
+.rules-sheet h1 { padding-right: 20px; }

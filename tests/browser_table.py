@@ -212,6 +212,7 @@ try:
         page.locator("#new-game").click()
         page.select_option("#mode", "attackers")
         page.select_option("#policy", "mcts")
+        page.once("dialog", lambda dialog: dialog.accept())
         page.locator('#setup-form button[type="submit"]').click()
         wait(page, "live.ply===0 && !busy")
         move(page)

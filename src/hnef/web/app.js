@@ -373,6 +373,7 @@ addEventListener('resize', cancelDrag);
 $('setup-form').addEventListener('submit', async event => {
   event.preventDefault();
   if (busy) return;
+  if (live?.ply && !live.outcome && !live.truncated && !confirm('Start a new game? Your current game will be replaced. Save a replay first if you want to keep it.')) return;
   const previous = config;
   config = formConfig(); paused = false; selected = null; focusSquare = [0, 0];
   const ok = await request('state', []);
@@ -457,10 +458,25 @@ async function importReplay(text) {
 }
 function openRules() {
   const mini = config.ruleset === 'mini-v1';
-  $('rules-content').innerHTML = mini ? `<ol><li><strong>Move like a rook.</strong> Slide one piece horizontally or vertically through empty squares. Attackers go first.</li><li><strong>Close the trap.</strong> Sandwich an enemy between two of your pieces to capture it. Moving between enemies is safe. The throne can also support captures.</li><li><strong>Protect the king.</strong> Capture him on the throne with four attackers, or beside it with three. Elsewhere, two opposite attackers suffice.</li><li><strong>Race to freedom.</strong> The golden king wins by reaching any edge. Only he may stop on the central throne; other pieces may cross it when empty.</li><li><strong>Break the deadlock.</strong> No legal moves means a loss. Three occurrences of the same board and player to move means a draw.</li></ol>` : `<ol><li><strong>Move like a rook.</strong> Attackers move first. Slide through empty squares. Only the king may occupy the throne or corners; anyone may cross an empty throne.</li><li><strong>Capture by surrounding.</strong> Sandwich ordinary pieces. The king needs four adjacent attackers, or three beside the throne, and cannot be captured on an edge.</li><li><strong>Reach a corner.</strong> The king escapes at any of the four corners. The engine also recognizes some proven permanent exit forts.</li><li><strong>Mind the walls.</strong> Shield walls can capture groups along an edge. Encircling every defender wins for the attackers.</li><li><strong>Keep moving.</strong> No legal moves loses. Threefold repetition awards a win to the attackers.</li></ol><p><strong>Experimental rules:</strong> fort recognition is conservative and automatic dead-position draws are not supported. This is a playable preview, not a complete Copenhagen adjudicator.</p>`;
-  if (config.ruleset === 'copenhagen-experimental-v1') {
-    $('rules-content').innerHTML = $('rules-content').innerHTML.replace('The engine also recognizes some proven permanent exit forts.', 'This legacy profile does not recognize exit forts.').replace('fort recognition is conservative and automatic dead-position draws are not supported.', 'exit forts and automatic dead-position draws are not supported in legacy v1.');
-  }
+  const legacy = config.ruleset === 'copenhagen-experimental-v1';
+  $('rules-title').textContent = mini ? 'Mini rules' : `Copenhagen rules${legacy ? ' (legacy)' : ''}`;
+  $('rules-content').innerHTML = `<ol>
+    <li>Attackers move first. Slide one piece along a row or column through empty squares. You cannot jump over pieces.</li>
+    <li>Capture an ordinary enemy piece by moving to trap it between two of your pieces. The king can help capture.</li>
+    <li>Defenders win by moving the king to ${mini ? 'any edge' : 'a corner'}. Attackers win by capturing the king.</li>
+    </ol>${mini ? '' : '<p>Experimental rules: some endings are not detected automatically. This is not a full Copenhagen implementation.</p>'}`;
+  $('rules-details').innerHTML = `<p>Only the king may stop on the central throne${mini ? '' : ' or corners'}. Other pieces may cross an empty throne. Moving between enemies does not get your piece captured.</p>
+    <p>To capture the king, move an attacker next to him to complete the trap: four attackers around him when he is on the throne, or three when he is beside it. ${mini ? 'Elsewhere, two opposite attackers suffice.' : 'Elsewhere, four adjacent attackers are needed. He cannot be captured on an edge.'}</p>
+    <p>The throne helps capture attackers whether occupied or empty, and defenders only when empty. ${mini ? 'Edges and corners do not help capture.' : 'Corners also help capture ordinary pieces.'}</p>
+    ${mini ? '' : `<p>A group of at least two enemy pieces along an edge can be captured when your pieces block both ends and every square directly behind them. A corner can block an end too. The final move must close an end. The king survives this group capture.</p>
+    <p>Attackers also win if they cut off every defender, including the king, from all edges.</p>
+    <p>${legacy ? 'This legacy version does not detect protected escape positions.' : 'Defenders can also win when the engine proves that the king has a permanent protected space at an edge. Some valid positions are not recognized.'} Positions where neither side can win are not automatically declared draws.</p>`}
+    <p>A player with no legal move loses. When the same board and player to move occurs three times, ${mini ? 'the game is a draw' : 'the attackers win'}.</p>
+    <p>The browser stops a game after 500 moves if it has not ended. This is an unfinished game, not a draw.</p>
+    <p class="rule-note">Drag a piece or select it and a marked square. Arrow keys navigate; Enter selects; Escape cancels. During review, Left and Right step through the game; Home and End jump to either end.</p>`;
+  $('rules-details').hidden = true;
+  $('expand-rules').setAttribute('aria-expanded', 'false');
+  $('expand-rules').textContent = 'More rules';
   openSheet('rules-dialog');
 }
 const outcomeReasons = {
@@ -502,7 +518,20 @@ function openSheet(id) {
   render();
   $(id).showModal();
 }
-$('new-game').addEventListener('click', () => { fillForm(); openSheet('setup-dialog'); });
+function openSetup() {
+  // Invalidate the old request before cancellation can settle its promise.
+  if (busy) { ++requestId; transport.cancel(); busy = false; }
+  retryAction = null; showError('');
+  motion.stop(); cancelDrag();
+  fillForm(); openSheet('setup-dialog');
+}
+for (const id of ['new-game', 'bottom-new-game']) $(id).addEventListener('click', openSetup);
+$('expand-rules').addEventListener('click', () => {
+  const expanded = $('rules-details').hidden;
+  $('rules-details').hidden = !expanded;
+  $('expand-rules').setAttribute('aria-expanded', String(expanded));
+  $('expand-rules').textContent = expanded ? 'Fewer rules' : 'More rules';
+});
 $('history-button').addEventListener('click', () => openSheet('history-dialog'));
 for (const button of document.querySelectorAll('[data-close]')) {
   button.addEventListener('click', () => $(button.dataset.close).close());
@@ -514,6 +543,14 @@ for (const id of ['setup-dialog', 'history-dialog', 'rules-dialog', 'result-dial
   });
 }
 for (const id of ['close-rules', 'rules-done']) $(id).addEventListener('click', () => $('rules-dialog').close());
+$('rules-dialog').addEventListener('keydown', event => {
+  if (event.key !== 'Tab') return;
+  const controls = [...$('rules-dialog').querySelectorAll('button, [href], input, select, textarea, [tabindex="0"]')]
+    .filter(element => !element.disabled && element.getClientRects().length);
+  const first = controls[0], last = controls.at(-1);
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+});
 $('rules-dialog').addEventListener('click', event => {if (event.target === $('rules-dialog')) {const r = $('rules-dialog').getBoundingClientRect(); if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) $('rules-dialog').close();}});
 async function init() {
   let actions = [], replay = null;
