@@ -1,0 +1,58 @@
+{
+  "cls": 0.0035576829949524177,
+  "paints": [
+    {
+      "name": "first-paint",
+      "startTime": 272
+    },
+    {
+      "name": "first-contentful-paint",
+      "startTime": 272
+    }
+  ],
+  "materials": [
+    {
+      "name": "materials.css",
+      "bytes": 2161,
+      "duration": 30.699999999953434
+    },
+    {
+      "name": "ink-linen.webp",
+      "bytes": 29332,
+      "duration": 14.399999999906868
+    },
+    {
+      "name": "board-paper.webp",
+      "bytes": 35518,
+      "duration": 13
+    },
+    {
+      "name": "warm-paper.webp",
+      "bytes": 33624,
+      "duration": 18.600000000093132
+    }
+  ],
+  "assetFiles": [
+    {
+      "name": "board-paper.webp",
+      "bytes": 35518,
+      "sha256": "128d4edfbc99bf8ab9c9ca115e225507ab6f12fe199d86d2d55bd16ff2784540"
+    },
+    {
+      "name": "ink-linen.webp",
+      "bytes": 29332,
+      "sha256": "9023302b53dd9723084eecd80727deaa59cc06aba24fab32e78adc0dd56a9df1"
+    },
+    {
+      "name": "materials.css",
+      "bytes": 2161,
+      "sha256": "ecb0584ffa0e588560b6bcc2dda8dcddf2bb28c885308dbab2efd55cdcbc77c8"
+    },
+    {
+      "name": "warm-paper.webp",
+      "bytes": 33624,
+      "sha256": "bbe53f451d09d20c2244ac7a39a7a0cf62be1dcbd3e54fe3ae6d83f6f420fde8"
+    }
+  ],
+  "notes": "Single local Chromium run, not a network benchmark. Tiles are static, 256px, repeated without scaling. No added JavaScript, animation, SVG turbulence or runtime filter. DPR 1 detail capture is not enlarged."
+}

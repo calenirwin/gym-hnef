@@ -1,0 +1,12 @@
+[
+  {
+    "foreground": "#233c43",
+    "background": "mist with maximum ambient alpha 3/255",
+    "minimumRatio": 9.63
+  },
+  {
+    "foreground": "#4c6062",
+    "background": "mist with maximum ambient alpha 3/255",
+    "minimumRatio": 5.49
+  }
+]

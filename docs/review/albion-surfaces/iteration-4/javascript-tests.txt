@@ -1,0 +1,20 @@
+✔ minimax accounts for the opponent rather than the best visible leaf (1.079331ms)
+✔ alternating-player target reverses the opponent perspective (0.177326ms)
+✔ terminal updates never bootstrap from an opponent value (0.252038ms)
+✔ PPO clips improvement in opposite directions for opposite advantages (0.171738ms)
+✔ the opponent mixture changes the preferred attacker (0.2464ms)
+✔ serializes requests, snapshots input and survives validation errors (10.182588ms)
+✔ cancellation rejects active and queued work; stale replies cannot update the next worker (2.822097ms)
+✔ timeout terminates worker, retains confirmed replay, validates it before retrying (13.362773ms)
+✔ review requests never replace the last confirmed live replay (3.378853ms)
+✔ startup failures reject and allow a fresh initialization without losing replay (1.287333ms)
+✔ worker crash clears pending promises and request-size checks do not start a worker (2.213584ms)
+✔ local HTTP mode preserves URL, body, validation response and body-reading deadline (12.644684ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 176.019752
