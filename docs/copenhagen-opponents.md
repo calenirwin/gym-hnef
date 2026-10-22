@@ -126,3 +126,7 @@ reasons, cutoff rates and latency distributions. See the
 It preserves the original smoke evidence and does not increase search or match
 budgets. See also [published-ruling research](copenhagen-rulings-research.md) and
 the [initial held-out corpus](../tests/fixtures/copenhagen-heldout-v1/README.md).
+
+The [first learner contract and bounded pilot proposal](copenhagen-first-learner.md)
+now has a dependency-free, replay-verified collection scaffold. It produces data,
+not learned weights; its initial sanity episodes yielded no terminal labels.
