@@ -135,3 +135,10 @@ A [bounded synthetic policy/value optimizer smoke](research/copenhagen-optimizer
 now retains an initialized and fitted resumable linear checkpoint. This is
 supervised training plumbing on four authored terminal transitions, **not** a
 modern trained Copenhagen RL opponent or a browser/model-registry candidate.
+
+A subsequent [schema-2 on-policy TD pilot](research/copenhagen-onpolicy-pilot/README.md)
+now exists, including initialized/final resumable checkpoints and held-out controls.
+It collected 246 transitions from synthetic starts, three terminals and 29 cutoffs;
+held-out results matched initialization. It is an experimental partial-history
+linear learner, not evidence that Copenhagen strength or full adjudication is solved.
+It remains outside the public opponent registry and UI.

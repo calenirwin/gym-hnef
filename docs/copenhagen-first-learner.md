@@ -82,3 +82,13 @@ now demonstrates real parameter updates, legal masks, finite gradients and exact
 checkpoint resume on independent synthetic terminal transitions. Its linear,
 partial-history feature version and teacher-action loss are deliberately named
 separately. It is not evidence of a trained competitive Copenhagen RL opponent.
+
+## On-policy milestone
+
+A separate [on-policy TD actor–critic pilot](research/copenhagen-onpolicy-pilot/README.md)
+now samples its own legal actions from training-only synthetic starts, bootstraps
+nonterminal cutoffs from the actual same-player successor, and evaluates against
+an initialized control on symmetry-separated held-out positions. It uses a distinct
+schema-2 checkpoint and algorithm identity. The bounded run observed terminal
+rewards for both learner colors, but held-out results did not improve. This is not
+the proposed full-history neural architecture or a competitive browser opponent.
