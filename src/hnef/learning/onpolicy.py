@@ -262,6 +262,8 @@ def evaluate(checkpoint, training_data, heldout, output, *, seeds=(100000, 10000
     cpu_caps()
     if not seeds or len(seeds) > 4 or any(type(s) is not int or s < 100000 for s in seeds):
         raise ValueError("Use 1..4 reserved evaluation seeds >=100000")
+    if len(set(seeds)) != len(seeds):
+        raise ValueError("Evaluation seeds must be unique")
     start = time.monotonic()
     training, digest = starts(training_data)
     testing, heldout_hash = starts(heldout)

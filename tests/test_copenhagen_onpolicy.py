@@ -132,6 +132,11 @@ def test_resume_and_heldout_evaluation_do_not_consume_training_rng(tmp_path):
     assert am == bm and ar.bit_generator.state == br.bit_generator.state
     report = evaluate(path, DATA, HELDOUT, tmp_path / "eval", seeds=(100000,))
     assert len(report["records"]) == 12
+    assert len({record["trace"] for record in report["records"]}) == 12
+    saved = {p.name: p.read_bytes() for p in (tmp_path / "eval").iterdir()}
+    with pytest.raises(FileExistsError):
+        evaluate(path, DATA, HELDOUT, tmp_path / "eval", seeds=(100000,))
+    assert saved == {p.name: p.read_bytes() for p in (tmp_path / "eval").iterdir()}
     for record in report["records"]:
         trace = json.loads((tmp_path / "eval" / record["trace"]).read_text())
         end = trace_state(trace)
@@ -171,3 +176,12 @@ def test_own_terminal_at_horizon_does_not_request_opponent_reply(monkeypatch):
     assert trace["terminated"] and not trace["truncated"]
     assert trace["reward"] == 1 and trace["bootstrap_value"] == 0
     assert samples[0][-1] == 1 and len(trace["actions"]) == 1
+
+
+@pytest.mark.parametrize("seeds", [(100000, 100000), [100000, 100001, 100000]])
+def test_duplicate_evaluation_seeds_fail_before_loading_or_writing(tmp_path, seeds):
+    output = tmp_path / "evaluation"
+    missing = tmp_path / "missing"
+    with pytest.raises(ValueError, match="Evaluation seeds must be unique"):
+        evaluate(missing, missing, missing, output, seeds=seeds)
+    assert not output.exists()
