@@ -1,4 +1,6 @@
-# Albion playing surface review
+**Latest review:** [Iteration 2 — Playing area composition](iteration-2/README.md). The first iteration below is preserved for comparison.
+
+# Albion playing surface review — first iteration
 
 Draft only; do not merge or publish until visual review. Based on main
 `46e56323c532f76403f484ca77653b56de7fb183`, after PRs #8 and #9 merged.

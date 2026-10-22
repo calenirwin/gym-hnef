@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#D8CDAA">
+  <meta name="theme-color" content="#092D42">
   <title>Hnef</title>
   <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css"><script src="/transport.js" data-mode="http" defer></script><script src="/motion.js" defer></script><script src="/app.js" defer></script>
@@ -32,6 +32,7 @@
     </div>
     <div id="board" class="board" role="grid" aria-label="Tafl board"></div>
   </section>
+  <div class="table-controls">
   <div class="state-line"><span id="status" role="status" aria-live="polite">…</span><span id="review-position" hidden></span><button id="result-button" class="icon-button compact" data-tip="Game result" aria-label="Game result" hidden><svg viewBox="0 0 24 24"><path d="m4 7 4 4 4-7 4 7 4-4-2 11H6ZM7 21h10"/></svg></button><button id="live" class="icon-button compact" data-tip="Return to game" aria-label="Return to game" hidden><svg viewBox="0 0 24 24"><path d="m7 5 10 7-10 7ZM20 5v14"/></svg></button></div>
   <div class="calculation-controls">
   <div id="error" role="alert" hidden></div><button id="retry" class="retry-button" hidden>Retry ↻</button>
@@ -54,6 +55,7 @@
   <p id="experimental" class="experimental" hidden>Experimental Copenhagen <button id="experimental-info" aria-label="Copenhagen limitations"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 11v6M12 7v1"/></svg></button></p>
   <button id="bottom-new-game" class="new-game-button">New game</button>
   <p id="save-note" class="save-note" role="status" hidden></p>
+  </div>
 </main>
 <footer class="wonder-footer" aria-label="Albion landscape">
   <img src="/assets/albion-footer.png" alt="" aria-hidden="true" draggable="false">

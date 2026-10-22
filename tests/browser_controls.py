@@ -105,7 +105,12 @@ try:
             page.evaluate(
                 "showError('The engine stopped. Your saved game is unchanged. '.repeat(4))"
             )
-            assert page.locator(".arena").bounding_box() == baseline
+            # Retry may scroll into view on short screens; compare document bounds.
+            bounds = page.locator(".arena").evaluate("""e => {
+              const r=e.getBoundingClientRect();
+              return {x:r.x+scrollX,y:r.y+scrollY,width:r.width,height:r.height};
+            }""")
+            assert bounds == baseline
             page.evaluate("showError('')")
             page.evaluate("review(0)")
             wait(page)

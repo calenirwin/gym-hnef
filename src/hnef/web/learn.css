@@ -202,3 +202,7 @@
   .lab { padding: 18px; margin-inline: -8px; }
   .lesson p, .playing-advice, .method-map dd { font-size: 14px; }
 }
+
+/* Paper is bounded by the shared ink frame for sustained reading. */
+.academy { background: var(--paper); padding: 48px; margin-bottom: 48px; }
+@media (max-width: 600px) { .academy { padding: 28px 24px; margin-inline: 12px; } }
