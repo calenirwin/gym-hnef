@@ -1,0 +1,32 @@
+[
+  {
+    "texture": "ink-linen",
+    "foreground": "#D8CDAA",
+    "worstCaseRatio": 6.88,
+    "method": "All tile pixels plus worst lighting endpoint; conservative unrounded compositing"
+  },
+  {
+    "texture": "ink-linen",
+    "foreground": "#A4D9E5",
+    "worstCaseRatio": 7.09,
+    "method": "All tile pixels plus worst lighting endpoint; conservative unrounded compositing"
+  },
+  {
+    "texture": "warm-paper",
+    "foreground": "#052D46",
+    "worstCaseRatio": 8.41,
+    "method": "All tile pixels plus worst lighting endpoint; conservative unrounded compositing"
+  },
+  {
+    "texture": "warm-paper",
+    "foreground": "#394E5B",
+    "worstCaseRatio": 5.12,
+    "method": "All tile pixels plus worst lighting endpoint; conservative unrounded compositing"
+  },
+  {
+    "texture": "ink-linen",
+    "foreground": "#F7F6F2",
+    "worstCaseRatio": 10.1,
+    "method": "All tile pixels plus worst lighting endpoint; conservative unrounded compositing"
+  }
+]

@@ -1,0 +1,52 @@
+[
+  {
+    "case": "bounds-copenhagen-experimental-v2-1280",
+    "frames": 1092,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-1440",
+    "frames": 1282,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-320",
+    "frames": 1033,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-390",
+    "frames": 1098,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-copenhagen-experimental-v2-768",
+    "frames": 1069,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-mini-v1-1280",
+    "frames": 1160,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-mini-v1-1440",
+    "frames": 1528,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-mini-v1-320",
+    "frames": 1457,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-mini-v1-390",
+    "frames": 1277,
+    "maxDeviation": 0
+  },
+  {
+    "case": "bounds-mini-v1-768",
+    "frames": 1380,
+    "maxDeviation": 0
+  }
+]

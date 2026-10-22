@@ -1,3 +1,5 @@
+**Latest review:** [Iteration 3 — ink linen and warm paper](iteration-3/README.md).
+
 **Latest review:** [Iteration 2 — Playing area composition](iteration-2/README.md). The first iteration below is preserved for comparison.
 
 # Albion playing surface review — first iteration

@@ -6,6 +6,7 @@
   <title>Hnef</title>
   <link rel="preload" href="/assets/fonts/cormorant.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/style.css"><script src="/transport.js" data-mode="http" defer></script><script src="/motion.js" defer></script><script src="/app.js" defer></script>
+  <link rel="stylesheet" href="/assets/materials/materials.css">
 </head>
 <body>
 <header class="masthead">
@@ -24,12 +25,6 @@
   </div>
   <section class="arena" aria-label="Playing table">
     <div class="board-aura" aria-hidden="true"></div>
-    <div class="board-flourishes" aria-hidden="true">
-      <img class="flourish northwest" src="/assets/board-flourish.png" alt="" draggable="false">
-      <img class="flourish northeast" src="/assets/board-flourish.png" alt="" draggable="false">
-      <img class="flourish southeast" src="/assets/board-flourish.png" alt="" draggable="false">
-      <img class="flourish southwest" src="/assets/board-flourish.png" alt="" draggable="false">
-    </div>
     <div id="board" class="board" role="grid" aria-label="Tafl board"></div>
   </section>
   <div class="table-controls">
@@ -57,10 +52,6 @@
   <p id="save-note" class="save-note" role="status" hidden></p>
   </div>
 </main>
-<footer class="wonder-footer" aria-label="Albion landscape">
-  <img src="/assets/albion-footer.png" alt="" aria-hidden="true" draggable="false">
-  <svg class="footer-star" viewBox="0 0 32 32" aria-hidden="true"><path d="m16 3 2.5 10.5L29 16l-10.5 2.5L16 29l-2.5-10.5L3 16l10.5-2.5Z"/><circle cx="16" cy="16" r="3"/></svg>
-</footer>
 <dialog id="setup-dialog" class="sheet" aria-labelledby="setup-title">
   <button class="icon-button close-dialog" data-close="setup-dialog" aria-label="Close game setup"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M6 18 18 6"/></svg></button>
   <h1 id="setup-title">New game</h1>
