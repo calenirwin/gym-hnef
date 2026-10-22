@@ -1,0 +1,38 @@
+{
+  "cls": 0.0021282027633101855,
+  "paints": [
+    {
+      "name": "first-paint",
+      "startTime": 192
+    },
+    {
+      "name": "first-contentful-paint",
+      "startTime": 192
+    }
+  ],
+  "assetFiles": [
+    {
+      "name": "daylight.css",
+      "bytes": 3572,
+      "sha256": "daf40cde489998657368b5048d2045b159f703638ca43bcc069cbdd453ce3bc4"
+    },
+    {
+      "name": "daylight.svg",
+      "bytes": 1891,
+      "sha256": "dbde9952618f483f91572a5167a185d2b76e6ed4e1c987cd26d6f6548ddc86c1"
+    }
+  ],
+  "notes": "Single local Chromium run, not a network benchmark. One original static SVG and shared CSS. No texture tiles, additional JS, animation, turbulence or runtime filters. DPR 1 detail is not enlarged.",
+  "atmosphere": [
+    {
+      "name": "daylight.css",
+      "bytes": 3572,
+      "duration": 32.1999999997206
+    },
+    {
+      "name": "daylight.svg",
+      "bytes": 1891,
+      "duration": 6
+    }
+  ]
+}

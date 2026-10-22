@@ -1,0 +1,42 @@
+/* Daylight Albion: quiet functional surfaces; atmosphere contained in original art. */
+html:root { --frame: #f3f0e8; --frame-raised: #e6ede9; --reading-sand: #efebe1; --paper: #f8f6f0; --ink: #233c43; --muted: #4c6062; --sand: #e1dac7; --mist: #d2e5e4; }
+html { background: #f3f0e8; }
+html body, html body:has(.table) { color: var(--ink); background: linear-gradient(150deg, #f5f2eb 30%, #e6ede9 100%); }
+html .site-header, html .site-footer, html .masthead, html .home-page, html .blog-index .index-header, html .blog-index .page-deck { color: var(--ink); }
+html .site-header :focus-visible, html .site-footer :focus-visible, html .masthead :focus-visible, html .home-page :focus-visible { outline-color: var(--ink); }
+html .blog-index .index-header .eyebrow, html .home-page .eyebrow, html .blog-index .empty { color: var(--muted); }
+html body:not(.home-page):not(.blog-index) main { background: var(--paper); box-shadow: none; }
+html .blog-index .entries { background: none; box-shadow: none; margin-inline: 0; padding: 34px 0; border-top: 1px solid #233c4328; }
+html .blog-index .index-header { position: relative; isolation: isolate; padding-block: 12px 26px; margin-bottom: 36px; }
+html .blog-index .index-header::after { content: ''; position: absolute; z-index: -1; right: -48px; top: -30px; width: 330px; height: 240px; background: url('./daylight.svg') center / contain no-repeat; }
+html .blog-index h1 { font-size: clamp(3.2rem, 4.6vw, 4.2rem); max-width: 80%; }
+html .blog-index .page-deck { max-width: 52ch; }
+html .blog-index .entry h2 { font-size: clamp(2.4rem, 3.8vw, 3.4rem); }
+html .blog-index .site-footer { padding-block: 20px; }
+html .table-controls { background: none; box-shadow: none; }
+html body:has(.table) { position: relative; isolation: isolate; overflow-x: clip; }
+html body:has(.table) main.table { background: none; box-shadow: none; }
+html body:has(.table)::before { content: ''; position: absolute; pointer-events: none; z-index: -1; right: 0; bottom: 0; width: min(48vw, 680px); height: 300px; background: url('./daylight.svg') right -130px bottom -25px / contain no-repeat; opacity: .7; }
+html .seat, html .seat.active, html .versus, html .hart-mark { color: var(--ink); }
+html .seat:not(.active) { color: var(--muted); }
+html .arena { background: #e3dfcf; box-shadow: 0 0 0 10px #efebe1, 0 0 0 11px #c6ccc2, 0 16px 38px #233c4318; }
+html .board::before { display: none; }
+html .square { background: #ffffff32; }
+html .square.checker { background: #36575122; }
+html .new-game-button, html .play-button, html .project-links .project-primary { background: var(--ink); color: var(--paper); box-shadow: none; }
+html .project-visual { background: #d5e3df; color: var(--ink); }
+html .project-visual > span { color: var(--ink); }
+html .project-dialog, html .sheet, html .dialog-close { background: var(--paper); }
+html .academy { background: var(--paper); }
+html .lab { background: #e6ede9; }
+html .tools { background: none; box-shadow: none; }
+@media (max-width: 900px) {
+ html body:has(.table)::before { width: 300px; height: 220px; right: 0; bottom: 0; background-position: right -135px bottom -20px; opacity: .35; }
+ html .table-controls { padding-bottom: 10px; }
+}
+@media (max-width: 1100px) {
+ html .blog-index h1 { max-width: 100%; }
+ html .blog-index .index-header { padding-bottom: 0; margin-bottom: 24px; }
+ html .blog-index .index-header::after { position: relative; display: block; inset: auto; width: 100%; height: 112px; margin-top: 20px; background-position: right center; }
+ html .blog-index .entries { padding-top: 26px; }
+}
