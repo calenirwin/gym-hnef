@@ -1,0 +1,20 @@
+{
+  "resources": [
+    {
+      "name": "daylight.css",
+      "bytes": 5021,
+      "duration": 31.79999999998836
+    },
+    {
+      "name": "ambient.webp",
+      "bytes": 16444,
+      "duration": 6.5
+    },
+    {
+      "name": "daylight.svg",
+      "bytes": 1891,
+      "duration": 6.400000000023283
+    }
+  ],
+  "note": "Single local Chromium run; not a network benchmark. One static 256px alpha tile; max opacity 3/255. No animation, JS or filters added."
+}

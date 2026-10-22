@@ -1,0 +1,382 @@
+[
+  {
+    "width": 320,
+    "idleBusyIdlePositions": [
+      [
+        [
+          32,
+          153,
+          256,
+          256
+        ],
+        [
+          60,
+          587,
+          200,
+          44
+        ],
+        [
+          50,
+          439,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          32,
+          153,
+          256,
+          256
+        ],
+        [
+          60,
+          587,
+          200,
+          44
+        ],
+        [
+          50,
+          439,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          32,
+          153,
+          256,
+          256
+        ],
+        [
+          60,
+          587,
+          200,
+          44
+        ],
+        [
+          50,
+          439,
+          220,
+          48
+        ]
+      ]
+    ]
+  },
+  {
+    "width": 320,
+    "route": "",
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "route": "learn/#history",
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "route": "learn/#playing",
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "route": "learn/#tactics",
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "route": "learn/#resources",
+    "overflow": false
+  },
+  {
+    "width": 320,
+    "route": "learn/#experiments",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "idleBusyIdlePositions": [
+      [
+        [
+          32,
+          153,
+          326,
+          326
+        ],
+        [
+          95,
+          657,
+          200,
+          44
+        ],
+        [
+          85,
+          509,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          32,
+          153,
+          326,
+          326
+        ],
+        [
+          95,
+          657,
+          200,
+          44
+        ],
+        [
+          85,
+          509,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          32,
+          153,
+          326,
+          326
+        ],
+        [
+          95,
+          657,
+          200,
+          44
+        ],
+        [
+          85,
+          509,
+          220,
+          48
+        ]
+      ]
+    ]
+  },
+  {
+    "width": 390,
+    "route": "",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "learn/#history",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "learn/#playing",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "learn/#tactics",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "learn/#resources",
+    "overflow": false
+  },
+  {
+    "width": 390,
+    "route": "learn/#experiments",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "idleBusyIdlePositions": [
+      [
+        [
+          89,
+          153,
+          590,
+          590
+        ],
+        [
+          284,
+          921,
+          200,
+          44
+        ],
+        [
+          274,
+          773,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          89,
+          153,
+          590,
+          590
+        ],
+        [
+          284,
+          921,
+          200,
+          44
+        ],
+        [
+          274,
+          773,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          89,
+          153,
+          590,
+          590
+        ],
+        [
+          284,
+          921,
+          200,
+          44
+        ],
+        [
+          274,
+          773,
+          220,
+          48
+        ]
+      ]
+    ]
+  },
+  {
+    "width": 768,
+    "route": "",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "learn/#history",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "learn/#playing",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "learn/#tactics",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "learn/#resources",
+    "overflow": false
+  },
+  {
+    "width": 768,
+    "route": "learn/#experiments",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "idleBusyIdlePositions": [
+      [
+        [
+          185,
+          171,
+          590,
+          590
+        ],
+        [
+          972,
+          472.5,
+          200,
+          44
+        ],
+        [
+          962,
+          316.5,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          185,
+          171,
+          590,
+          590
+        ],
+        [
+          972,
+          472.5,
+          200,
+          44
+        ],
+        [
+          962,
+          316.5,
+          220,
+          48
+        ]
+      ],
+      [
+        [
+          185,
+          171,
+          590,
+          590
+        ],
+        [
+          972,
+          472.5,
+          200,
+          44
+        ],
+        [
+          962,
+          316.5,
+          220,
+          48
+        ]
+      ]
+    ]
+  },
+  {
+    "width": 1440,
+    "route": "",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "learn/#history",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "learn/#playing",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "learn/#tactics",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "learn/#resources",
+    "overflow": false
+  },
+  {
+    "width": 1440,
+    "route": "learn/#experiments",
+    "overflow": false
+  }
+]

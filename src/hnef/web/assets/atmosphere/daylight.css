@@ -40,3 +40,19 @@ html .tools { background: none; box-shadow: none; }
  html .blog-index .index-header::after { position: relative; display: block; inset: auto; width: 100%; height: 112px; margin-top: 20px; background-position: right center; }
  html .blog-index .entries { padding-top: 26px; }
 }
+
+/* Iteration 5: faint ambient grain and quiet group definition; geometry unchanged. */
+html body, html body:has(.table) {
+ background-image: url('./ambient.webp'), radial-gradient(ellipse at 15% 0, #ffffff18, transparent 60%), linear-gradient(150deg, #f5f2eb 30%, #e6ede9 100%);
+ background-size: 256px 256px, 100% 100%, 100% 100%;
+}
+html .blog-index .entries { border-top-color: transparent; position: relative; isolation: isolate; }
+html .blog-index .entries::before { content: ''; position: absolute; inset: 0 -20px; z-index: -1; pointer-events: none; background: #f8f6f035; border-radius: 6px; box-shadow: inset 0 0 0 1px #233c4310, 0 8px 24px #233c4306; }
+html .table-controls { background: #f8f6f025; border-radius: 6px; box-shadow: inset 0 0 0 1px #233c4310, 0 8px 24px #233c4306; }
+html .site-header nav a::after { display: none; }
+html .site-header nav a, html .masthead .menu-link { text-decoration: none; border-radius: 3px; }
+html .site-header nav a[aria-current], html .masthead .menu-link[aria-current] { font-weight: 500; background: #233c430a; box-shadow: 0 0 0 7px #233c430a; }
+html .site-header nav a:hover, html .masthead .menu-link:hover { color: #101f23; background: #233c4308; }
+html .lesson-nav a[aria-current="step"] { text-decoration: none; }
+html .arena { box-shadow: 0 0 0 10px #efebe1, 0 0 0 11px #c6ccc2, 0 12px 30px #233c4312; }
+@media (max-width: 740px) { html .blog-index .entries::before { inset-inline: -12px; } }
