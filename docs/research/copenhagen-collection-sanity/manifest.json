@@ -1,0 +1,70 @@
+{
+  "schema": 1,
+  "purpose": "collection sanity only; no training or checkpoint",
+  "ruleset": "copenhagen-experimental-v2",
+  "features": "copenhagen-absolute-board-full-history-v1",
+  "action_count": 2420,
+  "codec_sha256": "5e2c856f6e60d6a100f0d3817b324cd6911252e22d16c5252e184ec835bb4f7c",
+  "behavior": "uniform legal learner versus random-v1; alternate learner side",
+  "python": "3.12.14",
+  "source": {
+    "git_commit": "0a1dc113740ca5c7e310eded096bd78a3331cd60",
+    "git_dirty": true,
+    "source_sha256": "fa6de66af3980420a909cff7dd0e46073b48630cff41ed9d61e227cd057be7db"
+  },
+  "config": {
+    "episodes": 4,
+    "max_plies": 16,
+    "seed": 0
+  },
+  "episodes": [
+    {
+      "data": "episode-0.json",
+      "replay": "replay-0.json",
+      "data_sha256": "25b08e069b4ab9d97b72e3ef579d6c430483997e9e874f086171f61b0622be88",
+      "replay_sha256": "13e9a66e019359ba4b394de69abf3bbb01daf16afc0ae48c950df070514dcf13",
+      "learner": "attackers",
+      "truncated": true,
+      "terminal_reason": null,
+      "plies": 16,
+      "samples": 8,
+      "labeled_samples": 0
+    },
+    {
+      "data": "episode-1.json",
+      "replay": "replay-1.json",
+      "data_sha256": "8114d23f76dfbb3f72ecdb211c51e8d07fe47ae95e948967d12a730100ac98eb",
+      "replay_sha256": "603fb671b4f9b5dae4b696c962858b2aa8f82efe80eae522268a80ea493296f2",
+      "learner": "defenders",
+      "truncated": true,
+      "terminal_reason": null,
+      "plies": 16,
+      "samples": 8,
+      "labeled_samples": 0
+    },
+    {
+      "data": "episode-2.json",
+      "replay": "replay-2.json",
+      "data_sha256": "8faa7c67601324d238d7a7db5ebfd25be8154ba6d7b36792404e282e09e7dd37",
+      "replay_sha256": "e641f3082d4ceed0b1dbbf34a98e963c40a5b04cd3d9c7570e6b7153300dcb12",
+      "learner": "attackers",
+      "truncated": true,
+      "terminal_reason": null,
+      "plies": 16,
+      "samples": 8,
+      "labeled_samples": 0
+    },
+    {
+      "data": "episode-3.json",
+      "replay": "replay-3.json",
+      "data_sha256": "ea90fb5ef98d350b3caee68d7065ecc902812908e6efb2098116c404f3465df8",
+      "replay_sha256": "b089a210e6cebb91dfc5977a270af5aa4e1bcb6ccf297fad1853b5bde1dd6156",
+      "learner": "defenders",
+      "truncated": true,
+      "terminal_reason": null,
+      "plies": 16,
+      "samples": 8,
+      "labeled_samples": 0
+    }
+  ]
+}

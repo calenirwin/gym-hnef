@@ -1,0 +1,15 @@
+{
+  "uninterrupted_episodes": 32,
+  "split_episodes": [
+    16,
+    16
+  ],
+  "checks": {
+    "actor_equal": true,
+    "critic_equal": true,
+    "metadata_equal": true,
+    "rng_equal": true,
+    "nonzero_actor": true,
+    "nonzero_critic": true
+  }
+}

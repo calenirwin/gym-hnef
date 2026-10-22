@@ -1,0 +1,44 @@
+{
+  "command": [
+    "python",
+    "-m",
+    "hnef.learning.plumbing",
+    "--data",
+    "tests/fixtures/copenhagen-training-plumbing-v1/cases.json",
+    "--output",
+    "/workspace/shared/copenhagen-plumbing-timed"
+  ],
+  "thread_caps": {
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "wall_seconds_including_python_startup": 0.6734530379999342,
+  "hard_process_timeout_seconds": 35,
+  "exit_code": 0,
+  "stderr": "",
+  "exact_resume_validation": {
+    "actor_equal": true,
+    "critic_equal": true,
+    "metadata_and_rng_equal": true,
+    "uninterrupted_steps": 4,
+    "split_steps": [
+      2,
+      2
+    ]
+  },
+  "full_game_probe": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "episodes": 4,
+    "max_plies": 128,
+    "transitions": 512,
+    "terminals": 0,
+    "cutoffs": 4,
+    "elapsed_seconds": 1.262423662999936
+  }
+}

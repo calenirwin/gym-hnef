@@ -1,0 +1,78 @@
+{
+  "purpose": "supervised synthetic policy/value plumbing smoke; not RL strength",
+  "contract": {
+    "schema": 1,
+    "ruleset": "copenhagen-experimental-v2",
+    "features": "copenhagen-linear-board-repetition-count-v1",
+    "codec_sha256": "5e2c856f6e60d6a100f0d3817b324cd6911252e22d16c5252e184ec835bb4f7c",
+    "dataset_sha256": "c6d9c7d4c62bb74b2de2e4aed40298756eb3e81402177d9e1a99efa2a0ef7800",
+    "source_sha256": "19ece10a7dc247362ac348c9ac6553e3bc28fe01ccae1a4a5acce84e412b4e18",
+    "numpy": "2.3.5"
+  },
+  "seed": 7,
+  "optimizer": "sgd-no-momentum-v1",
+  "learning_rate": 0.05,
+  "steps_this_run": 4,
+  "total_steps": 4,
+  "transitions": 4,
+  "terminals": 4,
+  "cutoffs": 0,
+  "records": [
+    {
+      "step": 1,
+      "indices": [
+        2,
+        3
+      ],
+      "loss": 4.893762812766452,
+      "gradient_norm": 3.100056126160942
+    },
+    {
+      "step": 2,
+      "indices": [
+        2,
+        3
+      ],
+      "loss": 4.742362488672957,
+      "gradient_norm": 2.9559488477617832
+    },
+    {
+      "step": 3,
+      "indices": [
+        0,
+        2
+      ],
+      "loss": 4.563035543725261,
+      "gradient_norm": 2.8428926721468186
+    },
+    {
+      "step": 4,
+      "indices": [
+        0,
+        1
+      ],
+      "loss": 4.415187914089525,
+      "gradient_norm": 2.839480384262145
+    }
+  ],
+  "elapsed_seconds": 0.4137238219991559,
+  "checkpoint": "checkpoint-0004.npz",
+  "checkpoint_bytes": 10084,
+  "checkpoint_sha256": "0f56c8463fc8d2321aa5e012ae44e7101b4580880d836fb4ef0e75cc408b41fe",
+  "initial_dataset_loss": 4.718330081703618,
+  "final_dataset_loss": 4.391950107505909,
+  "illegal_probability_mass": 0.0,
+  "target_probabilities": [
+    0.02054002481207976,
+    0.018494076163323932,
+    0.014943678672730214,
+    0.014872100706894379
+  ],
+  "values": [
+    0.18908130227451708,
+    0.1637198266368741,
+    0.2559322344713068,
+    0.19366836853771424
+  ],
+  "validation_failures": []
+}

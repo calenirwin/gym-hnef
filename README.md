@@ -80,6 +80,10 @@ assert state.ply == 0  # The parent is unchanged.
 assert successor.ply == 1
 ```
 
+See the [Copenhagen completion audit](docs/copenhagen-completion.md) and
+[opponent inventory and staged plan](docs/copenhagen-opponents.md) for current
+evidence, rule questions and reproducible Copenhagen baseline smoke.
+
 ## Development
 
 ```sh
