@@ -72,3 +72,13 @@ selection; report both colors, terminal reasons, cutoffs, time and initialized
 versus trained controls against fixed baselines. A tiny pilot cannot justify a
 strength claim, stable rules label or browser release. No model registry entry is
 added until a real checksummed checkpoint and compatible inference path exist.
+
+## Completed bounded fallback
+
+The proposed on-policy actor–critic pilot above is still not implemented. A
+subsequent full-game probe yielded no terminal labels, so a separate
+[NumPy supervised optimizer plumbing smoke](research/copenhagen-optimizer-smoke/README.md)
+now demonstrates real parameter updates, legal masks, finite gradients and exact
+checkpoint resume on independent synthetic terminal transitions. Its linear,
+partial-history feature version and teacher-action loss are deliberately named
+separately. It is not evidence of a trained competitive Copenhagen RL opponent.

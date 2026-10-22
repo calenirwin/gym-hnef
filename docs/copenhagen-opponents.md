@@ -130,3 +130,8 @@ the [initial held-out corpus](../tests/fixtures/copenhagen-heldout-v1/README.md)
 The [first learner contract and bounded pilot proposal](copenhagen-first-learner.md)
 now has a dependency-free, replay-verified collection scaffold. It produces data,
 not learned weights; its initial sanity episodes yielded no terminal labels.
+
+A [bounded synthetic policy/value optimizer smoke](research/copenhagen-optimizer-smoke/README.md)
+now retains an initialized and fitted resumable linear checkpoint. This is
+supervised training plumbing on four authored terminal transitions, **not** a
+modern trained Copenhagen RL opponent or a browser/model-registry candidate.
