@@ -14,8 +14,9 @@ uv run --no-sync hnef-rl evaluate runs/mini-ac-random-s42/checkpoint-000200.pt \
 uv run --no-sync hnef-rl list
 ```
 
-The named first run already exists in this checkout; choose a new run name for a
-fresh experiment. A run directory cannot silently be overwritten. Resume adds
+The named first run is historical; its resumable checkpoint directory is not
+present in the October 22 audit checkout. The versioned browser inference export
+and result reports remain available. Choose a new run name for a fresh experiment. A run directory cannot silently be overwritten. Resume adds
 updates to the saved configuration, optimizer, sampling RNG, and Torch RNG:
 
 ```sh
@@ -73,8 +74,9 @@ models/
 Runs and model binaries are ignored by Git. Keep small result reports and model
 cards in `docs/`; archive valuable checkpoints separately before changing machines.
 The first run occupies about 67 MB; its release and browser export together occupy
-about 1.1 MB. They currently live on this machine, while the deployed demo contains
-only the inference export and public evaluation card.
+about 1.1 MB. Those local checkpoint directories are absent from the October 22 audit checkout.
+The retained Mini Lab sources contain the inference export and public evaluation
+card; the published original playing table does not load that learned opponent.
 
 ```sh
 uv run --no-sync hnef-rl promote runs/mini-ac-random-s42/checkpoint-000200.pt \
