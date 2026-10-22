@@ -115,3 +115,14 @@ learning job can validate the untouched mini trainer.
 explorations only. Preserve the current published name, domain, pieces and light
 visual treatment; handle logo studies in a separate design task. No other tafl
 variant is implemented here.
+
+## Evaluation follow-up
+
+The registry now names supported profiles explicitly, so adding an enum member
+cannot silently certify an opponent. Schema-2 evaluation uses opponent-identity
+seed pairing, records derived seeds and reports side-specific results, terminal
+reasons, cutoff rates and latency distributions. See the
+[bounded profile and exact seed contract](research/copenhagen-smoke-v2-2026-10-22/README.md).
+It preserves the original smoke evidence and does not increase search or match
+budgets. See also [published-ruling research](copenhagen-rulings-research.md) and
+the [initial held-out corpus](../tests/fixtures/copenhagen-heldout-v1/README.md).

@@ -22,12 +22,15 @@ class OpponentSpec:
         )
 
 
+# Future profiles require explicit validation before registration.
+BASELINE_RULESETS = (Ruleset.MINI, Ruleset.COPENHAGEN, Ruleset.COPENHAGEN_V2)
+
 # IDs include budgets so different search costs cannot silently share a result label.
 OPPONENTS = (
-    OpponentSpec("random-v1", "random", tuple(Ruleset)),
-    OpponentSpec("heuristic-v1", "heuristic", tuple(Ruleset)),
-    OpponentSpec("mcts-v1-i4-r4", "mcts", tuple(Ruleset), 4, 4),
-    OpponentSpec("mcts-v1-i64-r48", "mcts", tuple(Ruleset), 64, 48),
+    OpponentSpec("random-v1", "random", BASELINE_RULESETS),
+    OpponentSpec("heuristic-v1", "heuristic", BASELINE_RULESETS),
+    OpponentSpec("mcts-v1-i4-r4", "mcts", BASELINE_RULESETS, 4, 4),
+    OpponentSpec("mcts-v1-i64-r48", "mcts", BASELINE_RULESETS, 64, 48),
 )
 
 

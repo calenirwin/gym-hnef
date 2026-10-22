@@ -8,9 +8,10 @@ import hashlib
 import json
 import platform
 import time
+from collections import Counter
 from dataclasses import asdict
+from math import ceil
 from pathlib import Path
-from random import Random
 
 from .engine import Ruleset
 from .matches import play_game
@@ -27,6 +28,55 @@ class MeasuredPolicy:
         move = self.policy.choose_move(state)
         self.samples.append(1000 * (time.perf_counter() - start))
         return move
+
+
+def policy_seed(seed: int, identifier: str) -> int:
+    """Identity-paired stream: stable across seats, opponents and registry ordering."""
+    payload = json.dumps(["identity-paired-v1", seed, identifier], separators=(",", ":"))
+    return int.from_bytes(hashlib.sha256(payload.encode()).digest()[:8], "big")
+
+
+def summarize(games):
+    """Per-opponent, per-seat denominators; nearest-rank latency percentiles."""
+    rows = []
+    for identifier in sorted({g[side] for g in games for side in ("attackers", "defenders")}):
+        for index, side in enumerate(("attackers", "defenders")):
+            selected = [g for g in games if g[side] == identifier]
+            if not selected:
+                continue
+            results, reasons = Counter(), Counter()
+            samples = sorted(t for g in selected for t in g["decision_ms"][index])
+            for game in selected:
+                outcome = game["outcome"]
+                if outcome is None:
+                    results["unfinished"] += 1
+                else:
+                    reasons[outcome["reason"]] += 1
+                    results[
+                        "draw"
+                        if outcome["winner"] is None
+                        else "win"
+                        if outcome["winner"] == side
+                        else "loss"
+                    ] += 1
+            rows.append(
+                {
+                    "opponent": identifier,
+                    "side": side,
+                    "games": len(selected),
+                    "results": {k: results[k] for k in ("win", "loss", "draw", "unfinished")},
+                    "terminal_reasons": dict(sorted(reasons.items())),
+                    "cutoff_rate": results["unfinished"] / len(selected),
+                    "latency_ms": {
+                        "decisions": len(samples),
+                        "mean": sum(samples) / len(samples) if samples else None,
+                        "p50": samples[ceil(0.5 * len(samples)) - 1] if samples else None,
+                        "p95": samples[ceil(0.95 * len(samples)) - 1] if samples else None,
+                        "max": samples[-1] if samples else None,
+                    },
+                }
+            )
+    return rows
 
 
 def smoke(output, *, seeds=(100_000, 100_001), max_plies=32):
@@ -48,7 +98,11 @@ def smoke(output, *, seeds=(100_000, 100_001), max_plies=32):
         source_hash.update(path.relative_to(root).as_posix().encode() + b"\0")
         source_hash.update(path.read_bytes())
     report = {
-        "schema": 1,
+        "schema": 2,
+        "seed_scheme": (
+            "identity-paired-v1: SHA256(JSON([scheme, seed, opponent ID])) first 8 bytes big-endian"
+        ),
+        "latency_percentiles": "nearest rank over decisions, not per-game averages",
         "purpose": "pipeline smoke; no strength or complete Copenhagen claim",
         "ruleset": ruleset.value,
         "python": platform.python_version(),
@@ -63,10 +117,10 @@ def smoke(output, *, seeds=(100_000, 100_001), max_plies=32):
         for second in range(first + 1, len(ids)):
             for attacker, defender in ((ids[first], ids[second]), (ids[second], ids[first])):
                 for seed in seeds:
-                    rng = Random(seed)
+                    policy_seeds = [policy_seed(seed, name) for name in (attacker, defender)]
                     players = [
-                        MeasuredPolicy(opponent(name).create(ruleset, rng.getrandbits(64)))
-                        for name in (attacker, defender)
+                        MeasuredPolicy(opponent(name).create(ruleset, stream))
+                        for name, stream in zip((attacker, defender), policy_seeds, strict=True)
                     ]
                     replay = play_game(*players, ruleset=ruleset, max_plies=max_plies)
                     state = replay.verify()
@@ -78,6 +132,9 @@ def smoke(output, *, seeds=(100_000, 100_001), max_plies=32):
                             "attackers": attacker,
                             "defenders": defender,
                             "seed": seed,
+                            "policy_seeds": dict(
+                                zip(("attackers", "defenders"), policy_seeds, strict=True)
+                            ),
                             "plies": state.ply,
                             "outcome": asdict(state.outcome) if state.outcome else None,
                             "truncated": state.outcome is None,
@@ -86,6 +143,7 @@ def smoke(output, *, seeds=(100_000, 100_001), max_plies=32):
                             "decision_ms": [player.samples for player in players],
                         }
                     )
+    report["summary"] = summarize(report["games"])
     (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     return report
 

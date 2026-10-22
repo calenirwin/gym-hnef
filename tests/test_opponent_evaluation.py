@@ -44,3 +44,43 @@ def test_invalid_smoke_seed_sets_do_not_create_output(tmp_path, seeds):
     with pytest.raises(ValueError):
         smoke(output, seeds=seeds)
     assert not output.exists()
+
+
+def test_streams_are_identity_paired_across_seats_and_matchups(tmp_path):
+    from hnef.evaluation import policy_seed
+
+    report = smoke(tmp_path / "pairing", seeds=(19,), max_plies=1)
+    for game in report["games"]:
+        for side in ("attackers", "defenders"):
+            assert game["policy_seeds"][side] == policy_seed(19, game[side])
+    assert policy_seed(19, "random-v1") != policy_seed(20, "random-v1")
+    assert policy_seed(19, "random-v1") != policy_seed(19, "heuristic-v1")
+
+
+def test_summary_keeps_draws_cutoffs_and_seat_denominators_separate():
+    from hnef.evaluation import summarize
+
+    games = [
+        {"attackers": "a", "defenders": "b", "outcome": outcome, "decision_ms": [[1, 3], []]}
+        for outcome in (
+            None,
+            {"winner": None, "reason": "adjudicated_draw"},
+            {"winner": "attackers", "reason": "king_captured"},
+            {"winner": "defenders", "reason": "king_escaped"},
+        )
+    ]
+    a, b = summarize(games)
+    assert a["results"] == {"win": 1, "loss": 1, "draw": 1, "unfinished": 1}
+    assert a["cutoff_rate"] == 0.25
+    assert a["terminal_reasons"] == {"adjudicated_draw": 1, "king_captured": 1, "king_escaped": 1}
+    assert a["latency_ms"] == {"decisions": 8, "mean": 2, "p50": 1, "p95": 3, "max": 3}
+    assert b["side"] == "defenders" and b["games"] == 4
+    assert b["latency_ms"]["p95"] is None
+    assert summarize([]) == []
+
+
+def test_registry_profiles_are_an_explicit_supported_set():
+    from hnef.opponents import OPPONENTS
+
+    for spec in OPPONENTS:
+        assert spec.rulesets == (Ruleset.MINI, Ruleset.COPENHAGEN, Ruleset.COPENHAGEN_V2)

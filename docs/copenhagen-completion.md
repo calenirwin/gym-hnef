@@ -83,3 +83,8 @@ maintainer. No request has been sent and no outside agreement is assumed.
 
 Until then the public experimental label stays. This is a work gate, not a
 promise that generic dead-position solving is inexpensive.
+
+Follow-up: [published adjudication research](copenhagen-rulings-research.md)
+records historical alternatives and current unanswered questions; it does not
+silently promote them into rules. The [held-out corpus](../tests/fixtures/copenhagen-heldout-v1/README.md)
+separates concrete immediate expectations from unresolved adjudication.
