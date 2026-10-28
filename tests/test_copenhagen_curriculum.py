@@ -22,6 +22,7 @@ from hnef.learning.plumbing import contract, load  # noqa: E402
 
 FIXTURES = Path(__file__).parent / "fixtures"
 TRAIN = FIXTURES / "copenhagen-training-tactics-v1/cases.json"
+BROAD = FIXTURES / "copenhagen-training-broad-v1/cases.json"
 VALIDATION = FIXTURES / "copenhagen-validation-tactics-v1/cases.json"
 
 
@@ -31,7 +32,9 @@ def cpu_caps(monkeypatch):
         monkeypatch.setenv(key, "1")
 
 
-@pytest.mark.parametrize("path", [TRAIN, VALIDATION], ids=["training", "validation"])
+@pytest.mark.parametrize(
+    "path", [TRAIN, BROAD, VALIDATION], ids=["training", "broad", "validation"]
+)
 def test_tactical_witnesses_are_legal_terminal_sequences_not_training_labels(path):
     cases = json.loads(path.read_text())["cases"]
     assert len({c["id"] for c in cases}) == len(cases) == 8
@@ -62,6 +65,7 @@ def test_new_validation_is_disjoint_from_all_training_and_previous_diagnostics()
     forbidden = set()
     for path in (
         TRAIN,
+        BROAD,
         FIXTURES / "copenhagen-training-plumbing-v1/cases.json",
         FIXTURES / "copenhagen-heldout-v1/cases.json",
     ):
@@ -74,7 +78,7 @@ def test_new_validation_is_disjoint_from_all_training_and_previous_diagnostics()
         for state in starts(FIXTURES / "copenhagen-heldout-v1/cases.json")[0]
         for key in symmetric_keys(state.board)
     }
-    assert all(state.board not in old_heldout for state in starts(TRAIN)[0])
+    assert all(state.board not in old_heldout for state in starts(TRAIN)[0] + starts(BROAD)[0])
 
 
 def test_training_does_not_consume_witness_annotations(tmp_path):

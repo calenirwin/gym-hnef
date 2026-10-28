@@ -141,3 +141,48 @@ timeout 65s python -m hnef.learning.onpolicy evaluate \
   --output /tmp/copenhagen-validation --horizon 16 \
   --opponents random-v1 heuristic-v1 --evaluation-seeds 100010 100011
 ```
+
+## Training-only learning curves
+
+The [broader training starts](../tests/fixtures/copenhagen-training-broad-v1/README.md)
+add controlled distractor moves to the existing teaching positions. The read-only
+`hnef.learning.curves` command enumerates legal one-ply successors and measures
+policy probability assigned to immediate wins. It does not use witness labels,
+sample actions, update weights, consume a training RNG or select checkpoints.
+Positions without an immediate winning move are marked `null` and excluded from
+the opportunity mean; they are not counted as failed winning choices.
+
+```sh
+timeout 65s python -m hnef.learning.onpolicy train \
+  --data tests/fixtures/copenhagen-training-broad-v1/cases.json \
+  --output /tmp/copenhagen-broad-1 --episodes 32 --horizon 4 --seed 17 \
+  --reference mixed-random-heuristic-v1
+timeout 65s python -m hnef.learning.onpolicy train \
+  --data tests/fixtures/copenhagen-training-broad-v1/cases.json \
+  --output /tmp/copenhagen-broad-2 --episodes 32 --horizon 4 \
+  --reference mixed-random-heuristic-v1 \
+  --resume /tmp/copenhagen-broad-1/checkpoint-0032.npz
+timeout 65s python -m hnef.learning.curves \
+  --data tests/fixtures/copenhagen-training-broad-v1/cases.json \
+  --checkpoints /tmp/copenhagen-broad-1/checkpoint-0000.npz \
+    /tmp/copenhagen-broad-1/checkpoint-0016.npz \
+    /tmp/copenhagen-broad-1/checkpoint-0032.npz \
+    /tmp/copenhagen-broad-2/checkpoint-0048.npz \
+    /tmp/copenhagen-broad-2/checkpoint-0064.npz \
+  --output /tmp/copenhagen-broad-curves
+```
+
+Use the single-thread environment settings above. The existing cumulative training
+cap remains 64 updates. Curves accept 2–9 unique checkpoints with strictly increasing
+steps, the same seed/configuration and matching source/data/rules/encoding contracts.
+They require explicitly training-only data and refuse to overwrite output. Reports
+include per-position branching, immediate-winning-action counts, uniform-policy
+reference probabilities, checkpoint hashes and separate means for each learner side.
+
+Freeze seeds, checkpoints, budget and an experiment-specific improvement gate
+before running. Include terminal win/loss update coverage as well as probability
+curves: a small change in a training metric alone is not readiness for a strength
+claim. If broader-branching learning fails that gate, diagnose training instead of
+spending a fresh evaluation set. If it passes, freeze a new, disjoint evaluation
+separately before use. These curves are training-fit evidence under the current
+experimental rules, not minimax values, generalization or full-game win rates.
