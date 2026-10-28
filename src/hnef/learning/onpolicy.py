@@ -21,6 +21,7 @@ from .plumbing import LinearModel, contract, load, save
 ALGORITHM = "same-player-td0-ac-v1"
 REFERENCES = ("random-v1", "heuristic-v1", "mcts-v1-i4-r4")
 TRAINING_REFERENCES = (*REFERENCES[:2], "mixed-random-heuristic-v1")
+CURRICULA = ("fixture-v1", "constrained32-broad32-v1", "broad64-v1")
 
 
 def features(state):
@@ -202,6 +203,51 @@ def update_coverage(records):
     ]
 
 
+def curriculum_groups(data, positions, curriculum, both_sides):
+    if curriculum not in CURRICULA:
+        raise ValueError("Unknown curriculum contract")
+    if curriculum == "fixture-v1":
+        return {"fixture": list(range(len(positions)))}
+    if both_sides:
+        raise ValueError("Staged starts already contain both movers")
+    cases = json.loads(Path(data).read_text())["cases"]
+    if (
+        len(cases) != 16
+        or len(positions) != 16
+        or any(
+            c.get("split") != "training"
+            or c.get("ruleset") != RULESET.value
+            or c.get("stage") not in ("constrained", "broad")
+            for c in cases
+        )
+    ):
+        raise ValueError("Staging requires 16 explicit training-only, versioned stage records")
+    groups = {
+        stage: [i for i, c in enumerate(cases) if c["stage"] == stage]
+        for stage in ("constrained", "broad")
+    }
+    for indices in groups.values():
+        if len(indices) != 8 or Counter(positions[i].player for i in indices) != {
+            Player.ATTACKERS: 4,
+            Player.DEFENDERS: 4,
+        }:
+            raise ValueError("Each stage requires eight starts, four per learner side")
+    return groups
+
+
+def curriculum_choice(curriculum, groups, step):
+    if curriculum not in CURRICULA or type(step) is not int or not 0 <= step < 64:
+        raise ValueError("Invalid curriculum step or contract")
+    if curriculum == "fixture-v1":
+        stage = "fixture"
+    elif curriculum == "broad64-v1":
+        stage = "broad"
+    else:
+        stage = "constrained" if step < 32 else "broad"
+    indices = groups[stage]
+    return stage, indices[step % len(indices)], len(indices)
+
+
 def train(
     output,
     data,
@@ -212,6 +258,7 @@ def train(
     resume=None,
     reference_id="random-v1",
     both_sides=False,
+    curriculum="fixture-v1",
 ):
     cpu_caps()
     if type(episodes) is not int or not 1 <= episodes <= 32:
@@ -229,6 +276,7 @@ def train(
         positions = [
             GameState(state.board, side, ruleset=RULESET) for state in positions for side in Player
         ]
+    groups = curriculum_groups(data, positions, curriculum, both_sides)
     expected = {
         **contract(digest),
         "schema": 2,
@@ -237,6 +285,7 @@ def train(
         "gamma": 0.99,
         "reference_id": reference_id,
         "start_schedule": "both-sides-v1" if both_sides else "fixture-mover-v1",
+        "curriculum": curriculum,
     }
     if resume:
         model, meta, rng = load(resume, expected)
@@ -259,9 +308,9 @@ def train(
     for _ in range(episodes):
         if time.monotonic() - start > 60:
             raise TimeoutError("60-second training budget exhausted")
-        index = meta["step"] % len(positions)
+        stage, index, stage_size = curriculum_choice(curriculum, groups, meta["step"])
         reference_seed = stream_seed(meta["seed"], f"td-reference-{meta['step']}")
-        actual_reference = training_reference(reference_id, meta["step"], len(positions))
+        actual_reference = training_reference(reference_id, meta["step"], stage_size)
         samples, trace = collect(
             model, positions[index], rng, reference_seed, horizon, meta["gamma"], actual_reference
         )
@@ -272,6 +321,7 @@ def train(
         records.append(
             {
                 "episode": meta["step"],
+                "stage": stage,
                 "opponent": actual_reference,
                 "start_index": index,
                 "trace": name,
@@ -503,6 +553,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--reference", choices=TRAINING_REFERENCES, default="random-v1")
     parser.add_argument("--both-sides", action="store_true")
+    parser.add_argument("--curriculum", choices=CURRICULA, default="fixture-v1")
     parser.add_argument("--opponents", choices=REFERENCES, nargs="+", default=["random-v1"])
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--evaluation-seeds", type=int, nargs="+", default=[100000, 100001])
@@ -517,6 +568,7 @@ if __name__ == "__main__":
             horizon=4 if args.horizon is None else args.horizon,
             reference_id=args.reference,
             both_sides=args.both_sides,
+            curriculum=args.curriculum,
             seed=args.seed,
             resume=args.resume,
         )

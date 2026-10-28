@@ -16,7 +16,7 @@ from .onpolicy import ALGORITHM, cpu_caps, features, starts
 from .plumbing import contract, load
 
 
-def training_positions(path):
+def training_positions(path, stage=None):
     cases = json.loads(Path(path).read_text())["cases"]
     if not cases or any(
         c.get("split") != "training" or c.get("ruleset") != RULESET.value or not c.get("board")
@@ -27,6 +27,14 @@ def training_positions(path):
     if len(set(ids)) != len(ids):
         raise ValueError("Training position IDs must be unique")
     states, digest = starts(path)
+    if stage is not None:
+        if stage not in ("constrained", "broad"):
+            raise ValueError("Unknown diagnostic training stage")
+        selected = [i for i, c in enumerate(cases) if c.get("stage") == stage]
+        if not selected:
+            raise ValueError("No training positions for the requested stage")
+        ids = [ids[i] for i in selected]
+        states = [states[i] for i in selected]
     # Never consume witness actions or intended reward annotations.
     winning = []
     for state in states:
@@ -76,13 +84,13 @@ def measure(model, ids, states, winning):
     return rows, summary
 
 
-def curves(data, checkpoints, output):
+def curves(data, checkpoints, output, *, stage=None):
     cpu_caps()
     paths = [Path(p).resolve() for p in checkpoints]
     if not 2 <= len(paths) <= 9 or len(set(paths)) != len(paths):
         raise ValueError("Use 2..9 unique checkpoint paths in increasing update order")
     start = time.monotonic()
-    ids, states, winning, digest = training_positions(data)
+    ids, states, winning, digest = training_positions(data, stage)
     expected = {**contract(digest), "schema": 2, "algorithm": ALGORITHM}
     records, config, last_step = [], None, -1
     for path in paths:
@@ -108,6 +116,7 @@ def curves(data, checkpoints, output):
         )
     report = {
         "schema": 1,
+        "diagnostic_stage": stage,
         "purpose": "training-only one-ply learning curves; not strength evaluation",
         "contract": expected,
         "training_config": config,
@@ -130,8 +139,9 @@ if __name__ == "__main__":
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--checkpoints", type=Path, nargs="+", required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--stage", choices=("constrained", "broad"))
     args = parser.parse_args()
-    result = curves(args.data, args.checkpoints, args.output)
+    result = curves(args.data, args.checkpoints, args.output, stage=args.stage)
     print(
         json.dumps(
             {"records": [{"step": r["step"], "summary": r["summary"]} for r in result["records"]]},

@@ -186,3 +186,39 @@ claim. If broader-branching learning fails that gate, diagnose training instead 
 spending a fresh evaluation set. If it passes, freeze a new, disjoint evaluation
 separately before use. These curves are training-fit evidence under the current
 experimental rules, not minimax values, generalization or full-game win rates.
+
+## Fixed staged training
+
+The [staged manifest](../tests/fixtures/copenhagen-training-staged-v1/README.md)
+binds both constrained and broader training starts to one checkpoint contract.
+`--curriculum constrained32-broad32-v1` makes a fixed transition after 32 updates;
+`--curriculum broad64-v1` is the same-budget broader-only control. Both retain the
+64-update cap. No dataset swap, optimizer reset or automatic mastery decision
+occurs at the boundary. Resume rejects a different curriculum ID.
+
+```sh
+timeout 65s python -m hnef.learning.onpolicy train \
+  --data tests/fixtures/copenhagen-training-staged-v1/cases.json \
+  --output /tmp/copenhagen-stage-1 --episodes 32 --horizon 4 --seed 17 \
+  --reference mixed-random-heuristic-v1 --curriculum constrained32-broad32-v1
+timeout 65s python -m hnef.learning.onpolicy train \
+  --data tests/fixtures/copenhagen-training-staged-v1/cases.json \
+  --output /tmp/copenhagen-stage-2 --episodes 32 --horizon 4 \
+  --reference mixed-random-heuristic-v1 --curriculum constrained32-broad32-v1 \
+  --resume /tmp/copenhagen-stage-1/checkpoint-0032.npz
+timeout 65s python -m hnef.learning.curves \
+  --data tests/fixtures/copenhagen-training-staged-v1/cases.json --stage broad \
+  --checkpoints /tmp/copenhagen-stage-1/checkpoint-0000.npz \
+    /tmp/copenhagen-stage-1/checkpoint-0032.npz \
+    /tmp/copenhagen-stage-2/checkpoint-0064.npz \
+  --output /tmp/copenhagen-stage-curves
+```
+
+Use the documented single-thread environment. For the control, use new output
+folders and `broad64-v1` for both training invocations. Freeze seeds, curve points,
+criteria and budgets before either arm runs. Report probability curves on the same
+broader subset, actual stage-specific terminal updates and reference/side exposure.
+In particular, broader-phase wins/losses must be observed directly; successes in
+the constrained phase cannot satisfy a broader-phase coverage gate. Preserve all
+fixed seeds rather than selecting a favorable model. No validation or final
+benchmark is needed to diagnose a failed training-only gate.
