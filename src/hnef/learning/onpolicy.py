@@ -20,6 +20,7 @@ from .plumbing import LinearModel, contract, load, save
 
 ALGORITHM = "same-player-td0-ac-v1"
 REFERENCES = ("random-v1", "heuristic-v1", "mcts-v1-i4-r4")
+TRAINING_REFERENCES = (*REFERENCES[:2], "mixed-random-heuristic-v1")
 
 
 def features(state):
@@ -149,6 +150,8 @@ def gradients(model, samples):
         {
             "loss": float(loss),
             "gradient_norm": norm,
+            "actor_gradient_norm": float(np.linalg.norm(actor_grad)),
+            "critic_gradient_norm": float(np.linalg.norm(critic_grad)),
             "mean_abs_advantage": float(np.abs(advantages).mean()),
         },
     )
@@ -172,6 +175,33 @@ def cpu_caps():
         raise ValueError("Set BLAS/OMP/MKL CPU thread caps to 1 before launch")
 
 
+def training_reference(identifier, step, positions):
+    """Cross reference with every start/side; never alternate it with the mover."""
+    if identifier not in TRAINING_REFERENCES:
+        raise ValueError("Unknown bounded training reference")
+    if type(step) is not int or step < 0 or type(positions) is not int or positions < 1:
+        raise ValueError("Invalid curriculum schedule index")
+    if identifier == "mixed-random-heuristic-v1":
+        return REFERENCES[(step // positions) % 2]
+    return identifier
+
+
+def update_coverage(records):
+    """Observed terminal update coverage, never intended fixture/witness labels."""
+    return [
+        {
+            "side": side.value,
+            "result": result,
+            "episodes": len(games),
+            "nonzero_actor_updates": sum(g["actor_gradient_norm"] > 0 for g in games),
+            "nonzero_critic_updates": sum(g["critic_gradient_norm"] > 0 for g in games),
+        }
+        for side in Player
+        for result, reward in (("win", 1), ("loss", -1))
+        for games in [[r for r in records if r["learner"] == side.value and r["reward"] == reward]]
+    ]
+
+
 def train(
     output,
     data,
@@ -190,8 +220,8 @@ def train(
         raise ValueError("Use 1..8 learner decisions per episode")
     if type(seed) is not int or not 0 <= seed < 100000:
         raise ValueError("Training seed must be below 100000")
-    if reference_id not in REFERENCES[:2] or type(both_sides) is not bool:
-        raise ValueError("Training requires random-v1/heuristic-v1 and boolean both_sides")
+    if reference_id not in TRAINING_REFERENCES or type(both_sides) is not bool:
+        raise ValueError("Training requires a bounded reference and boolean both_sides")
     start = time.monotonic()
     positions, digest = starts(data)
     if both_sides:
@@ -231,8 +261,9 @@ def train(
             raise TimeoutError("60-second training budget exhausted")
         index = meta["step"] % len(positions)
         reference_seed = stream_seed(meta["seed"], f"td-reference-{meta['step']}")
+        actual_reference = training_reference(reference_id, meta["step"], len(positions))
         samples, trace = collect(
-            model, positions[index], rng, reference_seed, horizon, meta["gamma"], reference_id
+            model, positions[index], rng, reference_seed, horizon, meta["gamma"], actual_reference
         )
         metrics = update(model, samples, meta["learning_rate"])
         meta["step"] += 1
@@ -241,6 +272,7 @@ def train(
         records.append(
             {
                 "episode": meta["step"],
+                "opponent": actual_reference,
                 "start_index": index,
                 "trace": name,
                 "learner": positions[index].player.value,
@@ -270,6 +302,20 @@ def train(
         "cutoffs": sum(r["truncated"] for r in records),
         "transitions": sum(r["plies"] for r in records),
         "nonzero_updates": sum(r["gradient_norm"] > 0 for r in records),
+        "terminal_update_coverage": update_coverage(records),
+        "reference_side_coverage": [
+            {
+                "opponent": ref,
+                "side": side.value,
+                "episodes": len(games),
+                "start_indices": sorted({g["start_index"] for g in games}),
+            }
+            for ref in sorted({r["opponent"] for r in records})
+            for side in Player
+            for games in [
+                [r for r in records if r["opponent"] == ref and r["learner"] == side.value]
+            ]
+        ],
     }
     write_json(output / "report.json", report)
     return report
@@ -455,10 +501,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--horizon", type=int, help="train default 4; evaluation default checkpoint horizon"
     )
-    parser.add_argument("--reference", choices=REFERENCES[:2], default="random-v1")
+    parser.add_argument("--reference", choices=TRAINING_REFERENCES, default="random-v1")
     parser.add_argument("--both-sides", action="store_true")
     parser.add_argument("--opponents", choices=REFERENCES, nargs="+", default=["random-v1"])
     parser.add_argument("--resume", type=Path)
+    parser.add_argument("--evaluation-seeds", type=int, nargs="+", default=[100000, 100001])
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--heldout", type=Path)
     args = parser.parse_args()
@@ -483,5 +530,6 @@ if __name__ == "__main__":
             args.output,
             references=args.opponents,
             horizon=args.horizon,
+            seeds=tuple(args.evaluation_seeds),
         )
     print(json.dumps({k: v for k, v in result.items() if k != "records"}, indent=2))

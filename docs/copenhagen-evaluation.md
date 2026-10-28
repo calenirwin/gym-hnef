@@ -52,7 +52,7 @@ timeout 65s python -m hnef.learning.onpolicy evaluate \
 ```
 
 The API accepts up to four unique reserved seeds (at least 100000); the CLI uses
-100000 and 100001. Evaluation allows up to 32 learner decisions and the bounded
+100000 and 100001 by default; override with `--evaluation-seeds`. Evaluation allows up to 32 learner decisions and the bounded
 registry IDs `random-v1`, `heuristic-v1`, `mcts-v1-i4-r4`. The latter is only a tiny
 search-cost diagnostic, not evidence of strong MCTS play. Duplicate IDs/seeds,
 unsupported opponents and invalid horizons fail before output creation. Existing
@@ -97,3 +97,47 @@ control across training seeds does not create independent control observations.
 Do not tune on these results. Before a strength claim, require broader training-only
 coverage, attacker-winning signal, full-history features, multiple seeds and a
 separate frozen final evaluation including opening-start trajectories.
+
+## Balanced tactical curriculum
+
+The [training-only tactics](../tests/fixtures/copenhagen-training-tactics-v1/README.md)
+contain explicit winning/loss witnesses for both learner sides. The witnesses are
+mechanically verified rule continuations, not supervised targets or forced-outcome
+labels. Actual terminal rewards drive updates. Attacker-winning starts deliberately
+have low branching; this is a teaching aid, not a full-game benchmark.
+
+`mixed-random-heuristic-v1` alternates **complete passes through all starts** between
+random and heuristic references. Every start and both learner sides therefore meet
+both opponents in a full two-pass cycle. Alternating opponent on every episode
+would confound it with the alternating mover and is not used. Partial runs may be
+unbalanced; reports list actual opponent/side exposure and visited start indices.
+Resume retains absolute step and schedule identity across pass boundaries.
+
+```sh
+timeout 65s python -m hnef.learning.onpolicy train \
+  --data tests/fixtures/copenhagen-training-tactics-v1/cases.json \
+  --output /tmp/copenhagen-balanced --episodes 32 --horizon 4 --seed 17 \
+  --reference mixed-random-heuristic-v1
+```
+
+Both movers are already explicit in these eight starts; omit `--both-sides`.
+For a matched comparator, use `--reference heuristic-v1` with the same other
+settings and a new output directory. Reports count observed terminal wins/losses
+and nonzero actor/critic gradients separately for each learner side. A high terminal
+rate consisting only of losses is not balanced update coverage.
+
+The [fresh validation set](../tests/fixtures/copenhagen-validation-tactics-v1/README.md)
+is disjoint under rotations/reflections from training and earlier public diagnostics.
+Use it with the evaluation command after freezing a manifest containing all seeds,
+source/data fingerprints, budgets and the rule to evaluate every final checkpoint.
+Its public synthetic tactical families do not justify a general strength claim.
+Never select a checkpoint or curriculum from these validation outcomes.
+
+```sh
+timeout 65s python -m hnef.learning.onpolicy evaluate \
+  --data tests/fixtures/copenhagen-training-tactics-v1/cases.json \
+  --heldout tests/fixtures/copenhagen-validation-tactics-v1/cases.json \
+  --checkpoint /tmp/copenhagen-balanced/checkpoint-0032.npz \
+  --output /tmp/copenhagen-validation --horizon 16 \
+  --opponents random-v1 heuristic-v1 --evaluation-seeds 100010 100011
+```
