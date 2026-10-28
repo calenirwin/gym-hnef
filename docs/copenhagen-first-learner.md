@@ -1,5 +1,9 @@
 # First Copenhagen learner: data contract and bounded pilot
 
+For the current opponent options, resume contract and paired comparison commands,
+see [bounded learning and evaluation](copenhagen-evaluation.md). The stages below
+retain the earlier scaffold and pilot provenance.
+
 This PR adds a **collection scaffold**, not a trained opponent. Run it without
 Torch, NumPy, accounts or downloads:
 

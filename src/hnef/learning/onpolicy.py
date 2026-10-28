@@ -1,4 +1,4 @@
-"""Bounded on-policy TD actor-critic on synthetic Copenhagen starts, versus random."""
+"""Bounded on-policy TD actor-critic on synthetic Copenhagen starts."""
 
 import argparse
 import hashlib
@@ -11,6 +11,7 @@ from pathlib import Path
 import numpy as np
 
 from hnef.engine import GameState, Player, apply_move
+from hnef.opponents import opponent
 from hnef.policies import RandomPolicy
 
 from .artifacts import write_json
@@ -18,6 +19,7 @@ from .copenhagen import CODEC, RULESET, encode, stream_seed
 from .plumbing import LinearModel, contract, load, save
 
 ALGORITHM = "same-player-td0-ac-v1"
+REFERENCES = ("random-v1", "heuristic-v1", "mcts-v1-i4-r4")
 
 
 def features(state):
@@ -73,9 +75,13 @@ def trace_state(trace):
     return state
 
 
-def collect(model, initial, rng, opponent_seed, horizon, gamma):
+def collect(model, initial, rng, opponent_seed, horizon, gamma, reference_id="random-v1"):
     learner = initial.player
-    reference = RandomPolicy(opponent_seed)
+    reference = (
+        RandomPolicy(opponent_seed)
+        if reference_id == "random-v1"
+        else opponent(reference_id).create(RULESET, opponent_seed)
+    )
     state, samples = initial, []
     trace = {
         "schema": 1,
@@ -85,6 +91,7 @@ def collect(model, initial, rng, opponent_seed, horizon, gamma):
         "actions": [],
         "keys": [initial.key],
         "opponent_seed": opponent_seed,
+        "opponent": reference_id,
     }
     for _ in range(horizon):
         x, mask = features(state)
@@ -165,7 +172,17 @@ def cpu_caps():
         raise ValueError("Set BLAS/OMP/MKL CPU thread caps to 1 before launch")
 
 
-def train(output, data, *, episodes=32, horizon=4, seed=17, resume=None):
+def train(
+    output,
+    data,
+    *,
+    episodes=32,
+    horizon=4,
+    seed=17,
+    resume=None,
+    reference_id="random-v1",
+    both_sides=False,
+):
     cpu_caps()
     if type(episodes) is not int or not 1 <= episodes <= 32:
         raise ValueError("Use 1..32 episodes")
@@ -173,14 +190,23 @@ def train(output, data, *, episodes=32, horizon=4, seed=17, resume=None):
         raise ValueError("Use 1..8 learner decisions per episode")
     if type(seed) is not int or not 0 <= seed < 100000:
         raise ValueError("Training seed must be below 100000")
+    if reference_id not in REFERENCES[:2] or type(both_sides) is not bool:
+        raise ValueError("Training requires random-v1/heuristic-v1 and boolean both_sides")
     start = time.monotonic()
     positions, digest = starts(data)
+    if both_sides:
+        # A fresh synthetic start, not a continuation with an edited mover/history.
+        positions = [
+            GameState(state.board, side, ruleset=RULESET) for state in positions for side in Player
+        ]
     expected = {
         **contract(digest),
         "schema": 2,
         "algorithm": ALGORITHM,
         "horizon": horizon,
         "gamma": 0.99,
+        "reference_id": reference_id,
+        "start_schedule": "both-sides-v1" if both_sides else "fixture-mover-v1",
     }
     if resume:
         model, meta, rng = load(resume, expected)
@@ -206,7 +232,7 @@ def train(output, data, *, episodes=32, horizon=4, seed=17, resume=None):
         index = meta["step"] % len(positions)
         reference_seed = stream_seed(meta["seed"], f"td-reference-{meta['step']}")
         samples, trace = collect(
-            model, positions[index], rng, reference_seed, horizon, meta["gamma"]
+            model, positions[index], rng, reference_seed, horizon, meta["gamma"], reference_id
         )
         metrics = update(model, samples, meta["learning_rate"])
         meta["step"] += 1
@@ -258,81 +284,162 @@ def symmetric_keys(board):
     }
 
 
-def evaluate(checkpoint, training_data, heldout, output, *, seeds=(100000, 100001)):
+def result_name(reward):
+    return {None: "unfinished", 1: "win", -1: "loss", 0: "draw"}[reward]
+
+
+def evaluation_summary(records):
+    """No completed-game-only denominator or implicit draw for censored games."""
+    summary, paired = [], []
+    references = sorted({r["opponent"] for r in records})
+    for reference_id in references:
+        for side in Player:
+            groups = {}
+            for label in ("initialized", "candidate"):
+                games = [
+                    r
+                    for r in records
+                    if r["model"] == label
+                    and r["side"] == side.value
+                    and r["opponent"] == reference_id
+                ]
+                if not games:
+                    continue
+                counts = Counter(result_name(g["reward"]) for g in games)
+                counts = {name: counts[name] for name in ("win", "loss", "draw", "unfinished")}
+                groups[label] = {(r["start_index"], r["seed"]): r for r in games}
+                if len(groups[label]) != len(games):
+                    raise ValueError("Duplicate evaluation pair")
+                n = len(games)
+                summary.append(
+                    {
+                        "model": label,
+                        "opponent": reference_id,
+                        "side": side.value,
+                        "games": n,
+                        "results": counts,
+                        "cutoff_rate": counts["unfinished"] / n,
+                        "win_rate_bounds": [
+                            counts["win"] / n,
+                            (counts["win"] + counts["unfinished"]) / n,
+                        ],
+                        "terminal_reasons": dict(
+                            Counter(g["reason"] for g in games if g["reason"])
+                        ),
+                    }
+                )
+            if not groups:
+                continue
+            if set(groups) != {"initialized", "candidate"} or (
+                groups["initialized"].keys() != groups["candidate"].keys()
+            ):
+                raise ValueError("Unpaired evaluation records")
+            low = high = 0
+            transitions = Counter()
+            for key, candidate in groups["candidate"].items():
+                initial = groups["initialized"][key]
+                c, i = candidate["reward"], initial["reward"]
+                # Finite-sample identification bounds, not confidence intervals.
+                low += int(c == 1) - int(i is None or i == 1)
+                high += int(c is None or c == 1) - int(i == 1)
+                transitions[f"{result_name(i)}->{result_name(c)}"] += 1
+            n = len(groups["candidate"])
+            paired.append(
+                {
+                    "opponent": reference_id,
+                    "side": side.value,
+                    "pairs": n,
+                    "win_rate_delta_bounds": [low / n, high / n],
+                    "outcome_transitions": dict(transitions),
+                }
+            )
+    return summary, paired
+
+
+def evaluate(
+    checkpoint,
+    training_data,
+    heldout,
+    output,
+    *,
+    seeds=(100000, 100001),
+    references=("random-v1",),
+    horizon=None,
+):
     cpu_caps()
     if not seeds or len(seeds) > 4 or any(type(s) is not int or s < 100000 for s in seeds):
         raise ValueError("Use 1..4 reserved evaluation seeds >=100000")
     if len(set(seeds)) != len(seeds):
         raise ValueError("Evaluation seeds must be unique")
+    if not references or any(r not in REFERENCES for r in references):
+        raise ValueError("Use bounded registered evaluation opponents")
+    if len(set(references)) != len(references):
+        raise ValueError("Evaluation opponents must be unique")
+    if horizon is not None and (type(horizon) is not int or not 1 <= horizon <= 32):
+        raise ValueError("Evaluation horizon must be 1..32 learner decisions")
     start = time.monotonic()
     training, digest = starts(training_data)
     testing, heldout_hash = starts(heldout)
     forbidden = {key for state in training for key in symmetric_keys(state.board)}
     if any(state.board in forbidden for state in testing):
         raise ValueError("Training/evaluation symmetry overlap")
+    # New training metadata binds the opponent and start schedule; earlier schema-2
+    # artifacts remain source-bound. Evaluation does not change the training contract.
     expected = {**contract(digest), "schema": 2, "algorithm": ALGORITHM}
     candidate, meta, _ = load(checkpoint, expected)
+    horizon = meta["horizon"] if horizon is None else horizon
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     records = []
-    for label, model in (("initialized", LinearModel()), ("candidate", candidate)):
-        for index, state in enumerate(testing):
-            for seed in seeds:
-                if time.monotonic() - start > 60:
-                    raise TimeoutError("60-second evaluation budget exhausted")
-                # Same learner and reference streams for initialized/candidate control.
-                rng = np.random.default_rng(stream_seed(seed, f"eval-learner-{index}"))
-                ref_seed = stream_seed(seed, f"eval-reference-{index}")
-                _, trace = collect(model, state, rng, ref_seed, meta["horizon"], meta["gamma"])
-                name = f"{label}-{index}-{seed}.json"
-                write_json(output / name, trace)
-                records.append(
-                    {
-                        "model": label,
-                        "start_index": index,
-                        "seed": seed,
-                        "side": state.player.value,
-                        "reward": trace["reward"],
-                        "reason": trace["reason"],
-                        "truncated": trace["truncated"],
-                        "plies": len(trace["actions"]),
-                        "trace": name,
-                    }
-                )
-    summary = []
-    for label in ("initialized", "candidate"):
-        for side in Player:
-            games = [r for r in records if r["model"] == label and r["side"] == side.value]
-            counts = Counter(
-                "unfinished"
-                if g["reward"] is None
-                else "win"
-                if g["reward"] == 1
-                else "loss"
-                if g["reward"] == -1
-                else "draw"
-                for g in games
-            )
-            summary.append(
-                {
-                    "model": label,
-                    "side": side.value,
-                    "games": len(games),
-                    "results": dict(counts),
-                    "terminal_reasons": dict(Counter(g["reason"] for g in games if g["reason"])),
-                }
-            )
+    for reference_id in references:
+        for label, model in (("initialized", LinearModel()), ("candidate", candidate)):
+            for index, state in enumerate(testing):
+                for seed in seeds:
+                    if time.monotonic() - start > 60:
+                        raise TimeoutError("60-second evaluation budget exhausted")
+                    # Pair candidate/control within a reference; separate reference streams.
+                    rng = np.random.default_rng(stream_seed(seed, f"eval-learner-{index}"))
+                    ref_seed = stream_seed(seed, f"eval-{reference_id}-{index}")
+                    episode_start = time.monotonic()
+                    _, trace = collect(
+                        model, state, rng, ref_seed, horizon, meta["gamma"], reference_id
+                    )
+                    elapsed = time.monotonic() - episode_start
+                    name = f"{reference_id}-{label}-{index}-{seed}.json"
+                    write_json(output / name, trace)
+                    records.append(
+                        {
+                            "model": label,
+                            "opponent": reference_id,
+                            "start_index": index,
+                            "seed": seed,
+                            "learner_seed": stream_seed(seed, f"eval-learner-{index}"),
+                            "opponent_seed": ref_seed,
+                            "side": state.player.value,
+                            "reward": trace["reward"],
+                            "reason": trace["reason"],
+                            "truncated": trace["truncated"],
+                            "plies": len(trace["actions"]),
+                            "trace": name,
+                            "elapsed_seconds": elapsed,
+                        }
+                    )
+    summary, paired = evaluation_summary(records)
     report = {
+        "evaluation_schema": 2,
         "checkpoint_sha256": hashlib.sha256(Path(checkpoint).read_bytes()).hexdigest(),
         "contract": expected,
+        "training_config": meta,
         "heldout_sha256": heldout_hash,
         "seeds": seeds,
-        "horizon": meta["horizon"],
+        "opponents": references,
+        "horizon": horizon,
         "gamma": meta["gamma"],
         "summary": summary,
+        "paired": paired,
         "records": records,
         "elapsed_seconds": time.monotonic() - start,
-        "limitation": "tiny synthetic-start evaluation, not full-game strength",
+        "limitation": "synthetic diagnostic; bounds express censoring, not confidence or strength",
     }
     write_json(output / "report.json", report)
     return report
@@ -345,7 +452,12 @@ if __name__ == "__main__":
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--episodes", type=int, default=32)
     parser.add_argument("--seed", type=int, default=17)
-    parser.add_argument("--horizon", type=int, default=4)
+    parser.add_argument(
+        "--horizon", type=int, help="train default 4; evaluation default checkpoint horizon"
+    )
+    parser.add_argument("--reference", choices=REFERENCES[:2], default="random-v1")
+    parser.add_argument("--both-sides", action="store_true")
+    parser.add_argument("--opponents", choices=REFERENCES, nargs="+", default=["random-v1"])
     parser.add_argument("--resume", type=Path)
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--heldout", type=Path)
@@ -355,12 +467,21 @@ if __name__ == "__main__":
             args.output,
             args.data,
             episodes=args.episodes,
-            horizon=args.horizon,
+            horizon=4 if args.horizon is None else args.horizon,
+            reference_id=args.reference,
+            both_sides=args.both_sides,
             seed=args.seed,
             resume=args.resume,
         )
     else:
         if args.checkpoint is None or args.heldout is None:
             parser.error("evaluate requires --checkpoint and --heldout")
-        result = evaluate(args.checkpoint, args.data, args.heldout, args.output)
+        result = evaluate(
+            args.checkpoint,
+            args.data,
+            args.heldout,
+            args.output,
+            references=args.opponents,
+            horizon=args.horizon,
+        )
     print(json.dumps({k: v for k, v in result.items() if k != "records"}, indent=2))

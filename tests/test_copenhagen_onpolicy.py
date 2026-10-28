@@ -185,3 +185,98 @@ def test_duplicate_evaluation_seeds_fail_before_loading_or_writing(tmp_path, see
     with pytest.raises(ValueError, match="Evaluation seeds must be unique"):
         evaluate(missing, missing, missing, output, seeds=seeds)
     assert not output.exists()
+
+
+def test_reference_and_side_schedule_are_bound_to_resume(tmp_path):
+    settings = dict(reference_id="heuristic-v1", both_sides=True, horizon=2)
+    whole = train(tmp_path / "whole", DATA, episodes=4, **settings)
+    part = train(tmp_path / "part", DATA, episodes=2, **settings)
+    checkpoint = tmp_path / "part" / part["checkpoint"]
+    resumed = train(tmp_path / "resumed", DATA, episodes=2, resume=checkpoint, **settings)
+    expected = {**contract(starts(DATA)[1]), "schema": 2, "algorithm": ALGORITHM}
+    a, am, ar = load(tmp_path / "whole" / whole["checkpoint"], expected)
+    b, bm, br = load(tmp_path / "resumed" / resumed["checkpoint"], expected)
+    assert np.array_equal(a.actor, b.actor) and np.array_equal(a.critic, b.critic)
+    assert am == bm and ar.bit_generator.state == br.bit_generator.state
+    assert [r["learner"] for r in whole["records"]] == ["attackers", "defenders"] * 2
+    for r in whole["records"]:
+        trace = json.loads((tmp_path / "whole" / r["trace"]).read_text())
+        assert trace["opponent"] == "heuristic-v1"
+        trace_state(trace)
+    for changed in ({"reference_id": "random-v1"}, {"both_sides": False}):
+        with pytest.raises(ValueError, match="contract mismatch"):
+            train(tmp_path / "bad", DATA, episodes=1, resume=checkpoint, **(settings | changed))
+        assert not (tmp_path / "bad").exists()
+
+
+def test_multi_opponent_evaluation_pairs_streams_without_mutating_checkpoint(tmp_path):
+    report = train(tmp_path / "train", DATA, episodes=2, horizon=1)
+    checkpoint = tmp_path / "train" / report["checkpoint"]
+    original = checkpoint.read_bytes()
+    refs = ("random-v1", "heuristic-v1", "mcts-v1-i4-r4")
+    result = evaluate(
+        checkpoint, DATA, HELDOUT, tmp_path / "eval", seeds=(100003,), references=refs, horizon=2
+    )
+    assert result["horizon"] == 2 and result["training_config"]["horizon"] == 1
+    assert len(result["records"]) == 36
+    assert len({r["trace"] for r in result["records"]}) == 36
+    assert checkpoint.read_bytes() == original
+    for record in result["records"]:
+        peer = next(
+            r
+            for r in result["records"]
+            if r["model"] != record["model"]
+            and (r["opponent"], r["start_index"], r["seed"])
+            == (record["opponent"], record["start_index"], record["seed"])
+        )
+        assert peer["learner_seed"] == record["learner_seed"]
+        assert peer["opponent_seed"] == record["opponent_seed"]
+        trace = json.loads((tmp_path / "eval" / record["trace"]).read_text())
+        assert trace["opponent"] == record["opponent"]
+        trace_state(trace)
+    assert len(result["paired"]) == 6
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"references": ("heuristic-v1", "heuristic-v1")},
+        {"references": ()},
+        {"references": ("mcts-v1-i64-r48",)},
+        {"horizon": 33},
+        {"horizon": True},
+        {"horizon": 0},
+    ],
+)
+def test_invalid_evaluation_budget_or_reference_fails_before_output(tmp_path, kwargs):
+    missing = tmp_path / "missing"
+    with pytest.raises(ValueError):
+        evaluate(missing, missing, missing, tmp_path / "out", **kwargs)
+    assert not (tmp_path / "out").exists()
+
+
+def test_censored_pair_bounds_do_not_invent_draws_or_drop_losses():
+    from hnef.learning.onpolicy import evaluation_summary
+
+    records = [
+        {
+            "model": model,
+            "opponent": "heuristic-v1",
+            "side": "attackers",
+            "start_index": i,
+            "seed": 100000,
+            "reward": reward,
+            "reason": "king_captured" if reward is not None else None,
+        }
+        for model, rewards in (("initialized", [None, 1, -1, 0]), ("candidate", [1, None, -1, 0]))
+        for i, reward in enumerate(rewards)
+    ]
+    summary, paired = evaluation_summary(records)
+    assert summary[0]["results"] == {"win": 1, "loss": 1, "draw": 1, "unfinished": 1}
+    assert summary[0]["cutoff_rate"] == 0.25
+    assert summary[0]["win_rate_bounds"] == [0.25, 0.5]
+    assert paired[0]["win_rate_delta_bounds"] == [-0.25, 0.25]
+    with pytest.raises(ValueError, match="Unpaired"):
+        evaluation_summary(records[:-1])
+    with pytest.raises(ValueError, match="Duplicate"):
+        evaluation_summary(records + records[:1])
