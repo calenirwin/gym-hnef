@@ -111,7 +111,7 @@ def test_invalid_staging_inputs_fail_before_output(tmp_path):
             curriculum="constrained32-broad32-v1",
             both_sides=True,
         )
-    with pytest.raises(ValueError, match="16 explicit"):
+    with pytest.raises(ValueError, match="explicit training-only"):
         train(
             tmp_path / "out",
             ROOT / "copenhagen-training-broad-v1/cases.json",

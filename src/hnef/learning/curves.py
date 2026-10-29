@@ -28,7 +28,7 @@ def training_positions(path, stage=None):
         raise ValueError("Training position IDs must be unique")
     states, digest = starts(path)
     if stage is not None:
-        if stage not in ("constrained", "broad"):
+        if stage not in ("constrained", "intermediate", "broad"):
             raise ValueError("Unknown diagnostic training stage")
         selected = [i for i, c in enumerate(cases) if c.get("stage") == stage]
         if not selected:
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--checkpoints", type=Path, nargs="+", required=True)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--stage", choices=("constrained", "broad"))
+    parser.add_argument("--stage", choices=("constrained", "intermediate", "broad"))
     args = parser.parse_args()
     result = curves(args.data, args.checkpoints, args.output, stage=args.stage)
     print(

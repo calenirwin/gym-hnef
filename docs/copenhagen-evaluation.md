@@ -222,3 +222,20 @@ In particular, broader-phase wins/losses must be observed directly; successes in
 the constrained phase cannot satisfy a broader-phase coverage gate. Preserve all
 fixed seeds rather than selecting a favorable model. No validation or final
 benchmark is needed to diagnose a failed training-only gate.
+
+## Intermediate defender stage
+
+The [three-stage manifest](../tests/fixtures/copenhagen-training-defender-staged-v1/README.md)
+adds an intermediate branch count for only the two defender escape starts. Use
+`--curriculum constrained16-intermediate16-broad32-v1` for 16 constrained, 16
+intermediate and 32 broader updates. For the control, use the same manifest with
+`--curriculum constrained32-broad32-v1`. Both use the existing two 32-update
+invocations and the same documented resume process; do not change curriculum IDs
+between invocations. Keep `--stage broad` for comparison curves.
+
+The fixed manifest has 24 starts (the explicit loader cap), but trajectory, thread
+and time budgets are unchanged. Each 16-update phase contains a complete crossed
+start/opponent cycle; the final 32-update phase contains two. Attacker starts and
+defender loss positions in the intermediate phase are unchanged. Check counts and
+terminal witnesses, freeze criteria/seeds before running, and preserve all outcomes.
+This compares two fixed teaching schedules, not a learned promotion decision.

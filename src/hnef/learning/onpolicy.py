@@ -21,7 +21,12 @@ from .plumbing import LinearModel, contract, load, save
 ALGORITHM = "same-player-td0-ac-v1"
 REFERENCES = ("random-v1", "heuristic-v1", "mcts-v1-i4-r4")
 TRAINING_REFERENCES = (*REFERENCES[:2], "mixed-random-heuristic-v1")
-CURRICULA = ("fixture-v1", "constrained32-broad32-v1", "broad64-v1")
+CURRICULA = (
+    "fixture-v1",
+    "constrained32-broad32-v1",
+    "broad64-v1",
+    "constrained16-intermediate16-broad32-v1",
+)
 
 
 def features(state):
@@ -47,8 +52,8 @@ def target(outcome, learner, next_value, gamma):
 def starts(path):
     raw = Path(path).read_bytes()
     records = [c for c in json.loads(raw)["cases"] if c.get("board") is not None]
-    if not 1 <= len(records) <= 16:
-        raise ValueError("Expected 1..16 concrete curriculum positions")
+    if not 1 <= len(records) <= 24:
+        raise ValueError("Expected 1..24 concrete curriculum positions")
     # Deliberately do not read move/expected-outcome/teacher labels.
     states = [GameState(tuple(c["board"]), Player(c["player"]), ruleset=RULESET) for c in records]
     return states, hashlib.sha256(raw).hexdigest()
@@ -211,20 +216,25 @@ def curriculum_groups(data, positions, curriculum, both_sides):
     if both_sides:
         raise ValueError("Staged starts already contain both movers")
     cases = json.loads(Path(data).read_text())["cases"]
+    stage_names = (
+        ("constrained", "intermediate", "broad") if len(cases) == 24 else ("constrained", "broad")
+    )
     if (
-        len(cases) != 16
-        or len(positions) != 16
+        len(cases) not in (16, 24)
+        or len(positions) != len(cases)
+        or (curriculum == "constrained16-intermediate16-broad32-v1" and len(cases) != 24)
         or any(
             c.get("split") != "training"
             or c.get("ruleset") != RULESET.value
-            or c.get("stage") not in ("constrained", "broad")
+            or c.get("stage") not in stage_names
             for c in cases
         )
     ):
-        raise ValueError("Staging requires 16 explicit training-only, versioned stage records")
+        raise ValueError(
+            "Staging requires 16 or 24 explicit training-only, versioned stage records"
+        )
     groups = {
-        stage: [i for i, c in enumerate(cases) if c["stage"] == stage]
-        for stage in ("constrained", "broad")
+        stage: [i for i, c in enumerate(cases) if c["stage"] == stage] for stage in stage_names
     }
     for indices in groups.values():
         if len(indices) != 8 or Counter(positions[i].player for i in indices) != {
@@ -242,6 +252,8 @@ def curriculum_choice(curriculum, groups, step):
         stage = "fixture"
     elif curriculum == "broad64-v1":
         stage = "broad"
+    elif curriculum == "constrained16-intermediate16-broad32-v1":
+        stage = "constrained" if step < 16 else "intermediate" if step < 32 else "broad"
     else:
         stage = "constrained" if step < 32 else "broad"
     indices = groups[stage]
