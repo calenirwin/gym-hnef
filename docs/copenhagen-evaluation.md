@@ -239,3 +239,22 @@ start/opponent cycle; the final 32-update phase contains two. Attacker starts an
 defender loss positions in the intermediate phase are unchanged. Check counts and
 terminal witnesses, freeze criteria/seeds before running, and preserve all outcomes.
 This compares two fixed teaching schedules, not a learned promotion decision.
+
+### Replay diagnosis of training updates
+
+`PYTHONPATH=src python tools/diagnose_copenhagen.py --data <training-cases.json>
+--run <training-invocation-directory> --output <new-directory>` diagnoses up to
+32 saved updates without training a new model. Set `OPENBLAS_NUM_THREADS=1`,
+`OMP_NUM_THREADS=1` and `MKL_NUM_THREADS=1`. The command has a 60-second cap.
+It requires matching source/data/encoding contracts, reproduces collection,
+optimizer parameters and RNG state, and records input hashes. Use the source
+revision matching the saved training checkpoint; contracts are not bypassed.
+
+The report counts exact one-ply winning opportunities and choices at visited
+learner states, records their signed advantages, and measures each update's
+change in winning-action probability on broad **training** probes. Negative
+probe deltas indicate interference with that probe, not proof of weaker play.
+Actor and critic parameters are separate. The reported clipping ratio isolates
+how the critic gradient reduces actor step size through the shared norm cap;
+it is not an actor/critic gradient cosine or a causal critic ablation.
+Synthetic training diagnostics do not replace heldout full-game evaluation.
