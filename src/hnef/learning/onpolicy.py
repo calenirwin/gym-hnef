@@ -10,7 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
-from hnef.engine import GameState, Player, apply_move
+from hnef.engine import GameState, Player, apply_move, legal_moves
 from hnef.opponents import opponent
 from hnef.policies import RandomPolicy
 
@@ -20,6 +20,7 @@ from .plumbing import LinearModel, contract, load, save
 
 ALGORITHM = "same-player-td0-ac-v1"
 REFERENCES = ("random-v1", "heuristic-v1", "mcts-v1-i4-r4")
+BEHAVIORS = ("policy-v1", "immediate-win-prior4-v1")
 TRAINING_REFERENCES = (*REFERENCES[:2], "mixed-random-heuristic-v1")
 CURRICULA = (
     "fixture-v1",
@@ -82,7 +83,39 @@ def trace_state(trace):
     return state
 
 
-def collect(model, initial, rng, opponent_seed, horizon, gamma, reference_id="random-v1"):
+def behavior_prior(state, behavior):
+    if behavior not in BEHAVIORS:
+        raise ValueError("Unknown behavior policy")
+    prior = np.ones(len(CODEC.moves))
+    if behavior == "immediate-win-prior4-v1":
+        for move in legal_moves(state):
+            successor = apply_move(state, move)
+            if successor.outcome is not None and successor.outcome.winner is state.player:
+                prior[CODEC.encode(move)] = 4.0
+    return prior
+
+
+def behavior_probs(probs, prior):
+    if prior.shape != probs.shape or not np.isfinite(prior).all() or (prior <= 0).any():
+        raise ValueError("Invalid fixed behavior prior")
+    if np.all(prior == 1):
+        return probs
+    weighted = probs * prior
+    return weighted / weighted.sum(axis=-1, keepdims=True)
+
+
+def collect(
+    model,
+    initial,
+    rng,
+    opponent_seed,
+    horizon,
+    gamma,
+    reference_id="random-v1",
+    behavior="policy-v1",
+):
+    if behavior not in BEHAVIORS:
+        raise ValueError("Unknown behavior policy")
     learner = initial.player
     reference = (
         RandomPolicy(opponent_seed)
@@ -100,10 +133,17 @@ def collect(model, initial, rng, opponent_seed, horizon, gamma, reference_id="ra
         "opponent_seed": opponent_seed,
         "opponent": reference_id,
     }
+    if behavior != "policy-v1":
+        trace["behavior"] = behavior
+        trace["behavior_probabilities"] = []
     for _ in range(horizon):
         x, mask = features(state)
         probs, value = model.forward(x[None], mask[None])
-        action = int(rng.choice(len(probs[0]), p=probs[0]))
+        prior = behavior_prior(state, behavior)
+        sampling = behavior_probs(probs[0], prior)
+        action = int(rng.choice(len(sampling), p=sampling))
+        if behavior != "policy-v1":
+            trace["behavior_probabilities"].append(float(sampling[action]))
         state = apply_move(state, CODEC.decode(action))
         trace["actions"].append(action)
         trace["keys"].append(state.key)
@@ -119,7 +159,8 @@ def collect(model, initial, rng, opponent_seed, horizon, gamma, reference_id="ra
             _, nv = model.forward(nx[None], nm[None])
             next_value = float(nv[0])
         y = target(state.outcome, learner, next_value, gamma)
-        samples.append((x, mask, action, float(value[0]), y))
+        sample = (x, mask, action, float(value[0]), y)
+        samples.append(sample if behavior == "policy-v1" else (*sample, prior))
         if state.outcome is not None:
             break
     trace.update(
@@ -136,10 +177,17 @@ def collect(model, initial, rng, opponent_seed, horizon, gamma, reference_id="ra
 
 
 def gradients(model, samples):
-    x, mask, actions, old_values, targets = (np.array(a) for a in zip(*samples, strict=True))
+    x, mask, actions, old_values, targets = (
+        np.array(a) for a in zip(*(s[:5] for s in samples), strict=True)
+    )
+    if any(len(s) not in (5, 6) for s in samples):
+        raise ValueError("Invalid sample contract")
     probs, values = model.forward(x, mask)
     if not np.allclose(values, old_values, rtol=1e-12, atol=1e-12):
         raise ValueError("Model changed since on-policy collection")
+    priors = np.array([s[5] if len(s) == 6 else np.ones(len(CODEC.moves)) for s in samples])
+    probs = behavior_probs(probs, priors)
+    # Fixed log-priors have zero parameter derivative: grad log q = one_hot - q.
     advantages = targets - old_values  # Detached target and baseline.
     delta = probs.copy()
     delta[np.arange(len(x)), actions] -= 1
@@ -271,8 +319,11 @@ def train(
     reference_id="random-v1",
     both_sides=False,
     curriculum="fixture-v1",
+    behavior="policy-v1",
 ):
     cpu_caps()
+    if behavior not in BEHAVIORS:
+        raise ValueError("Unknown behavior policy")
     if type(episodes) is not int or not 1 <= episodes <= 32:
         raise ValueError("Use 1..32 episodes")
     if type(horizon) is not int or not 1 <= horizon <= 8:
@@ -298,6 +349,7 @@ def train(
         "reference_id": reference_id,
         "start_schedule": "both-sides-v1" if both_sides else "fixture-mover-v1",
         "curriculum": curriculum,
+        "behavior": behavior,
     }
     if resume:
         model, meta, rng = load(resume, expected)
@@ -324,7 +376,14 @@ def train(
         reference_seed = stream_seed(meta["seed"], f"td-reference-{meta['step']}")
         actual_reference = training_reference(reference_id, meta["step"], stage_size)
         samples, trace = collect(
-            model, positions[index], rng, reference_seed, horizon, meta["gamma"], actual_reference
+            model,
+            positions[index],
+            rng,
+            reference_seed,
+            horizon,
+            meta["gamma"],
+            actual_reference,
+            behavior,
         )
         metrics = update(model, samples, meta["learning_rate"])
         meta["step"] += 1
@@ -565,6 +624,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("--reference", choices=TRAINING_REFERENCES, default="random-v1")
     parser.add_argument("--both-sides", action="store_true")
+    parser.add_argument("--behavior", choices=BEHAVIORS, default="policy-v1")
     parser.add_argument("--curriculum", choices=CURRICULA, default="fixture-v1")
     parser.add_argument("--opponents", choices=REFERENCES, nargs="+", default=["random-v1"])
     parser.add_argument("--resume", type=Path)
@@ -581,6 +641,7 @@ if __name__ == "__main__":
             reference_id=args.reference,
             both_sides=args.both_sides,
             curriculum=args.curriculum,
+            behavior=args.behavior,
             seed=args.seed,
             resume=args.resume,
         )

@@ -94,6 +94,7 @@ def diagnose(data, run, output):
             meta["horizon"],
             meta["gamma"],
             record["opponent"],
+            meta.get("behavior", "policy-v1"),
         )
         if json.loads(json.dumps(replay)) != trace:
             raise ValueError("Exact collection replay failed")

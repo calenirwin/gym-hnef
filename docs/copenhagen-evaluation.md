@@ -258,3 +258,24 @@ Actor and critic parameters are separate. The reported clipping ratio isolates
 how the critic gradient reduces actor step size through the shared norm cap;
 it is not an actor/critic gradient cosine or a causal critic ablation.
 Synthetic training diagnostics do not replace heldout full-game evaluation.
+
+### Fixed tactical-prior behavior experiment
+
+Training accepts `--behavior immediate-win-prior4-v1` (default `policy-v1`).
+The experimental behavior policy is `q(a|s) = p(a|s) w(s,a) / sum_b p(b|s) w(s,b)`,
+where `w=4` for exact engine-adjudicated immediate winning moves and `w=1`
+otherwise. Illegal actions remain masked. This is rule-assisted sampling, not
+an unassisted learner discovering tactics. It does not decide unresolved rules.
+
+The prior is fixed with respect to the parameters. The actor uses `q-one_hot`
+in its loss gradient and samples from that same `q`; no off-policy forced moves
+or omitted importance correction are hidden in the update. The critic targets
+the same behavior's trajectories with explicit truncation bootstrapping. Traces
+record the behavior identifier and each selected action's actual probability;
+checkpoints bind the behavior and reject switching it on resume. Source
+fingerprints still prevent silently resuming older implementations.
+
+Training curves and the existing evaluation command measure the **raw** policy
+`p`, with the tactical prior removed. Gate any heldout run on prespecified raw
+training-policy improvement, balanced actual win/loss updates, and exact replay.
+Assisted collection success alone is not evidence of learned playing strength.
