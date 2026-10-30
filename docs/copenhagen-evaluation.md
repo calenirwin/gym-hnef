@@ -279,3 +279,15 @@ Training curves and the existing evaluation command measure the **raw** policy
 `p`, with the tactical prior removed. Gate any heldout run on prespecified raw
 training-policy improvement, balanced actual win/loss updates, and exact replay.
 Assisted collection success alone is not evidence of learned playing strength.
+
+The replay diagnostic's schema 2 adds per-visited-state legal/winning action
+counts, raw and behavior winning-action probability, selected-action probability,
+value/target and exact state identity. Summaries group by original training start
+and initial versus continuation decision. `conditional_expected_wins` sums the
+actual behavior probabilities at visited histories; `observed_minus_expected`
+compares this sum with selected wins. Histories and policies adapt, so these are
+not independent trials, binomial significance tests or guarantees of wins.
+Raw probability mass on assisted histories is not the counterfactual outcome of
+an unassisted rollout. Per-position probe deltas separate training-fit changes
+on each broad start; they do not measure heldout generalization. The command
+still replays existing updates only and never alters checkpoints or rules.
