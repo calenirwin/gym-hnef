@@ -324,3 +324,28 @@ budgets. It does not migrate earlier checkpoints; source fingerprints remain
 strict. Limits are eight pairs (64 learner decisions) per invocation, sixteen
 pairs (128 decisions) total, and 60 seconds per invocation. No public opponent
 or game rule changes follow from a synthetic training comparison.
+
+### Local optimizer factorial on saved batches
+
+`tools/compare_copenhagen_gradients.py --data <training-cases.json> --run
+<saved-cell-batch-invocation> --output <new-directory>` separates local optimizer
+operations using identical starting parameters, states, actions and TD targets.
+Its four arms cross decision versus rollout weighting with clipping after
+averaging versus clipping each rollout before averaging. All four have the same
+total learning-rate exposure. A separately labeled unmatched-dose diagnostic
+shows the effect of multiplying that exposure by the rollout count.
+
+The command verifies that decision-weighted aggregate clipping reproduces the
+saved batch update, and that splitting a fixed gradient across stateless SGD
+steps reproduces the equivalent single step. This identity does **not** cover
+online policy refresh, changing targets or momentum. Local probe effects are not
+cumulative learning curves, trained models or heldout strength evidence. No
+checkpoint is written and these diagnostics cannot satisfy a learning gate.
+
+Use the original trainer source revision matching the artifacts on PYTHONPATH,
+with the standard one-thread environment caps. The tool applies the strengthened
+current verifier only after AST-checking that all other batch-module code is
+identical; recorded source contracts are enforced without overrides. It checks
+report-level initial baselines as well as traces, parameters and per-cell probes.
+Only saved frozen-policy batch runs are supported, with the existing eight-cell
+and 60-second invocation limits. No new rollout is sampled for training.
