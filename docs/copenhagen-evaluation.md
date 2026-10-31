@@ -291,3 +291,36 @@ Raw probability mass on assisted histories is not the counterfactual outcome of
 an unassisted rollout. Per-position probe deltas separate training-fit changes
 on each broad start; they do not measure heldout generalization. The command
 still replays existing updates only and never alters checkpoints or rules.
+
+### Matched-decision rollout batches
+
+`python -m hnef.learning.batches train --data <training-cases.json> --output
+<new-directory> --mode cell-batch-v1 --seed 53 --cells 8` compares with
+`--mode episode-v1`. Use the same documented one-thread environment variables
+and `PYTHONPATH=src`. Resume into a new directory with the last checkpoint and
+identical mode/seed. `verify --data <training-cases.json> --output <run-directory>`
+replays the saved invocation in memory, checking traces, gradients, probes,
+parameters and checkpoint state without writing new model artifacts.
+
+The comparison uses eight broad training starts and two reference opponents.
+Each position/opponent pair receives exactly eight learner decisions. A rollout
+ends at a terminal result or at four learner decisions; the last horizon is
+shortened to meet the quota exactly. After a terminal rollout a fresh independent
+rollout fills the remaining quota. Cutoffs retain TD bootstrapping, not draw
+labels. Seeds are independently derived for each pair/rollout and each actor.
+Reference assignment crosses every start and therefore both learner sides.
+
+In `cell-batch-v1`, parameters stay frozen during collection for one pair and
+one decision-weighted gradient update follows. In `episode-v1`, each rollout
+gets its own update. Both use the fixed tactical-prior behavior and its correct
+on-policy gradient; reported probes remove that prior. Equal sampling budgets
+do not imply equal optimizer steps, rollout counts or aggregate gradient
+weights. Learning-rate and update-frequency effects are part of this comparison;
+it cannot isolate variance reduction alone. Per-rollout gradient contributions
+are distinguished from actual aggregate cell parameter changes.
+
+The new schema-3 algorithm binds mode, seed, position order, RNG derivation and
+budgets. It does not migrate earlier checkpoints; source fingerprints remain
+strict. Limits are eight pairs (64 learner decisions) per invocation, sixteen
+pairs (128 decisions) total, and 60 seconds per invocation. No public opponent
+or game rule changes follow from a synthetic training comparison.
