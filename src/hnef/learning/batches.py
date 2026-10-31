@@ -160,6 +160,18 @@ def verify(run, data):
     ids, states, winning, expected = setup(data, cfg["mode"], cfg["seed"])
     if cfg != expected or not 1 <= len(report["records"]) <= 8:
         raise ValueError("Replay contract/count mismatch")
+    first = report["records"][0]["cell"]
+    if type(first) is not int or not 0 <= first < TOTAL_CELLS:
+        raise ValueError("Invalid initial cell index")
+    initial, initial_meta, _ = load(run / f"checkpoint-{first:04}.npz", expected)
+    if initial_meta["step"] != first:
+        raise ValueError("Initial checkpoint step mismatch")
+    initial_positions, initial_summary = measure(initial, ids, states, winning)
+    if (
+        report.get("initial_positions") != initial_positions
+        or report.get("initial_summary") != initial_summary
+    ):
+        raise ValueError("Initial baseline probe replay mismatch")
     last = None
     for record in report["records"]:
         if time.monotonic() - started > 60:

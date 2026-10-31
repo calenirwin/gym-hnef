@@ -107,3 +107,28 @@ def test_assignment_crosses_all_starts_with_each_reference_and_caps(tmp_path):
     )
     with pytest.raises(ValueError, match="mode/index"):
         batches.cell(LinearModel(), states[0], 53, 16, "cell-batch-v1")
+
+
+@pytest.mark.parametrize("field", ["initial_positions", "initial_summary"])
+@pytest.mark.parametrize("resumed", [False, True])
+def test_initial_baseline_tampering_rejected(tmp_path, field, resumed):
+    cfg = dict(mode="cell-batch-v1", seed=53, cells=1)
+    batches.train(tmp_path / "first", DATA, **cfg)
+    run = tmp_path / "first"
+    if resumed:
+        run = tmp_path / "resumed"
+        batches.train(run, DATA, resume=tmp_path / "first/checkpoint-0001.npz", **cfg)
+    assert batches.verify(run, DATA)["decisions"] == 8
+    checkpoint_bytes = {p.name: p.read_bytes() for p in run.glob("*.npz")}
+    path = run / "report.json"
+    report = json.loads(path.read_text())
+    key = (
+        "immediate_win_probability"
+        if field == "initial_positions"
+        else "mean_immediate_win_probability"
+    )
+    report[field][0][key] += 0.1
+    path.write_text(json.dumps(report))
+    with pytest.raises(ValueError, match="Initial baseline probe replay mismatch"):
+        batches.verify(run, DATA)
+    assert checkpoint_bytes == {p.name: p.read_bytes() for p in run.glob("*.npz")}
