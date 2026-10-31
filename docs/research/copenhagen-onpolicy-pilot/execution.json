@@ -1,0 +1,82 @@
+[
+  {
+    "command": [
+      "python",
+      "-m",
+      "hnef.learning.onpolicy",
+      "train",
+      "--data",
+      "tests/fixtures/copenhagen-training-plumbing-v1/cases.json",
+      "--output",
+      "/workspace/shared/copenhagen-onpolicy-schema2/train",
+      "--episodes",
+      "32",
+      "--horizon",
+      "4",
+      "--seed",
+      "17"
+    ],
+    "wall_seconds_including_startup": 2.312066694998066,
+    "exit_code": 0,
+    "stderr": "",
+    "hard_timeout_seconds": 65
+  },
+  {
+    "command": [
+      "python",
+      "-m",
+      "hnef.learning.onpolicy",
+      "evaluate",
+      "--data",
+      "tests/fixtures/copenhagen-training-plumbing-v1/cases.json",
+      "--heldout",
+      "tests/fixtures/copenhagen-heldout-v1/cases.json",
+      "--checkpoint",
+      "/workspace/shared/copenhagen-onpolicy-schema2/train/checkpoint-0032.npz",
+      "--output",
+      "/workspace/shared/copenhagen-onpolicy-schema2/evaluation"
+    ],
+    "wall_seconds_including_startup": 0.6726152259980154,
+    "exit_code": 0,
+    "stderr": "",
+    "hard_timeout_seconds": 65
+  },
+  {
+    "command": [
+      "python",
+      "-m",
+      "hnef.learning.onpolicy",
+      "train",
+      "--data",
+      "tests/fixtures/copenhagen-training-plumbing-v1/cases.json",
+      "--output",
+      "/workspace/shared/copenhagen-onpolicy-schema2/part",
+      "--episodes",
+      "16"
+    ],
+    "wall_seconds_including_startup": 1.252461193002091,
+    "exit_code": 0,
+    "stderr": "",
+    "hard_timeout_seconds": 65
+  },
+  {
+    "command": [
+      "python",
+      "-m",
+      "hnef.learning.onpolicy",
+      "train",
+      "--data",
+      "tests/fixtures/copenhagen-training-plumbing-v1/cases.json",
+      "--output",
+      "/workspace/shared/copenhagen-onpolicy-schema2/resumed",
+      "--episodes",
+      "16",
+      "--resume",
+      "/workspace/shared/copenhagen-onpolicy-schema2/part/checkpoint-0016.npz"
+    ],
+    "wall_seconds_including_startup": 1.2036100850018556,
+    "exit_code": 0,
+    "stderr": "",
+    "hard_timeout_seconds": 65
+  }
+]

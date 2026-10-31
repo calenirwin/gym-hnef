@@ -1,0 +1,332 @@
+{
+  "checkpoint_sha256": "15cf8da04729f4f52b307205600d967f126758b4765d102ab71c64ace7d21091",
+  "contract": {
+    "schema": 2,
+    "ruleset": "copenhagen-experimental-v2",
+    "features": "copenhagen-linear-board-repetition-count-v1",
+    "codec_sha256": "5e2c856f6e60d6a100f0d3817b324cd6911252e22d16c5252e184ec835bb4f7c",
+    "dataset_sha256": "c6d9c7d4c62bb74b2de2e4aed40298756eb3e81402177d9e1a99efa2a0ef7800",
+    "source_sha256": "2d147bfa48a78a1d567b37c6e68a32fe88e33b4a3eaf1ff0ed805298426b4554",
+    "numpy": "2.3.5",
+    "algorithm": "same-player-td0-ac-v1"
+  },
+  "heldout_sha256": "9d3f9ddad120afd5670e046384a5ee669eff27ad0ff5937c22b6bc03c9cc54e2",
+  "seeds": [
+    100000,
+    100001
+  ],
+  "horizon": 4,
+  "gamma": 0.99,
+  "summary": [
+    {
+      "model": "initialized",
+      "side": "attackers",
+      "games": 6,
+      "results": {
+        "unfinished": 4,
+        "loss": 2
+      },
+      "terminal_reasons": {
+        "king_escaped": 2
+      }
+    },
+    {
+      "model": "initialized",
+      "side": "defenders",
+      "games": 6,
+      "results": {
+        "unfinished": 6
+      },
+      "terminal_reasons": {}
+    },
+    {
+      "model": "candidate",
+      "side": "attackers",
+      "games": 6,
+      "results": {
+        "unfinished": 4,
+        "loss": 2
+      },
+      "terminal_reasons": {
+        "king_escaped": 2
+      }
+    },
+    {
+      "model": "candidate",
+      "side": "defenders",
+      "games": 6,
+      "results": {
+        "unfinished": 6
+      },
+      "terminal_reasons": {}
+    }
+  ],
+  "records": [
+    {
+      "model": "initialized",
+      "start_index": 0,
+      "seed": 100000,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-0-100000.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 0,
+      "seed": 100001,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-0-100001.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 1,
+      "seed": 100000,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-1-100000.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 1,
+      "seed": 100001,
+      "side": "attackers",
+      "reward": -1,
+      "reason": "king_escaped",
+      "truncated": false,
+      "plies": 8,
+      "trace": "initialized-1-100001.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 2,
+      "seed": 100000,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-2-100000.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 2,
+      "seed": 100001,
+      "side": "attackers",
+      "reward": -1,
+      "reason": "king_escaped",
+      "truncated": false,
+      "plies": 6,
+      "trace": "initialized-2-100001.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 3,
+      "seed": 100000,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-3-100000.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 3,
+      "seed": 100001,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-3-100001.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 4,
+      "seed": 100000,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-4-100000.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 4,
+      "seed": 100001,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-4-100001.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 5,
+      "seed": 100000,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-5-100000.json"
+    },
+    {
+      "model": "initialized",
+      "start_index": 5,
+      "seed": 100001,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "initialized-5-100001.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 0,
+      "seed": 100000,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-0-100000.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 0,
+      "seed": 100001,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-0-100001.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 1,
+      "seed": 100000,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-1-100000.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 1,
+      "seed": 100001,
+      "side": "attackers",
+      "reward": -1,
+      "reason": "king_escaped",
+      "truncated": false,
+      "plies": 8,
+      "trace": "candidate-1-100001.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 2,
+      "seed": 100000,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-2-100000.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 2,
+      "seed": 100001,
+      "side": "attackers",
+      "reward": -1,
+      "reason": "king_escaped",
+      "truncated": false,
+      "plies": 6,
+      "trace": "candidate-2-100001.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 3,
+      "seed": 100000,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-3-100000.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 3,
+      "seed": 100001,
+      "side": "attackers",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-3-100001.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 4,
+      "seed": 100000,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-4-100000.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 4,
+      "seed": 100001,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-4-100001.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 5,
+      "seed": 100000,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-5-100000.json"
+    },
+    {
+      "model": "candidate",
+      "start_index": 5,
+      "seed": 100001,
+      "side": "defenders",
+      "reward": null,
+      "reason": null,
+      "truncated": true,
+      "plies": 8,
+      "trace": "candidate-5-100001.json"
+    }
+  ],
+  "elapsed_seconds": 0.5226649889991677,
+  "limitation": "tiny synthetic-start evaluation, not full-game strength"
+}
