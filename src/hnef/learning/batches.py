@@ -16,7 +16,10 @@ from .onpolicy import collect, cpu_caps, gradients, update
 from .plumbing import LinearModel, contract, load, save
 
 ALGORITHM = "same-player-td0-matched-cells-v1"
-MODES = ("episode-v1", "cell-batch-v1")
+LEGACY_MODES = ("episode-v1", "cell-batch-v1")
+NORMALIZED_MODES = ("episode-normalized-v1", "cell-normalized-v1")
+MODES = (*LEGACY_MODES, *NORMALIZED_MODES)
+NORMALIZED_ALGORITHM = "same-player-td0-matched-cells-v2"
 BEHAVIOR = "immediate-win-prior4-v1"
 DECISIONS_PER_CELL = 8
 TOTAL_CELLS = 16
@@ -34,6 +37,9 @@ def cell(model, state, seed, index, mode):
     reference = "random-v1" if index < 8 else "heuristic-v1"
     remaining, rollout, records, all_samples = DECISIONS_PER_CELL, 0, [], []
     before_actor, before_critic = model.actor.copy(), model.critic.copy()
+    normalized = mode in NORMALIZED_MODES
+    online = mode in ("episode-v1", "episode-normalized-v1")
+    pending_actor, pending_critic = np.zeros_like(model.actor), np.zeros_like(model.critic)
     while remaining:
         learner_seed = stream_seed(seed, f"matched-cell-{index}-learner-{rollout}")
         reference_seed = stream_seed(seed, f"matched-cell-{index}-reference-{rollout}")
@@ -47,8 +53,18 @@ def cell(model, state, seed, index, mode):
             reference,
             BEHAVIOR,
         )
-        _, _, contribution = gradients(model, samples)
-        if mode == "episode-v1":
+        actor, critic, contribution = gradients(model, samples)
+        if normalized:
+            weight = len(samples) / DECISIONS_PER_CELL
+            clip_scale = min(1.0, 1 / max(contribution["gradient_norm"], 1e-12))
+            da, dc = weight * clip_scale * actor, weight * clip_scale * critic
+            if online:
+                model.actor -= 0.05 * da
+                model.critic -= 0.05 * dc
+            else:
+                pending_actor += da
+                pending_critic += dc
+        elif mode == "episode-v1":
             update(model, samples, 0.05)
         all_samples.extend(samples)
         records.append(
@@ -61,23 +77,39 @@ def cell(model, state, seed, index, mode):
                 critic_contribution_norm=contribution["critic_gradient_norm"],
             )
         )
+        if normalized:
+            records[-1].update(
+                decision_weight=weight, clip_scale=clip_scale, effective_learning_rate=0.05 * weight
+            )
         remaining -= len(samples)
         rollout += 1
-    if mode == "cell-batch-v1":
+    if not online:
         # One mean over decisions, not an unweighted mean of unequal rollouts.
         assert np.array_equal(model.actor, before_actor)
         assert np.array_equal(model.critic, before_critic)
-        update(model, all_samples, 0.05)
-    return dict(
+        if normalized:
+            model.actor -= 0.05 * pending_actor
+            model.critic -= 0.05 * pending_critic
+        else:
+            update(model, all_samples, 0.05)
+    if not np.isfinite(model.actor).all() or not np.isfinite(model.critic).all():
+        raise ValueError("Nonfinite cell update")
+    result = dict(
         cell=index,
         reference=reference,
         learner=state.player.value,
         decisions=DECISIONS_PER_CELL,
         rollouts=records,
-        updates=rollout if mode == "episode-v1" else 1,
+        updates=rollout if online else 1,
         actor_delta_norm=float(np.linalg.norm(model.actor - before_actor)),
         critic_delta_norm=float(np.linalg.norm(model.critic - before_critic)),
     )
+    if normalized:
+        exposure = sum(r["effective_learning_rate"] for r in records)
+        if not np.isclose(exposure, 0.05, rtol=0, atol=1e-15):
+            raise ValueError("Cell learning-rate exposure mismatch")
+        result["learning_rate_exposure"] = exposure
+    return result
 
 
 def setup(data, mode, seed):
@@ -102,6 +134,14 @@ def setup(data, mode, seed):
         "rng_policy": "independent-cell-rollout-streams-v1",
         "start_ids": ids,
     }
+    if mode in NORMALIZED_MODES:
+        expected.update(
+            algorithm=NORMALIZED_ALGORITHM,
+            gradient_weighting="decision-quota-v1",
+            clipping="per-rollout-joint-l2-cap1-v1",
+            cell_learning_rate_exposure=0.05,
+            policy_refresh="rollout" if mode == "episode-normalized-v1" else "cell",
+        )
     return ids, states, winning, expected
 
 

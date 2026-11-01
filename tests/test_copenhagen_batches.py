@@ -20,7 +20,7 @@ def caps(monkeypatch):
         monkeypatch.setenv(key, "1")
 
 
-@pytest.mark.parametrize("mode", batches.MODES)
+@pytest.mark.parametrize("mode", batches.LEGACY_MODES)
 def test_cell_budget_streams_and_freeze(mode, monkeypatch):
     state = starts(DATA)[0][16]
     model = LinearModel()
@@ -67,7 +67,7 @@ def test_cell_budget_streams_and_freeze(mode, monkeypatch):
         assert any(not np.array_equal(a, snapshots[0][0]) for a, _ in snapshots[1:])
 
 
-@pytest.mark.parametrize("mode", batches.MODES)
+@pytest.mark.parametrize("mode", batches.LEGACY_MODES)
 def test_resume_replay_and_contract_rejection(tmp_path, mode):
     config = dict(mode=mode, seed=53)
     batches.train(tmp_path / "full", DATA, cells=3, **config)

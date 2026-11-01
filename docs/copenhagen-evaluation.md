@@ -349,3 +349,27 @@ identical; recorded source contracts are enforced without overrides. It checks
 report-level initial baselines as well as traces, parameters and per-cell probes.
 Only saved frozen-policy batch runs are supported, with the existing eight-cell
 and 60-second invocation limits. No new rollout is sampled for training.
+
+### Online comparison with matched update exposure
+
+The `episode-normalized-v1` and `cell-normalized-v1` modes use the versioned
+`same-player-td0-matched-cells-v2` contract. Both clip each rollout's joint actor
+and critic gradient to norm one, weight it by `rollout_decisions / 8`, and spend
+exactly 0.05 total learning-rate exposure per position/opponent block.
+
+`episode-normalized-v1` applies each weighted contribution immediately; the
+following independent rollout uses refreshed policy and value parameters.
+`cell-normalized-v1` collects under frozen parameters, accumulates the same kind
+of clipped, decision-weighted contributions, then applies them once. Neither
+mode clips the accumulated result again. Policy/value refresh timing is the
+intentional difference; trajectories and TD targets can consequently diverge.
+Equal nominal exposure does not imply identical parameter distances or outcomes.
+
+Use the existing `hnef.learning.batches train` and `verify` commands with either
+new mode. Per-rollout weights, clipping scales and effective learning rates,
+and the per-block exposure total, are recorded and checked during exact replay.
+Resume binds the normalization, clipping, refresh timing and source fingerprints.
+The old modes retain their own semantics for reproduction; no old checkpoint is
+relabeled. The existing sample/time caps, training-only probes and strengthened
+initial-baseline checks remain in force. A local optimizer identity does not
+substitute for an online learning gate or heldout opponent evaluation.
