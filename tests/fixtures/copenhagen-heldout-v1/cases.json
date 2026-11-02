@@ -1,0 +1,308 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "id": "open-corner-low-material",
+      "kind": "transition",
+      "origin": "constructed rule example; not a referee ruling",
+      "split": "held-out",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "6a; 10",
+      "board": [
+        "........K..",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "..A........",
+        "...........",
+        "...........",
+        "..........."
+      ],
+      "player": "defenders",
+      "move": [
+        [
+          0,
+          8
+        ],
+        [
+          0,
+          10
+        ]
+      ],
+      "expected_outcome": {
+        "winner": "defenders",
+        "reason": "king_escaped"
+      },
+      "expected_cells": [],
+      "rationale": "An immediate escape disproves an automatic draw based solely on low material."
+    },
+    {
+      "id": "throne-adjacent-capture",
+      "kind": "transition",
+      "origin": "constructed rule example; not a referee ruling",
+      "split": "held-out",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "7a",
+      "board": [
+        "...........",
+        "...........",
+        "...........",
+        "...A.......",
+        "....A......",
+        "....K......",
+        "....A......",
+        "...........",
+        "...........",
+        "...........",
+        "..........."
+      ],
+      "player": "attackers",
+      "move": [
+        [
+          3,
+          3
+        ],
+        [
+          5,
+          3
+        ]
+      ],
+      "expected_outcome": {
+        "winner": "attackers",
+        "reason": "king_captured"
+      },
+      "expected_cells": [
+        [
+          5,
+          4,
+          "."
+        ]
+      ],
+      "rationale": "Three attackers and the throne surround the king."
+    },
+    {
+      "id": "shieldwall-spares-king",
+      "kind": "transition",
+      "origin": "constructed rule example; not a referee ruling",
+      "split": "held-out",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "4b; 7a",
+      "board": [
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "......A....",
+        "...........",
+        "...AAA.....",
+        "..ADKD....."
+      ],
+      "player": "attackers",
+      "move": [
+        [
+          7,
+          6
+        ],
+        [
+          10,
+          6
+        ]
+      ],
+      "expected_outcome": null,
+      "expected_cells": [
+        [
+          10,
+          3,
+          "."
+        ],
+        [
+          10,
+          4,
+          "K"
+        ],
+        [
+          10,
+          5,
+          "."
+        ]
+      ],
+      "rationale": "The flanking move captures the soldiers; the edge king has legal moves and survives."
+    },
+    {
+      "id": "occupied-throne-protection",
+      "kind": "transition",
+      "origin": "constructed rule example; not a referee ruling",
+      "split": "held-out",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "5",
+      "board": [
+        "...........",
+        "...........",
+        ".......A...",
+        "...........",
+        "...........",
+        ".....KD....",
+        "...........",
+        "...........",
+        "........A..",
+        "...........",
+        "..........."
+      ],
+      "player": "attackers",
+      "move": [
+        [
+          2,
+          7
+        ],
+        [
+          5,
+          7
+        ]
+      ],
+      "expected_outcome": null,
+      "expected_cells": [
+        [
+          5,
+          6,
+          "D"
+        ]
+      ],
+      "rationale": "The occupied throne cannot serve as hostile support against a defender."
+    },
+    {
+      "id": "voluntary-sandwich",
+      "kind": "transition",
+      "origin": "constructed rule example; not a referee ruling",
+      "split": "held-out",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "4a",
+      "board": [
+        "...........",
+        "...........",
+        "..D........",
+        "...........",
+        ".A.A.......",
+        "...........",
+        "...........",
+        ".......K...",
+        "...........",
+        "...........",
+        "..........."
+      ],
+      "player": "defenders",
+      "move": [
+        [
+          2,
+          2
+        ],
+        [
+          4,
+          2
+        ]
+      ],
+      "expected_outcome": null,
+      "expected_cells": [
+        [
+          4,
+          2,
+          "D"
+        ]
+      ],
+      "rationale": "A defender may move between attackers; its own move does not capture itself."
+    },
+    {
+      "id": "low-material-unresolved",
+      "kind": "transition",
+      "origin": "constructed rule example; not a referee ruling",
+      "split": "held-out",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "10",
+      "board": [
+        "...........",
+        "........A..",
+        "...........",
+        "...........",
+        "....K......",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "...........",
+        "..........."
+      ],
+      "player": "defenders",
+      "move": [
+        [
+          4,
+          4
+        ],
+        [
+          4,
+          3
+        ]
+      ],
+      "expected_outcome": null,
+      "expected_cells": [
+        [
+          4,
+          3,
+          "K"
+        ]
+      ],
+      "rationale": "V2 continues. This fixture makes no claim about the game-theoretic result.",
+      "adjudication_status": "unknown",
+      "question": "Does rule 10 require no possible winning continuation or no forced win?"
+    },
+    {
+      "id": "mobile-defence-2013",
+      "kind": "research-question",
+      "split": "unresolved",
+      "source": "https://aagenielsen.dk/hnefataflforum/phpBB3/viewtopic.php?start=110&t=2",
+      "locator": "Hagbard, 30 September 2013; crust, 2 October 2013",
+      "rule": "6b; 8",
+      "expected_adjudication": "unknown",
+      "board": null,
+      "question": "Does a non-solid fort whose attack loses count as an exit fort under current rules?",
+      "evidence": "Historical deadlock prompted a defender-only repetition proposal, not a current mobile-fort proof.",
+      "limitation": "Diagram not transcribed: image retrieval unavailable. Do not invent coordinates or a ruling."
+    },
+    {
+      "id": "draw-fort-2026",
+      "kind": "research-question",
+      "split": "unresolved",
+      "source": "https://aagenielsen.dk/hnefataflforum/phpBB3/viewtopic.php?start=150&t=2",
+      "locator": "Ytreza, 2 April 2026, Casshern/Sqaree",
+      "rule": "8; 10",
+      "expected_adjudication": "unknown",
+      "board": null,
+      "question": "How should the reported long-lived draw fort be adjudicated absent timeout?",
+      "evidence": "The author asks a question and describes personal alternatives, not an official answer.",
+      "limitation": "Position image and full move history not available here; no executable claim."
+    },
+    {
+      "id": "terminal-precedence",
+      "kind": "research-question",
+      "split": "unresolved",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "locator": "rules 6b, 8, 9, 10",
+      "rule": "6b; 8; 9; 10",
+      "expected_adjudication": "unknown",
+      "board": null,
+      "question": "Which terminal condition wins when fort, repetition or draw criteria coincide?",
+      "evidence": "V2 has a regression for fort before repetition, but source prose gives no complete ordering.",
+      "limitation": "Existing synthetic repeated-history test documents software semantics, not reachable-game referee evidence."
+    }
+  ]
+}

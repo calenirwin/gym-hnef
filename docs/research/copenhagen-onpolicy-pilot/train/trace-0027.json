@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "ruleset": "copenhagen-experimental-v2",
+  "board": [
+    "...........",
+    "..A........",
+    ".......A...",
+    "......AK...",
+    ".......A...",
+    "...........",
+    "....D......",
+    "........A..",
+    ".....D.....",
+    "...........",
+    "..........."
+  ],
+  "player": "attackers",
+  "actions": [
+    1709,
+    1400,
+    272,
+    96,
+    1035,
+    1626,
+    793,
+    1879
+  ],
+  "keys": [
+    "243061470b52f42f741c3eabf4e20b79a739c3231ad479dcb1ab7ef7ab7053be",
+    "aabb194d1f3727df2e421f991c882c2991bad31d4fd7ca00f6f33b6031fb56e5",
+    "b19778cbaa5687a167002b962cf331afc3537af05380e5187fb4424546c81cd7",
+    "d5e1ed0e72c0e5f619f3441411c9d93856ad2e2c989f8fb844a4dd4017f60300",
+    "7840a55730af70e02c225c7b2f39a5dbf231eeff79b0f43c6764cd38a5839049",
+    "b4b7c8505ba8e46d711a2ba86d1bc17a7ac315b20810a73a9a6ad5f1046d941d",
+    "55be01a949e271e9ae40277ec25bc03271181e07c5a01dd29b1691e2ff6df49a",
+    "1f34090553abfc8b52c28dc7a9bfda43c79478bc8285decde45786cc4b236c74",
+    "fdbd17034e258557d10de9e1c09f6227a589cde0c5ba3519eea50fdc6551ebb1"
+  ],
+  "opponent_seed": 12104542235335789872,
+  "terminated": false,
+  "truncated": true,
+  "reason": null,
+  "reward": null,
+  "bootstrap_value": 0.04757938698008032,
+  "final_target": 0.047103593110279514,
+  "learner_decisions": 4
+}

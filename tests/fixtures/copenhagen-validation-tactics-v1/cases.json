@@ -1,0 +1,349 @@
+{
+  "schema": 1,
+  "cases": [
+    {
+      "id": "central-net-attackers",
+      "board": [
+        "...........",
+        "..D........",
+        "....A......",
+        "...AK......",
+        "....A......",
+        "...........",
+        ".....A.....",
+        ".......D...",
+        "...........",
+        "...........",
+        "..........."
+      ],
+      "player": "attackers",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "7a",
+      "witness": [
+        [
+          [
+            6,
+            5
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      ],
+      "expected_reward": 1,
+      "expected_reason": "king_captured",
+      "initial_legal_moves": 60,
+      "initial_winning_moves": 1
+    },
+    {
+      "id": "central-net-defenders",
+      "board": [
+        "...........",
+        "..D........",
+        "....A......",
+        "...AK......",
+        "....A......",
+        "...........",
+        ".....A.....",
+        ".......D...",
+        "...........",
+        "...........",
+        "..........."
+      ],
+      "player": "defenders",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "7a",
+      "witness": [
+        [
+          [
+            7,
+            7
+          ],
+          [
+            7,
+            8
+          ]
+        ],
+        [
+          [
+            6,
+            5
+          ],
+          [
+            3,
+            5
+          ]
+        ]
+      ],
+      "expected_reward": -1,
+      "expected_reason": "king_captured",
+      "initial_legal_moves": 46,
+      "initial_winning_moves": 0
+    },
+    {
+      "id": "southern-net-attackers",
+      "board": [
+        "...........",
+        "...........",
+        "......D....",
+        "...........",
+        ".....A.....",
+        "...........",
+        "......A....",
+        "......KA...",
+        "..D...A....",
+        ".......D...",
+        "..........."
+      ],
+      "player": "attackers",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "7a",
+      "witness": [
+        [
+          [
+            4,
+            5
+          ],
+          [
+            7,
+            5
+          ]
+        ]
+      ],
+      "expected_reward": 1,
+      "expected_reason": "king_captured",
+      "initial_legal_moves": 52,
+      "initial_winning_moves": 1
+    },
+    {
+      "id": "southern-net-defenders",
+      "board": [
+        "...........",
+        "...........",
+        "......D....",
+        "...........",
+        ".....A.....",
+        "...........",
+        "......A....",
+        "......KA...",
+        "..D...A....",
+        ".......D...",
+        "..........."
+      ],
+      "player": "defenders",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "7a",
+      "witness": [
+        [
+          [
+            2,
+            6
+          ],
+          [
+            2,
+            7
+          ]
+        ],
+        [
+          [
+            4,
+            5
+          ],
+          [
+            7,
+            5
+          ]
+        ]
+      ],
+      "expected_reward": -1,
+      "expected_reason": "king_captured",
+      "initial_legal_moves": 48,
+      "initial_winning_moves": 0
+    },
+    {
+      "id": "west-run-attackers",
+      "board": [
+        "...........",
+        ".....D.....",
+        "...........",
+        "KA.........",
+        "A..........",
+        "...........",
+        "........A..",
+        "...........",
+        ".......A...",
+        "...........",
+        "..........."
+      ],
+      "player": "attackers",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "6a",
+      "witness": [
+        [
+          [
+            8,
+            7
+          ],
+          [
+            8,
+            6
+          ]
+        ],
+        [
+          [
+            3,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      ],
+      "expected_reward": -1,
+      "expected_reason": "king_escaped",
+      "initial_legal_moves": 74,
+      "initial_winning_moves": 0
+    },
+    {
+      "id": "west-run-defenders",
+      "board": [
+        "...........",
+        ".....D.....",
+        "...........",
+        "KA.........",
+        "A..........",
+        "...........",
+        "........A..",
+        "...........",
+        ".......A...",
+        "...........",
+        "..........."
+      ],
+      "player": "defenders",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "6a",
+      "witness": [
+        [
+          [
+            3,
+            0
+          ],
+          [
+            0,
+            0
+          ]
+        ]
+      ],
+      "expected_reward": 1,
+      "expected_reason": "king_escaped",
+      "initial_legal_moves": 22,
+      "initial_winning_moves": 1
+    },
+    {
+      "id": "east-run-attackers",
+      "board": [
+        "...........",
+        "...........",
+        "..A....D...",
+        "...........",
+        "...........",
+        "...........",
+        ".....D.....",
+        "..........A",
+        ".........AK",
+        "...........",
+        "..........."
+      ],
+      "player": "attackers",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "6a",
+      "witness": [
+        [
+          [
+            2,
+            2
+          ],
+          [
+            3,
+            2
+          ]
+        ],
+        [
+          [
+            8,
+            10
+          ],
+          [
+            10,
+            10
+          ]
+        ]
+      ],
+      "expected_reward": -1,
+      "expected_reason": "king_escaped",
+      "initial_legal_moves": 51,
+      "initial_winning_moves": 0
+    },
+    {
+      "id": "east-run-defenders",
+      "board": [
+        "...........",
+        "...........",
+        "..A....D...",
+        "...........",
+        "...........",
+        "...........",
+        ".....D.....",
+        "..........A",
+        ".........AK",
+        "...........",
+        "..........."
+      ],
+      "player": "defenders",
+      "split": "validation",
+      "origin": "authored synthetic tactical start; no opening reachability claim",
+      "ruleset": "copenhagen-experimental-v2",
+      "source": "https://aagenielsen.dk/copenhagen_rules.php",
+      "rule": "6a",
+      "witness": [
+        [
+          [
+            8,
+            10
+          ],
+          [
+            10,
+            10
+          ]
+        ]
+      ],
+      "expected_reward": 1,
+      "expected_reason": "king_escaped",
+      "initial_legal_moves": 38,
+      "initial_winning_moves": 1
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+{
+  "instrumentation": "cProfile; timings include profiler overhead",
+  "total_calls": 99008986,
+  "total_seconds": 38.912555085,
+  "functions": [
+    {
+      "function": "hnef/evaluation.py:1:<module>",
+      "calls": 1,
+      "self_seconds": 7.9048e-05,
+      "cumulative_seconds": 41.229274049000004
+    },
+    {
+      "function": "hnef/evaluation.py:82:smoke",
+      "calls": 1,
+      "self_seconds": 0.003074058,
+      "cumulative_seconds": 41.195666968000005
+    },
+    {
+      "function": "hnef/matches.py:11:play_game",
+      "calls": 12,
+      "self_seconds": 0.005071087,
+      "cumulative_seconds": 40.261005761
+    },
+    {
+      "function": "hnef/evaluation.py:26:choose_move",
+      "calls": 340,
+      "self_seconds": 0.0038285560000000003,
+      "cumulative_seconds": 39.160818191000004
+    },
+    {
+      "function": "hnef/engine/rules.py:40:apply_move",
+      "calls": 14663,
+      "self_seconds": 0.8498752660000001,
+      "cumulative_seconds": 37.265481208000004
+    },
+    {
+      "function": "hnef/engine/rules.py:19:legal_moves",
+      "calls": 32198,
+      "self_seconds": 8.314523450000001,
+      "cumulative_seconds": 35.556641638
+    },
+    {
+      "function": "hnef/policies.py:82:choose_move",
+      "calls": 106,
+      "self_seconds": 0.002584152,
+      "cumulative_seconds": 30.06405674
+    },
+    {
+      "function": "hnef/policies.py:24:_best",
+      "calls": 227,
+      "self_seconds": 0.010999387000000001,
+      "cumulative_seconds": 29.943785405000003
+    },
+    {
+      "function": "hnef/policies.py:84:<lambda>",
+      "calls": 11563,
+      "self_seconds": 0.058745953000000004,
+      "cumulative_seconds": 29.92371739
+    },
+    {
+      "function": "hnef/engine/state.py:30:__post_init__",
+      "calls": 3223526,
+      "self_seconds": 6.482382973,
+      "cumulative_seconds": 13.988858449
+    },
+    {
+      "function": "hnef/policies.py:142:choose_move",
+      "calls": 121,
+      "self_seconds": 0.010522065,
+      "cumulative_seconds": 8.972608989000001
+    },
+    {
+      "function": "hnef/policies.py:167:search",
+      "calls": 121,
+      "self_seconds": 0.014133663000000001,
+      "cumulative_seconds": 8.962086924000001
+    },
+    {
+      "function": "hnef/engine/rules.py:11:_inside",
+      "calls": 5697676,
+      "self_seconds": 2.8371430550000003,
+      "cumulative_seconds": 7.742652263
+    },
+    {
+      "function": "hnef/policies.py:157:_rollout",
+      "calls": 484,
+      "self_seconds": 0.024730597,
+      "cumulative_seconds": 6.948444423000001
+    },
+    {
+      "function": "hnef/engine/state.py:33:<genexpr>",
+      "calls": 19341156,
+      "self_seconds": 2.8343011540000003,
+      "cumulative_seconds": 2.8343011540000003
+    },
+    {
+      "function": "hnef/engine/rules.py:12:<genexpr>",
+      "calls": 16769432,
+      "self_seconds": 2.156151113,
+      "cumulative_seconds": 2.156151113
+    },
+    {
+      "function": "hnef/engine/state.py:83:__post_init__",
+      "calls": 14687,
+      "self_seconds": 0.152173255,
+      "cumulative_seconds": 1.5015853300000002
+    },
+    {
+      "function": "hnef/engine/state.py:122:at",
+      "calls": 8843738,
+      "self_seconds": 1.2759435410000002,
+      "cumulative_seconds": 1.2759435410000002
+    },
+    {
+      "function": "hnef/engine/rules.py:15:_add",
+      "calls": 5758758,
+      "self_seconds": 0.9803608370000001,
+      "cumulative_seconds": 0.9803608370000001
+    },
+    {
+      "function": "hnef/replay.py:41:verify",
+      "calls": 12,
+      "self_seconds": 0.00209413,
+      "cumulative_seconds": 0.9014096920000001
+    }
+  ]
+}

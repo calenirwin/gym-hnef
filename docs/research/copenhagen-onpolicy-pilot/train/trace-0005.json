@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "ruleset": "copenhagen-experimental-v2",
+  "board": [
+    "......K....",
+    "...........",
+    ".....D.....",
+    "...A.......",
+    "...........",
+    "........A..",
+    "...........",
+    "....D......",
+    "......A....",
+    "...........",
+    "..........."
+  ],
+  "player": "defenders",
+  "actions": [
+    555,
+    1271,
+    1439,
+    1899,
+    120
+  ],
+  "keys": [
+    "d23df604e2eddfda865f380c5efa703895d4e629e04f2f0c65b0c46ea06d6940",
+    "231878a03a952105bf3ad36e99ebadd267b3bf76cd8d3d8d59c76b9ee2c274d7",
+    "7f8eeeda4654ad101aa80f590c8834266d2d13328878e86909da843289124c00",
+    "392122343f8756667e4438615c58b12c37d50cf99926edc36fe9f0f1728a07ae",
+    "3759011126e5c6247af5d787a432238f0cf52fbdf02093603a5d826afceb2946",
+    "698ee3c6a5f0b6817532e49f901c88d58e3ca7863a6f8c12025bfdc09cb25d00"
+  ],
+  "opponent_seed": 17384019043227033450,
+  "terminated": true,
+  "truncated": false,
+  "reason": "king_escaped",
+  "reward": 1,
+  "bootstrap_value": 0.0,
+  "final_target": 1.0,
+  "learner_decisions": 3
+}

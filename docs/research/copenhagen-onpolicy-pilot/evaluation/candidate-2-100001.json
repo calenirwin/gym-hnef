@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "ruleset": "copenhagen-experimental-v2",
+  "board": [
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "...........",
+    "......A....",
+    "...........",
+    "...AAA.....",
+    "..ADKD....."
+  ],
+  "player": "attackers",
+  "actions": [
+    2088,
+    2309,
+    1869,
+    2080,
+    1676,
+    2299
+  ],
+  "keys": [
+    "ae1f4754ee7bda3e3278677c909ebabd2b1c0863d5c2424e02fa00fea8a8e5cc",
+    "937dc31a4430b9da2f3c892296ed1249321abcf6e10d331e10aade2623351e69",
+    "7365464dd32a008a03244c5bf869fe6a06bd5c2f1ae0a7e2a128f8726d34e008",
+    "afbe765da9344a56335f2b5a7aff211debdfc60c544fecab629556eca632e20a",
+    "010a7d1d7113257c2ea96e84b1cf83362acfe0d816832f85cfce72a4ba551d04",
+    "3cf0194949f742f99cae1059cedb59a9a2d6a87cc24f9cce4803b95f9c4a7c7a",
+    "c011ddc0f53d61142267cc4ca3b9804bb986bb82ef1ab73cbe47cf7d9cdfd422"
+  ],
+  "opponent_seed": 13712155678330299665,
+  "terminated": true,
+  "truncated": false,
+  "reason": "king_escaped",
+  "reward": -1,
+  "bootstrap_value": 0.0,
+  "final_target": -1.0,
+  "learner_decisions": 3
+}

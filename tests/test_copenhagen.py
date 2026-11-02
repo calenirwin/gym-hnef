@@ -25,6 +25,12 @@ A, D = Player.ATTACKERS, Player.DEFENDERS
 COPENHAGEN = Ruleset.COPENHAGEN
 
 
+@pytest.fixture(autouse=True, params=[Ruleset.COPENHAGEN, Ruleset.COPENHAGEN_V2])
+def copenhagen_profile(request, monkeypatch):
+    """Every ordinary-rule fixture must also exercise the current profile."""
+    monkeypatch.setattr(__import__(__name__), "COPENHAGEN", request.param)
+
+
 def position(pieces, player=A):
     pieces = dict(pieces)
     if "K" not in pieces.values():
