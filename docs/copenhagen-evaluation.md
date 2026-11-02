@@ -403,3 +403,26 @@ checkpoints are diagnostics, not opportunities to select a favorable model.
 Verify every invocation and compare adjacent boundary checkpoints, including
 metadata and RNG, before reporting a curve. Synthetic training improvement
 alone cannot establish heldout generalization or competitive strength.
+
+### Saved-curve gradient and critic diagnostics
+
+`tools/diagnose_copenhagen_curve.py --run <saved-phase> --data
+<training-cases.json> --output <new-directory>` accepts the fixed normalized
+curve profile. Run with the matching trainer source on PYTHONPATH and the
+one-thread environment. Each invocation has a 60-second limit and first verifies
+all saved traces, parameters, probes and report-level baselines.
+
+It reconstructs the weighted, clipped actor/critic update and checks it against
+the saved parameter change. For each immediate-win training probe, it reports
+the first-order winning-probability change and the observed change, identifying
+whether the update came from that same start. These local projections can be
+summed to inspect reinforcement or interference across starts; they are not
+isolated causal effects or evidence of opponent strength.
+
+Residual rows contain target, value and signed TD error. Only the final sample
+of a terminal rollout is marked terminal; earlier samples remain bootstrapped.
+Cutoffs have their own bootstrap category and are never labeled draws. These
+sampled, changing-policy errors do not establish full-game value calibration.
+The diagnostic does not write model checkpoints, train a new policy or read
+heldout positions. Freeze the input phases and aggregate time cap before running
+multiple invocations; report all seeds rather than choosing favorable results.
