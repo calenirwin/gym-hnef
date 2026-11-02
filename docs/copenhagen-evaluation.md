@@ -426,3 +426,26 @@ sampled, changing-policy errors do not establish full-game value calibration.
 The diagnostic does not write model checkpoints, train a new policy or read
 heldout positions. Freeze the input phases and aggregate time cap before running
 multiple invocations; report all seeds rather than choosing favorable results.
+
+Schema-2 curve diagnoses additionally reconstruct the critic delta from every
+sample's clipped contribution. Within each position/reference block, the report
+crosses target groups (terminal win/loss, intermediate bootstrap, cutoff
+bootstrap) with update-source groups. Positive gradient cosine means alignment;
+negative means opposition. A negative predicted half-MSE change means local
+improvement. Observed before/after errors use the same samples and frozen TD
+targets, including the originally recorded bootstrap values. This isolates local
+fitting from target drift; it does not establish future-policy value accuracy or
+interference between different starting positions.
+
+For identical encoded terminal inputs within a frozen block, the report checks
+`MSE = sampled target variance + squared error from the sampled target mean`.
+A state-value critic predicts an expectation, not the reward of each sampled
+action. Winning-outcome error can rise when fitting a loss-heavy distribution,
+even while overall error falls. These small empirical mixtures are not true
+policy-value estimates, and partial-history features can still alias states.
+
+The Python timer is cooperative. Use an external hard timeout, for example
+`timeout --kill-after=5s 65s env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+MKL_NUM_THREADS=1 PYTHONPATH=src python tools/diagnose_copenhagen_curve.py ...`.
+For a declared multi-phase run, also wrap its driver in an aggregate timeout;
+do not extend the budget after inspecting results.
