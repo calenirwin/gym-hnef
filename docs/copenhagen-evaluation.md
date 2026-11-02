@@ -373,3 +373,33 @@ The old modes retain their own semantics for reproduction; no old checkpoint is
 relabeled. The existing sample/time caps, training-only probes and strengthened
 initial-baseline checks remain in force. A local optimizer identity does not
 substitute for an online learning gate or heldout opponent evaluation.
+
+### Fixed normalized training curve
+
+The optional `--profile normalized-curve512-v1` explicitly extends only
+`--mode cell-normalized-v1` to 64 blocks (512 learner decisions). The default
+profiles keep their 16-block cap. The extended contract binds the profile and
+reference schedule: eight starts against random, then the same eight against
+heuristic, repeated four times. Global block indices keep rollout streams
+independent across cycles. Resume cannot switch profiles or extend the cap.
+
+Each invocation still accepts at most eight blocks and 60 seconds. For example:
+
+```sh
+python -m hnef.learning.batches train --data <training-cases.json> \
+  --output <phase-1> --mode cell-normalized-v1 --seed 137 \
+  --profile normalized-curve512-v1 --cells 8
+python -m hnef.learning.batches train --data <training-cases.json> \
+  --output <phase-2> --mode cell-normalized-v1 --seed 137 \
+  --profile normalized-curve512-v1 --cells 8 \
+  --resume <phase-1>/checkpoint-0008.npz
+python -m hnef.learning.batches verify --data <training-cases.json> --output <phase-2>
+```
+
+Set the documented one-thread environment before running. Declare seeds,
+checkpoints, aggregate CPU budget and final gate before collecting trajectories.
+The reports expose raw-policy training probes at every block; intermediate
+checkpoints are diagnostics, not opportunities to select a favorable model.
+Verify every invocation and compare adjacent boundary checkpoints, including
+metadata and RNG, before reporting a curve. Synthetic training improvement
+alone cannot establish heldout generalization or competitive strength.

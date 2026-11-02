@@ -23,18 +23,27 @@ NORMALIZED_ALGORITHM = "same-player-td0-matched-cells-v2"
 BEHAVIOR = "immediate-win-prior4-v1"
 DECISIONS_PER_CELL = 8
 TOTAL_CELLS = 16
+CURVE_PROFILE = "normalized-curve512-v1"
 
 
-def cell(model, state, seed, index, mode):
+def budget(profile, mode):
+    if profile is None:
+        return TOTAL_CELLS
+    if profile != CURVE_PROFILE or mode != "cell-normalized-v1":
+        raise ValueError("Curve profile requires the fixed cell-normalized-v1 schedule")
+    return 64
+
+
+def cell(model, state, seed, index, mode, profile=None):
     """Eight decisions from independent fresh rollouts at one start/reference.
 
     A terminal rollout is followed by a fresh one until the cell quota is met.
     The final rollout horizon is capped by remaining decisions, with normal TD
     bootstrapping. Every batch sample was collected under the same frozen model.
     """
-    if mode not in MODES or not 0 <= index < TOTAL_CELLS:
+    if mode not in MODES or not 0 <= index < budget(profile, mode):
         raise ValueError("Invalid cell mode/index")
-    reference = "random-v1" if index < 8 else "heuristic-v1"
+    reference = "random-v1" if (index // 8) % 2 == 0 else "heuristic-v1"
     remaining, rollout, records, all_samples = DECISIONS_PER_CELL, 0, [], []
     before_actor, before_critic = model.actor.copy(), model.critic.copy()
     normalized = mode in NORMALIZED_MODES
@@ -112,9 +121,10 @@ def cell(model, state, seed, index, mode):
     return result
 
 
-def setup(data, mode, seed):
+def setup(data, mode, seed, profile=None):
     if mode not in MODES or type(seed) is not int or not 0 <= seed < 100000:
         raise ValueError("Use a supported mode and training seed below 100000")
+    total = budget(profile, mode)
     ids, states, winning, digest = training_positions(data, "broad")
     if len(states) != 8 or any(sum(s.player is side for s in states) != 4 for side in Player):
         raise ValueError("Require eight broad training starts, four per side")
@@ -126,7 +136,7 @@ def setup(data, mode, seed):
         "seed": seed,
         "behavior": BEHAVIOR,
         "decisions_per_cell": DECISIONS_PER_CELL,
-        "total_cells": TOTAL_CELLS,
+        "total_cells": total,
         "max_rollout_horizon": 4,
         "gamma": 0.99,
         "learning_rate": 0.05,
@@ -142,22 +152,27 @@ def setup(data, mode, seed):
             cell_learning_rate_exposure=0.05,
             policy_refresh="rollout" if mode == "episode-normalized-v1" else "cell",
         )
+    if profile is not None:
+        expected.update(
+            budget_profile=profile,
+            reference_schedule="alternating-eight-start-cycles-v1",
+        )
     return ids, states, winning, expected
 
 
-def train(output, data, *, mode, seed, cells=8, resume=None):
+def train(output, data, *, mode, seed, cells=8, resume=None, profile=None):
     cpu_caps()
     if type(cells) is not int or not 1 <= cells <= 8:
         raise ValueError("Use 1..8 cells per invocation")
     started = time.monotonic()
-    ids, states, winning, expected = setup(data, mode, seed)
+    ids, states, winning, expected = setup(data, mode, seed, profile)
     if resume:
         model, meta, rng = load(resume, expected)
     else:
         model, rng = LinearModel(), np.random.default_rng(seed)
         meta = {**expected, "step": 0, "optimizer_steps": 0}
-    if type(meta["step"]) is not int or not 0 <= meta["step"] <= TOTAL_CELLS - cells:
-        raise ValueError("Total cell cap is 16")
+    if type(meta["step"]) is not int or not 0 <= meta["step"] <= expected["total_cells"] - cells:
+        raise ValueError(f"Total cell cap is {expected['total_cells']}")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=False)
     save(output / f"checkpoint-{meta['step']:04}.npz", model, meta, rng)
@@ -167,7 +182,7 @@ def train(output, data, *, mode, seed, cells=8, resume=None):
         if time.monotonic() - started > 60:
             raise TimeoutError("60-second training budget exhausted")
         index = meta["step"]
-        record = cell(model, states[index % 8], seed, index, mode)
+        record = cell(model, states[index % 8], seed, index, mode, profile)
         record["start_id"] = ids[index % 8]
         meta["step"] += 1
         meta["optimizer_steps"] += record["updates"]
@@ -197,11 +212,13 @@ def verify(run, data):
     run = Path(run)
     report = json.loads((run / "report.json").read_text())
     cfg = report["contract"]
-    ids, states, winning, expected = setup(data, cfg["mode"], cfg["seed"])
+    ids, states, winning, expected = setup(
+        data, cfg["mode"], cfg["seed"], cfg.get("budget_profile")
+    )
     if cfg != expected or not 1 <= len(report["records"]) <= 8:
         raise ValueError("Replay contract/count mismatch")
     first = report["records"][0]["cell"]
-    if type(first) is not int or not 0 <= first < TOTAL_CELLS:
+    if type(first) is not int or not 0 <= first < expected["total_cells"]:
         raise ValueError("Invalid initial cell index")
     initial, initial_meta, _ = load(run / f"checkpoint-{first:04}.npz", expected)
     if initial_meta["step"] != first:
@@ -222,7 +239,9 @@ def verify(run, data):
         last = index
         model, meta, rng = load(run / f"checkpoint-{index:04}.npz", expected)
         after, after_meta, after_rng = load(run / f"checkpoint-{index + 1:04}.npz", expected)
-        replay = cell(model, states[index % 8], cfg["seed"], index, cfg["mode"])
+        replay = cell(
+            model, states[index % 8], cfg["seed"], index, cfg["mode"], cfg.get("budget_profile")
+        )
         replay["start_id"] = ids[index % 8]
         replay["raw_positions"], replay["raw_summary"] = measure(model, ids, states, winning)
         if json.loads(json.dumps(replay)) != record:
@@ -253,6 +272,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=53)
     parser.add_argument("--cells", type=int, default=8)
     parser.add_argument("--resume", type=Path)
+    parser.add_argument("--profile", choices=(CURVE_PROFILE,))
     args = parser.parse_args()
     result = (
         train(
@@ -262,6 +282,7 @@ if __name__ == "__main__":
             seed=args.seed,
             cells=args.cells,
             resume=args.resume,
+            profile=args.profile,
         )
         if args.command == "train"
         else verify(args.output, args.data)
