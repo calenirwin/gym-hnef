@@ -403,3 +403,101 @@ checkpoints are diagnostics, not opportunities to select a favorable model.
 Verify every invocation and compare adjacent boundary checkpoints, including
 metadata and RNG, before reporting a curve. Synthetic training improvement
 alone cannot establish heldout generalization or competitive strength.
+
+### Saved-curve gradient and critic diagnostics
+
+`tools/diagnose_copenhagen_curve.py --run <saved-phase> --data
+<training-cases.json> --output <new-directory>` accepts the fixed normalized
+curve profile. Run with the matching trainer source on PYTHONPATH and the
+one-thread environment. Each invocation has a 60-second limit and first verifies
+all saved traces, parameters, probes and report-level baselines.
+
+It reconstructs the weighted, clipped actor/critic update and checks it against
+the saved parameter change. For each immediate-win training probe, it reports
+the first-order winning-probability change and the observed change, identifying
+whether the update came from that same start. These local projections can be
+summed to inspect reinforcement or interference across starts; they are not
+isolated causal effects or evidence of opponent strength.
+
+Residual rows contain target, value and signed TD error. Only the final sample
+of a terminal rollout is marked terminal; earlier samples remain bootstrapped.
+Cutoffs have their own bootstrap category and are never labeled draws. These
+sampled, changing-policy errors do not establish full-game value calibration.
+The diagnostic does not write model checkpoints, train a new policy or read
+heldout positions. Freeze the input phases and aggregate time cap before running
+multiple invocations; report all seeds rather than choosing favorable results.
+
+Schema-2 curve diagnoses additionally reconstruct the critic delta from every
+sample's clipped contribution. Within each position/reference block, the report
+crosses target groups (terminal win/loss, intermediate bootstrap, cutoff
+bootstrap) with update-source groups. Positive gradient cosine means alignment;
+negative means opposition. A negative predicted half-MSE change means local
+improvement. Observed before/after errors use the same samples and frozen TD
+targets, including the originally recorded bootstrap values. This isolates local
+fitting from target drift; it does not establish future-policy value accuracy or
+interference between different starting positions.
+
+For identical encoded terminal inputs within a frozen block, the report checks
+`MSE = sampled target variance + squared error from the sampled target mean`.
+A state-value critic predicts an expectation, not the reward of each sampled
+action. Winning-outcome error can rise when fitting a loss-heavy distribution,
+even while overall error falls. These small empirical mixtures are not true
+policy-value estimates, and partial-history features can still alias states.
+
+The Python timer is cooperative. Use an external hard timeout, for example
+`timeout --kill-after=5s 65s env OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+MKL_NUM_THREADS=1 PYTHONPATH=src python tools/diagnose_copenhagen_curve.py ...`.
+For a declared multi-phase run, also wrap its driver in an aggregate timeout;
+do not extend the budget after inspecting results.
+
+### Fixed early terminal panel
+
+`tools/diagnose_copenhagen_panel.py --runs <phase1> ... <phase8> --data
+<training-cases.json> --output <new-directory>` verifies consecutive saved phases
+and exact checkpoint boundaries, then freezes **all terminal samples from the
+first sixteen blocks**. Duplicate observations retain their observed weights;
+cutoffs and intermediate bootstrap targets are excluded. Each seed has its own
+panel, with feature vectors, terminal rewards, source positions and a content
+hash recorded in the output.
+
+Later saved critic updates are measured on those identical inputs and rewards.
+The report attributes actual fixed-target half-MSE changes to updates from the
+same start or another start, and checks that changes telescope exactly from
+checkpoint 16 to the final checkpoint. Positive change means increased error on
+this panel; negative means improved fit. Reporting by position and outcome avoids
+hiding worsening winning-sample fit behind the more numerous losses.
+
+The panel removes changing evaluation-sample composition and bootstrap-target
+drift. It is still an observed training panel, not an unbiased policy-value
+estimate or a heldout strength test. Own/other attribution describes the saved
+trajectory, not a counterfactual training intervention. A state-value critic
+predicts expected returns, not individual action outcomes. Do not infer that
+increasing error on selected wins alone implies an incorrect value function.
+
+Freeze input seeds and panel definition before results. Use one-thread settings
+and an external process timeout (for example `timeout --kill-after=5s 95s` per
+seed), with a separate aggregate timeout around multi-seed drivers. The tool does
+not train, write model checkpoints, select a policy or increase training budgets.
+
+Add `--attribute-outcomes` for source-position/outcome accounting on that same
+panel (schema 2). Saved rollout clipping and decision weights are preserved when
+reconstructing terminal-win, terminal-loss, intermediate-bootstrap and
+cutoff-bootstrap critic contributions. Their sum must match the saved critic
+parameter delta. Initial baselines, traces and checkpoint boundaries are still
+verified before attribution.
+
+For each panel input, all components follow the same straight parameter path
+from the saved before-critic to after-critic. The integral of half-MSE's derivative
+along this path allocates its actual nonlinear change among components. The
+allocations sum to the observed change, are independent of component ordering,
+and retain opposing contributions when the total update cancels. This is a
+specific descriptive attribution convention, not a causal intervention or a
+unique explanation. Source position is recorded separately from target-panel
+position, so own-start and other-start contributions can be aggregated without
+changing panel weights.
+
+Report all frozen seeds and source/outcome groups. Consistent concentration of
+harmful other-start contributions can motivate a prospectively specified,
+fixed-data critic-capacity test. It cannot by itself justify changing the serving
+critic, reweighting outcomes, increasing training, or claiming stronger play.
+Sampled terminal outcomes still do not provide unbiased expected-state values.
