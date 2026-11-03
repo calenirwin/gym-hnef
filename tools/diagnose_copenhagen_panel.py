@@ -20,7 +20,61 @@ def effects(x, targets, before, after):
     return old, new, new - old
 
 
-def diagnose(runs, data, output):
+def allocate(x, targets, before, components):
+    """Exact straight-line allocation for scalar tanh critic half-MSE.
+
+    Every component follows the same simultaneous parameter path. This avoids
+    arbitrary component ordering, but is not a causal intervention or unique
+    explanation. Stable tanh difference avoids cancellation near zero updates.
+    """
+    names = sorted(components)
+    if not names:
+        raise ValueError("No critic components")
+    dz_parts = np.array([x @ components[k] for k in names])
+    dz = dz_parts.sum(axis=0)
+    v = np.tanh(x @ before)
+    t = np.tanh(dz)
+    dv = np.tanh(x @ before + dz) - v
+    small = np.abs(dz) < 0.1
+    dv[small] = t[small] * (1 - v[small] * v[small]) / (1 + v[small] * t[small])
+    ratio = np.divide(dv, dz, out=1 - v * v, where=dz != 0)
+    slope = ratio * (v - targets + 0.5 * dv)
+    result = {k: dz_parts[i] * slope for i, k in enumerate(names)}
+    if not all(np.isfinite(a).all() for a in result.values()):
+        raise ValueError("Nonfinite allocation")
+    return result
+
+
+def components(record, model, state):
+    """Reconstruct actual clipped sample contributions, preserving rollout weights."""
+    parts, remaining = {}, 8
+    for rollout in record["rollouts"]:
+        samples, trace = collect(
+            model,
+            state,
+            np.random.default_rng(rollout["learner_seed"]),
+            rollout["reference_seed"],
+            min(4, remaining),
+            0.99,
+            record["reference"],
+            batches.BEHAVIOR,
+        )
+        if json.loads(json.dumps(trace)) != rollout["trace"]:
+            raise ValueError("Attribution trace mismatch")
+        for i, sample in enumerate(samples):
+            x, _, _, value, target = sample[:5]
+            kind = "bootstrap-intermediate"
+            if i == len(samples) - 1:
+                kind = f"terminal-{trace['reward']}" if trace["terminated"] else "bootstrap-cutoff"
+            delta = -0.05 / 8 * rollout["clip_scale"] * (value - target) * (1 - value * value) * x
+            parts[kind] = parts.get(kind, np.zeros_like(model.critic)) + delta
+        remaining -= len(samples)
+    if remaining:
+        raise ValueError("Attribution decision quota mismatch")
+    return parts
+
+
+def diagnose(runs, data, output, *, attribute_outcomes=False):
     cpu_caps()
     runs = [Path(r).resolve() for r in runs]
     if not 3 <= len(runs) <= 8 or len(set(runs)) != len(runs):
@@ -102,6 +156,16 @@ def diagnose(runs, data, output):
             before, _, _ = load(runs[phase] / f"checkpoint-{index:04}.npz", cfg)
             after, _, _ = load(runs[phase] / f"checkpoint-{index + 1:04}.npz", cfg)
             old, new, delta = effects(x, y, before.critic, after.critic)
+            allocation = None
+            if attribute_outcomes:
+                parts = components(record, before, states[index % 8])
+                if not np.allclose(
+                    sum(parts.values()), after.critic - before.critic, rtol=0, atol=1e-15
+                ):
+                    raise ValueError("Outcome components do not reconstruct critic update")
+                allocation = allocate(x, y, before.critic, parts)
+                if not np.allclose(sum(allocation.values()), delta, rtol=0, atol=1e-12):
+                    raise ValueError("Outcome allocations do not sum to observed error change")
             rows.append(
                 dict(
                     cell=index,
@@ -116,6 +180,15 @@ def diagnose(runs, data, output):
                             before_half_mse=float(old[indices].mean()),
                             after_half_mse=float(new[indices].mean()),
                             change=float(delta[indices].mean()),
+                            **(
+                                {
+                                    "outcomes": {
+                                        k: float(v[indices].mean()) for k, v in allocation.items()
+                                    }
+                                }
+                                if allocation is not None
+                                else {}
+                            ),
                         )
                         for k, indices in groups.items()
                     ],
@@ -134,7 +207,7 @@ def diagnose(runs, data, output):
         if not np.isclose(sum(changes), total[indices].mean(), rtol=0, atol=1e-12):
             raise ValueError("Panel changes do not telescope")
     result = dict(
-        schema=1,
+        schema=2 if attribute_outcomes else 1,
         contract=cfg,
         panel_definition="all-first16-terminal-samples-v1",
         panel_sha256=digest,
@@ -150,11 +223,12 @@ def diagnose(runs, data, output):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--attribute-outcomes", action="store_true")
     parser.add_argument("--runs", nargs="+", type=Path, required=True)
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    r = diagnose(args.runs, args.data, args.output)
+    r = diagnose(args.runs, args.data, args.output, attribute_outcomes=args.attribute_outcomes)
     print(
         json.dumps(
             dict(

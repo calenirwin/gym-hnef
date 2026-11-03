@@ -478,3 +478,26 @@ Freeze input seeds and panel definition before results. Use one-thread settings
 and an external process timeout (for example `timeout --kill-after=5s 95s` per
 seed), with a separate aggregate timeout around multi-seed drivers. The tool does
 not train, write model checkpoints, select a policy or increase training budgets.
+
+Add `--attribute-outcomes` for source-position/outcome accounting on that same
+panel (schema 2). Saved rollout clipping and decision weights are preserved when
+reconstructing terminal-win, terminal-loss, intermediate-bootstrap and
+cutoff-bootstrap critic contributions. Their sum must match the saved critic
+parameter delta. Initial baselines, traces and checkpoint boundaries are still
+verified before attribution.
+
+For each panel input, all components follow the same straight parameter path
+from the saved before-critic to after-critic. The integral of half-MSE's derivative
+along this path allocates its actual nonlinear change among components. The
+allocations sum to the observed change, are independent of component ordering,
+and retain opposing contributions when the total update cancels. This is a
+specific descriptive attribution convention, not a causal intervention or a
+unique explanation. Source position is recorded separately from target-panel
+position, so own-start and other-start contributions can be aggregated without
+changing panel weights.
+
+Report all frozen seeds and source/outcome groups. Consistent concentration of
+harmful other-start contributions can motivate a prospectively specified,
+fixed-data critic-capacity test. It cannot by itself justify changing the serving
+critic, reweighting outcomes, increasing training, or claiming stronger play.
+Sampled terminal outcomes still do not provide unbiased expected-state values.

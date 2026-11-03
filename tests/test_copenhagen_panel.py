@@ -47,9 +47,13 @@ def test_panel_replays_preserves_inputs_and_rejects_tampering(tmp_path):
         )
         runs.append(run)
     before = {str(p): p.read_bytes() for run in runs for p in run.iterdir()}
-    result = panel.diagnose(runs, DATA, tmp_path / "out")
+    result = panel.diagnose(runs, DATA, tmp_path / "out", attribute_outcomes=True)
     assert before == {str(p): p.read_bytes() for run in runs for p in run.iterdir()}
     assert len(result["records"]) == 8
+    assert result["schema"] == 2
+    for row in result["records"]:
+        for group in row["groups"]:
+            assert sum(group["outcomes"].values()) == pytest.approx(group["change"], abs=1e-12)
     assert all(r["cell"] < 16 and r["target"] in (-1, 0, 1) for r in result["panel"])
     assert not list((tmp_path / "out").glob("*.npz"))
     # Panel definition must not change with later phases or error results.
@@ -64,3 +68,18 @@ def test_panel_replays_preserves_inputs_and_rejects_tampering(tmp_path):
     path.write_text(json.dumps(raw))
     with pytest.raises(ValueError, match="Initial baseline"):
         panel.diagnose(runs, DATA, tmp_path / "bad")
+
+
+@pytest.mark.parametrize("before,total", [(0.0, 0.2), (0.3, 0.0), (0.3, 1e-12), (30.0, -60.0)])
+def test_outcome_allocation_exact_order_independent_and_cancelling(before, total):
+    x = np.array([[1.0], [-0.5]])
+    y = np.array([1.0, -1.0])
+    parts = {"loss": np.array([0.4]), "win": np.array([total - 0.4])}
+    result = panel.allocate(x, y, np.array([before]), parts)
+    reverse = panel.allocate(x, y, np.array([before]), dict(reversed(list(parts.items()))))
+    _, _, actual = panel.effects(x, y, np.array([before]), np.array([before + total]))
+    assert np.allclose(sum(result.values()), actual, rtol=0, atol=1e-12)
+    assert all(np.array_equal(result[k], reverse[k]) for k in result)
+    if total == 0:
+        assert np.any(result["loss"] != 0)
+        assert np.allclose(result["loss"], -result["win"], rtol=0, atol=1e-15)
