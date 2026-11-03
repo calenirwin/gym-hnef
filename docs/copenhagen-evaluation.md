@@ -449,3 +449,32 @@ The Python timer is cooperative. Use an external hard timeout, for example
 MKL_NUM_THREADS=1 PYTHONPATH=src python tools/diagnose_copenhagen_curve.py ...`.
 For a declared multi-phase run, also wrap its driver in an aggregate timeout;
 do not extend the budget after inspecting results.
+
+### Fixed early terminal panel
+
+`tools/diagnose_copenhagen_panel.py --runs <phase1> ... <phase8> --data
+<training-cases.json> --output <new-directory>` verifies consecutive saved phases
+and exact checkpoint boundaries, then freezes **all terminal samples from the
+first sixteen blocks**. Duplicate observations retain their observed weights;
+cutoffs and intermediate bootstrap targets are excluded. Each seed has its own
+panel, with feature vectors, terminal rewards, source positions and a content
+hash recorded in the output.
+
+Later saved critic updates are measured on those identical inputs and rewards.
+The report attributes actual fixed-target half-MSE changes to updates from the
+same start or another start, and checks that changes telescope exactly from
+checkpoint 16 to the final checkpoint. Positive change means increased error on
+this panel; negative means improved fit. Reporting by position and outcome avoids
+hiding worsening winning-sample fit behind the more numerous losses.
+
+The panel removes changing evaluation-sample composition and bootstrap-target
+drift. It is still an observed training panel, not an unbiased policy-value
+estimate or a heldout strength test. Own/other attribution describes the saved
+trajectory, not a counterfactual training intervention. A state-value critic
+predicts expected returns, not individual action outcomes. Do not infer that
+increasing error on selected wins alone implies an incorrect value function.
+
+Freeze input seeds and panel definition before results. Use one-thread settings
+and an external process timeout (for example `timeout --kill-after=5s 95s` per
+seed), with a separate aggregate timeout around multi-seed drivers. The tool does
+not train, write model checkpoints, select a policy or increase training budgets.
